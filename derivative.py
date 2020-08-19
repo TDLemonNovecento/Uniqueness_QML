@@ -4,9 +4,10 @@ import sympy as sp
 
 #variables by which to derive:
 
-r1, r2, r3, Z, N = sp.symbols('r1 r2 r3 Z N')
+dx = sp.symbols('dx')
 
-def firstd(fM, n = 23):
+
+def firstd(f, dx):
     '''Compute the first derivative of a mapping function fM.
     Tries analytical derivation first.
     If it fails, numerical derivation is performed.
@@ -32,14 +33,13 @@ def firstd(fM, n = 23):
     matching format to mapping function fM
     
     '''
-    z_vec = [("Z" + str(x)) for x in range(n)]
-    print(z_vec)
-
-
+    dev_R = sp.Matrix(n, 1, 1)
+    print(dev_R)
     dev_r1, dev_r2, dev_r3, dev_Z, dev_N = 0,0,0,0,0
     try:
         print("analytical evaluation started")
-        r1, r2, r3, Z, N = sp.symbols('r1 r2 r3 Z N')
+            
+
         dev_r1 = sp.diff(fM, r1)
         dev_r2 = sp.diff(fM, r2)
         dev_r3 = sp.diff(fM, r3)

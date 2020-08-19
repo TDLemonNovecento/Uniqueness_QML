@@ -2,45 +2,122 @@
 import qml
 import numpy as np
 import sympy as sp
+import derivative
+import sys
+
+N = sp.symbols('N')
+
+Z1, Z2, Z3 = sp.symbols('Z1 Z2 Z3')
+
+Z = sp.Matrix([[Z1, Z2, Z3]])
+
+#x1, x2, x3, y1, y2, y3, z1, z2, z3 = sp.symbols('x1 x2 x3 y1 y2 y3 z1 z2 z3')
+r1, r2, r3 = sp.symbols('r1 r2 r3')
+
+R =  sp.Matrix([[r1, r2, r3]])
 
 
-#r1, r2, r3, Z, N = sp.symbols('r1 r2 r3 Z N')
-'''i, j are molecules with xyz, Z, and N info '''
+'''Sample program for max. 3 atoms '''
 
-def Coulomb_Matrix_FVec(r1, r2, r3, Z, N, n):
+def Coulomb_Matrix_FVec(R, Z, N, n, which_derivative = 0, which_dx = [0,0], which_ddx = [0,0]):
+
     '''Compute Vector containing coulomb matrix information
 
     Parameters
     ----------
-    r1,r2,r3 : variable
+    R : vector
+        position vectors r1, r2, ... , rn of n Atoms
         Armstroeng, coordinates in xyz space
     Z : vector
-        variable of nuclear charges
+        nuclear charges Z1, Z2, ..., Zn of n Atoms
     N : variable
-        number of electrons
-    n : number
-        size of Z = number of atoms in system
+        number of electrons in system
+        if neutral, N = sum_i(Zi)
+    which_derivative :
+        0 = original function is returned
+        1 = first derivative defined by which_dx is returned
+        2 = second derivative defined by which_dx and which_ddx is returned
+    which_dx, which_ddx :
+        [0, i] returns derivative by ri
+        [1, i] returns derivative by Zi
+        [2, i] returns derivative by N
 
     Returns
     -------
-    fM : vector
-        function
+    fM : Matrix
         '''
-    def fM(r1, r2, r3, Z, N):
-        i, j = 0
-        n = len(Z)
-        print(n)
-        size = n*(n + 1) / 2
-        fM = zeros(size)
-        print(fM)
-
-        fM = 2*Z**2/(r1**2 + r2**2 + r3**2)
-    return(fM)
-
-def Coulomb_Matrix_VtoM(v):
-    CM = representations.vector_to_matrix(v) 
-    return(CM)
     
+    assert (which_derivative in [0, 1, 2]), "which_derivative value out of bounds. Choose 0, 1, 2 to get no derivative, the first or the second."
+            
+    def f(i, j):
+        if(i == j):
+            print(Z[i])    
+            return(Z[i]**(2.4)/2)
+        else:
+            difference = sp.sqrt((R[i]-R[j])**2)
+            return (Z[i]*Z[j]/difference)
+    fM = sp.Matrix(n, n, f)
+                      
+
+    if (which_derivative == 0):
+        function = fM       
+    elif (which_derivative == 1):
+        if which_dx[0] == 0:
+            print("derive by %s" % R.row(0).col(which_dx[1]))
+            print(R.row(0).col(which_dx[1]))
+            function = first_derivative_CM(fM, R.row(0).col(which_dx[1]))
+        elif which_dx[0] == 1:
+            print("derive by %s" % Z.row(0).col(which_dx[1]))
+            function = first_derivative_CM(fM, Z.row(0).col(which_dx[1]))
+        elif which_dx[0] == 2:
+            print("derive by N")
+            function = first_derivative_CM(fM, N)
+        else:
+            print("your which_dx pointer is messed up")
+    
+    elif (which_derivative == 2):
+        function = "second derivative"
+
+    return(function)
+
+def first_derivative_CM(fM, dx = Z1):
+
+    '''Compute the first derivative of a mapping function fM.
+    Tries analytical derivation first.
+    If it fails, numerical derivation is performed.
+
+    Parameters
+    ----------
+    fM : function
+        maps from xyz to space of representation M
+    n : number of atoms
+
+    Internal Variables
+    ------------------
+    r1,r2,r3 : variable
+        Armstroeng, coordinates in xyz space
+    Z : vector
+        variable of Nuclear charge
+    N : variable
+        number of electrons
+
+    Returns
+    -------
+    vector of 5 derivatives
+    matching format to mapping function fM
+    
+    '''
+    n = fM.shape[0] #determine size of CM
+
+    def f(i,j): #use sp.FunctionMatrix, its clearer
+        return(derivative.firstd(fM.row(i).col(j), dx))
+
+    d_fM = (n, n, f)
+    print(d_fM)
+
+    return("first_der")
+
+
 
 def coulomb_element(i, j, atomic_pointer):
     #coulomb matrix
