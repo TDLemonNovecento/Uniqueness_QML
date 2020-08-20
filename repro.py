@@ -19,7 +19,7 @@ R =  sp.Matrix([[r1, r2, r3]])
 
 '''Sample program for max. 3 atoms '''
 
-def Coulomb_Matrix_FVec(R, Z, N, n, which_derivative = 0, which_dx = [0,0], which_ddx = [0,0]):
+def Coulomb_Matrix_FM(R, Z, N, n, which_derivative = 0, which_dx = [0,0], which_ddx = [0,0]):
 
     '''Compute Vector containing coulomb matrix information
 
@@ -51,7 +51,6 @@ def Coulomb_Matrix_FVec(R, Z, N, n, which_derivative = 0, which_dx = [0,0], whic
             
     def f(i, j):
         if(i == j):
-            print(Z[i])    
             return(Z[i]**(2.4)/2)
         else:
             difference = sp.sqrt((R[i]-R[j])**2)
@@ -62,26 +61,69 @@ def Coulomb_Matrix_FVec(R, Z, N, n, which_derivative = 0, which_dx = [0,0], whic
     if (which_derivative == 0):
         function = fM       
     elif (which_derivative == 1):
-        if which_dx[0] == 0:
-            print("derive by %s" % R.row(0).col(which_dx[1]))
-            print(R.row(0).col(which_dx[1]))
-            function = first_derivative_CM(fM, R.row(0).col(which_dx[1]))
+        function = derivative_organizer(derivative_CM, fM, which_dx)
+
+        '''        if which_dx[0] == 0:
+            print("derive by %s" % R[0,which_dx[1]])
+            function = first_derivative_CM(fM, R[0,which_dx[1]])
         elif which_dx[0] == 1:
-            print("derive by %s" % Z.row(0).col(which_dx[1]))
-            function = first_derivative_CM(fM, Z.row(0).col(which_dx[1]))
+            print("derive by %s" % Z[0,which_dx[1]])
+            function = first_derivative_CM(fM, Z[0,which_dx[1]])
         elif which_dx[0] == 2:
             print("derive by N")
             function = first_derivative_CM(fM, N)
         else:
             print("your which_dx pointer is messed up")
-    
+        '''    
     elif (which_derivative == 2):
-        function = "second derivative"
+        d_function = derivative_organizer(derivative_CM, fM, which_dx)
+        function = derivative_organizer(derivative_CM, d_function, which_ddx)
 
     return(function)
 
-def first_derivative_CM(fM, dx = Z1):
+def derivative_organizer(der_f, fM, which_dx):
+    '''handles derivative arguments [i,j] of which_dx or which_ddx
+    Assigns them to dri, dZi or dN and sends function to representation
+    specific derivative function der_f
 
+    Parameters
+    ----------
+    der_f : derivative function
+            representation specific
+    fM: variable
+        matrix, vector, or else of representation mapping
+    which_dx : array
+            [i,j], i index chooses from [R, Z, N]
+            j index chooses from [r1, r2, ...] or [Z1, Z2, ...]
+
+    Internal Variables
+    ------------------
+    R = [r1, r2, ...]
+    Z = [Z1, Z2, ...]
+
+    Returns
+    -------
+    function of same shape as fM
+    (or depending on der_f different shape)
+    '''
+
+    if which_dx[0] == 0:
+        print("derive by %s" % R[0,which_dx[1]])
+        function = der_f(fM, R[0,which_dx[1]])
+    elif which_dx[0] == 1:
+        print("derive by %s" % Z[0,which_dx[1]])
+        function = der_f(fM, Z[0,which_dx[1]])
+    elif which_dx[0] == 2:
+        print("derive by N")
+        function = der_f(fM, N)
+    else:
+        print("your which_dx pointer is messed up")
+        sys.exit(1)
+    return(function)
+
+
+def derivative_CM(fM, dx = Z1):
+    #may be replaced by analytic_func(A, f, x) in sympy.matrices 
     '''Compute the first derivative of a mapping function fM.
     Tries analytical derivation first.
     If it fails, numerical derivation is performed.
@@ -108,14 +150,13 @@ def first_derivative_CM(fM, dx = Z1):
     
     '''
     n = fM.shape[0] #determine size of CM
-
+    
     def f(i,j): #use sp.FunctionMatrix, its clearer
-        return(derivative.firstd(fM.row(i).col(j), dx))
+        return(derivative.firstd(fM[i,j], dx))
+    d_fM = sp.Matrix(n, n, f)
+       
 
-    d_fM = (n, n, f)
-    print(d_fM)
-
-    return("first_der")
+    return(d_fM)
 
 
 

@@ -15,7 +15,7 @@ R =  sp.Matrix([[r1, r2, r3]])
 database = "/home/stuke/Databases/XYZ_random/"
 
 
-'''
+
 print("iterate over all molecules")
 for xyzfile in os.listdir(database):
     xyz_fullpath = database + xyzfile #probably path can be gotten more directly
@@ -23,7 +23,13 @@ for xyzfile in os.listdir(database):
 
     print(compound)
 
-'''
 
-f = repro.Coulomb_Matrix_FVec(R, Z, N, 3 , 1)
-print(f)
+print("calculate Coulomb Matrix Representations")
+for i in range(3):
+    for j in range(3):
+        for k in range(3):
+            print("derivative by %i" %i)
+            print("R, Z, or N? :%i" %j)
+            print("ri or zi: %i" %k)
+            f = repro.Coulomb_Matrix_FM(R, Z, N, 3 , i, [j, k], [j,k])
+            print(f) 

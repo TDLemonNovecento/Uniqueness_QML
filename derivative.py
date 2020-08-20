@@ -33,31 +33,19 @@ def firstd(f, dx):
     matching format to mapping function fM
     
     '''
-    dev_R = sp.Matrix(n, 1, 1)
-    print(dev_R)
-    dev_r1, dev_r2, dev_r3, dev_Z, dev_N = 0,0,0,0,0
     try:
-        print("analytical evaluation started")
-            
-
-        dev_r1 = sp.diff(fM, r1)
-        dev_r2 = sp.diff(fM, r2)
-        dev_r3 = sp.diff(fM, r3)
-        for i in no_Z:
-            dev_Z = sp.diff(fM, z_vec)
-        dev_N = sp.diff(fM, N)
+        #print("analytical evaluation started")
+        dev = sp.diff(f, dx)    
+        
     except:
-        print("numerical evaluation had to be run")
-        dev_r1 = numerical_dev(fM, r1)
-        dev_r2 = numerical_dev(fM, r2)
-        dev_r3 = numerical_dev(fM, r3)
-        dev_Z = numerical_dev(fM, z_vec)
-        dev_N = numerical_dev(fM, N)
+        #print("numerical evaluation had to be run")
+        dev = numerical_dev(f, dx)
     else:
-        print("analytical evaluation excited successfully")
+        pass
+        #print("analytical evaluation excited successfully")
     finally:
-        return(dev_r1, dev_r2, dev_r3, dev_Z, dev_N)
-
+        return(dev)
+    
 def secondd(rep):
     return("some hessian matrix is returned here")
 
