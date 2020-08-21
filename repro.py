@@ -8,18 +8,19 @@ import sys
 N = sp.symbols('N')
 
 Z1, Z2, Z3 = sp.symbols('Z1 Z2 Z3')
-
 Z = sp.Matrix([[Z1, Z2, Z3]])
 
-#x1, x2, x3, y1, y2, y3, z1, z2, z3 = sp.symbols('x1 x2 x3 y1 y2 y3 z1 z2 z3')
-r1, r2, r3 = sp.symbols('r1 r2 r3')
+x1, x2, x3, y1, y2, y3, z1, z2, z3 = sp.symbols('x1 x2 x3 y1 y2 y3 z1 z2 z3')
+r1 = sp.Matrix([[x1, y1, z1]])
+r2 = sp.Matrix([[x2, y2, z2]])
+r3 = sp.Matrix([[x3, y3, z3]])
 
-R =  sp.Matrix([[r1, r2, r3]])
+R =  sp.Matrix([r1, r2, r3])
 
 
 '''Sample program for max. 3 atoms '''
 
-def Coulomb_Matrix_FM(R, Z, N, n, which_derivative = 0, which_dx = [0,0], which_ddx = [0,0]):
+def Coulomb_Matrix_FM(R, Z, N, n, which_derivative = 0, which_dx = [0,0, 0], which_ddx = [0,0,0]):
 
     '''Compute Vector containing coulomb matrix information
 
@@ -53,8 +54,9 @@ def Coulomb_Matrix_FM(R, Z, N, n, which_derivative = 0, which_dx = [0,0], which_
         if(i == j):
             return(Z[i]**(2.4)/2)
         else:
-            difference = sp.sqrt((R[i]-R[j])**2)
-            return (Z[i]*Z[j]/difference)
+            difference = R.row(i) - R.row(j)
+            distance = sp.sqrt(difference.dot(difference))
+            return (Z[i]*Z[j]/distance)
     fM = sp.Matrix(n, n, f)
                       
 
@@ -92,13 +94,15 @@ def derivative_organizer(der_f, fM, which_dx):
             representation specific
     fM: variable
         matrix, vector, or else of representation mapping
-    which_dx : array
-            [i,j], i index chooses from [R, Z, N]
+    which_dx : array [i,j, k]
+            i index chooses from [R, Z, N]
             j index chooses from [r1, r2, ...] or [Z1, Z2, ...]
+            k index chooses from [xi, yi, zi] of the ri vector
 
     Internal Variables
     ------------------
     R = [r1, r2, ...]
+    ri = [xi, yi, zi]
     Z = [Z1, Z2, ...]
 
     Returns
@@ -108,8 +112,8 @@ def derivative_organizer(der_f, fM, which_dx):
     '''
 
     if which_dx[0] == 0:
-        print("derive by %s" % R[0,which_dx[1]])
-        function = der_f(fM, R[0,which_dx[1]])
+        print("derive by %s" % R[which_dx[1],which_dx[2]])
+        function = der_f(fM, R[which_dx[1], which_dx[2]])
     elif which_dx[0] == 1:
         print("derive by %s" % Z[0,which_dx[1]])
         function = der_f(fM, Z[0,which_dx[1]])
