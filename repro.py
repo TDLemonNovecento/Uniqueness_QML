@@ -4,18 +4,9 @@ import numpy as np
 import sympy as sp
 import derivative
 import sys
+from der_symbols import * 
 
 N = sp.symbols('N')
-
-Z1, Z2, Z3 = sp.symbols('Z1 Z2 Z3')
-Z = sp.Matrix([[Z1, Z2, Z3]])
-
-x1, x2, x3, y1, y2, y3, z1, z2, z3 = sp.symbols('x1 x2 x3 y1 y2 y3 z1 z2 z3')
-r1 = sp.Matrix([[x1, y1, z1]])
-r2 = sp.Matrix([[x2, y2, z2]])
-r3 = sp.Matrix([[x3, y3, z3]])
-
-R =  sp.Matrix([r1, r2, r3])
 
 
 '''Sample program for max. 3 atoms '''
@@ -49,16 +40,18 @@ def Coulomb_Matrix_FM(R, Z, N, n, which_derivative = 0, which_dx = [0,0, 0], whi
         '''
     
     assert (which_derivative in [0, 1, 2]), "which_derivative value out of bounds. Choose 0, 1, 2 to get no derivative, the first or the second."
-            
-    def f(i, j):
+    print("first checkpoint")       
+    def f_CM(i, j):
         if(i == j):
             return(Z[i]**(2.4)/2)
         else:
             difference = R.row(i) - R.row(j)
             distance = sp.sqrt(difference.dot(difference))
             return (Z[i]*Z[j]/distance)
-    fM = sp.Matrix(n, n, f)
-                      
+    
+    
+    fM = sp.Matrix(n, n, f_CM)
+    print("second checkpoint")                  
 
     if (which_derivative == 0):
         function = fM       
@@ -163,21 +156,60 @@ def derivative_CM(fM, dx = Z1):
     return(d_fM)
 
 
+def subs_CM(f, cZ, cR, cN):
+    '''Substitutes sympy symbols by real values
+    Parameters
+    ----------
+    f : function
+    cZ : vector
+        contains nuclear charges [Z1, Z2, ...]
+    cR : matrix
+        contains position vectors [r1, r2, ...]
+        with ri = [xi, yi, zi]
+    cN : value
+        total number of electrons in system
+        in uncharged system == no. Zi
+    Returns
+    -------
+    Matrix of shape of f
+    '''
+    n = f.shape[0]
+    nZ = cZ.shape[0]
+    
+    try:
+        for i in range(n):
+            for j in range(n):
+                for k in range(1, nZ+1):
+                    f[i,j] = f[i,j].subs({sp.Symbol('x%i' %k): cR[k-1, 0], sp.Symbol('y%i' %k) : cR[k-1,1], sp.Symbol('z%i' %k) : cR[k-1,2], sp.Symbol('Z%i' %k) : cZ[k-1]})
+                f[i,j] = f[i,j].subs({sp.Symbol('N') : cN})
+    except IndexError:
+        pass
+    return(f)
 
-def coulomb_element(i, j, atomic_pointer):
-    #coulomb matrix
-    size = 2 
-    mol = qml.Compound(xyz)
-    mol.generate_coulomb_matrix(size = size, sorting="row-norm")
-    return(mol.representation)
 
-def cm_ev(xyz):
-    mol = qml.Compound(xyz)
-    mol.generate_eigenvalue_coulomb_matrix(mol)
-    return(mol.representation)
-
-class Atomic_Pointer:
-    def __init__(self, position, atomic_charge, no_electrons):
-        self.position = position
-        self.atomic_charge = atomic_charge
-        self.no_electrons = no_electrons
+def subs_CM2(f, cZ, cR, cN):
+    '''Substitutes sympy symbols by real values
+    Parameters
+    ----------
+    f : function
+    cZ : vector
+    	contains nuclear charges [Z1, Z2, ...]
+    cR : matrix
+    	contains position vectors [r1, r2, ...]
+    	with ri = [xi, yi, zi]
+    cN : value
+    	total number of electrons in system
+    	in uncharged system == no. Zi
+    Returns
+    -------
+    Matrix of shape of f
+    '''
+    n = f.shape[0]
+    
+    try:
+        for i in range(n):
+            for j in range(n):
+                f[i,j] = f[i,j].subs({sp.Symbol('x1'):cR[0, 0], sp.Symbol('y1'):cR[0,1], sp.Symbol('z1'):cR[0,2], sp.Symbol('x2'):cR[1,0], sp.Symbol('y2'): cR[1,1], sp.Symbol('z2'):cR[1,2], sp.Symbol('Z1'):cZ[0], sp.Symbol('Z2') : cZ[1], sp.Symbol('N') : cN})
+    except IndexError:
+        pass
+    return(f)
