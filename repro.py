@@ -40,7 +40,7 @@ def Coulomb_Matrix_FM(R, Z, N, n, which_derivative = 0, which_dx = [0,0, 0], whi
         '''
     
     assert (which_derivative in [0, 1, 2]), "which_derivative value out of bounds. Choose 0, 1, 2 to get no derivative, the first or the second."
-    print("first checkpoint")       
+    
     def f_CM(i, j):
         if(i == j):
             return(Z[i]**(2.4)/2)
@@ -51,7 +51,65 @@ def Coulomb_Matrix_FM(R, Z, N, n, which_derivative = 0, which_dx = [0,0, 0], whi
     
     
     fM = sp.Matrix(n, n, f_CM)
-    print("second checkpoint")                  
+
+    if (which_derivative == 0):
+        function = fM       
+    elif (which_derivative == 1):
+        function = derivative_organizer(derivative_CM, fM, which_dx)
+
+        '''        if which_dx[0] == 0:
+            print("derive by %s" % R[0,which_dx[1]])
+            function = first_derivative_CM(fM, R[0,which_dx[1]])
+        elif which_dx[0] == 1:
+            print("derive by %s" % Z[0,which_dx[1]])
+            function = first_derivative_CM(fM, Z[0,which_dx[1]])
+        elif which_dx[0] == 2:
+            print("derive by N")
+            function = first_derivative_CM(fM, N)
+        else:
+            print("your which_dx pointer is messed up")
+        '''    
+    elif (which_derivative == 2):
+        d_function = derivative_organizer(derivative_CM, fM, which_dx)
+        function = derivative_organizer(derivative_CM, d_function, which_ddx)
+
+    return(function)
+    
+    
+def Eigenvalue_CM_FM(R, Z, N, n, which_derivative = 0, which_dx = [0,0, 0], which_ddx = [0,0,0]):
+
+    '''Compute Vector containing coulomb matrix information
+
+    Parameters
+    ----------
+    R : vector
+        position vectors r1, r2, ... , rn of n Atoms
+        Armstroeng, coordinates in xyz space
+    Z : vector
+        nuclear charges Z1, Z2, ..., Zn of n Atoms
+    N : variable
+        number of electrons in system
+        if neutral, N = sum_i(Zi)
+    which_derivative :
+        0 = original function is returned
+        1 = first derivative defined by which_dx is returned
+        2 = second derivative defined by which_dx and which_ddx is returned
+    which_dx, which_ddx :
+        [0, i] returns derivative by ri
+        [1, i] returns derivative by Zi
+        [2, i] returns derivative by N
+
+    Returns
+    -------
+    fM : Vector
+        '''
+    
+    assert (which_derivative in [0, 1, 2]), "which_derivative value out of bounds. Choose 0, 1, 2 to get no derivative, the first or the second."
+    
+    coulomb_matrix = Coulomb_Matrix_FM(R, Z, N, n, 0)                  
+    eigenvalue_list = list(coulomb_matrix.eigenvals().keys())
+    fM = sp.Matrix(eigenvalue_list)
+
 
     if (which_derivative == 0):
         function = fM       
@@ -127,7 +185,7 @@ def derivative_CM(fM, dx = Z1):
 
     Parameters
     ----------
-    fM : function
+    fM : matrix
         maps from xyz to space of representation M
     n : number of atoms
 
@@ -142,19 +200,18 @@ def derivative_CM(fM, dx = Z1):
 
     Returns
     -------
-    vector of 5 derivatives
-    matching format to mapping function fM
+    matrix of shape fM
     
     '''
     n = fM.shape[0] #determine size of CM
-    
+    m = fM.shape[1]
+
     def f(i,j): #use sp.FunctionMatrix, its clearer
         return(derivative.firstd(fM[i,j], dx))
-    d_fM = sp.Matrix(n, n, f)
+    d_fM = sp.Matrix(n, m, f)
        
 
     return(d_fM)
-
 
 def subs_CM(f, cZ, cR, cN):
     '''Substitutes sympy symbols by real values
@@ -205,10 +262,11 @@ def subs_CM2(f, cZ, cR, cN):
     Matrix of shape of f
     '''
     n = f.shape[0]
-    
+    m = f.shape[1]
+
     try:
         for i in range(n):
-            for j in range(n):
+            for j in range(m):
                 f[i,j] = f[i,j].subs({sp.Symbol('x1'):cR[0, 0], sp.Symbol('y1'):cR[0,1], sp.Symbol('z1'):cR[0,2], sp.Symbol('x2'):cR[1,0], sp.Symbol('y2'): cR[1,1], sp.Symbol('z2'):cR[1,2], sp.Symbol('Z1'):cZ[0], sp.Symbol('Z2') : cZ[1], sp.Symbol('N') : cN})
     except IndexError:
         pass
