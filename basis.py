@@ -1,4 +1,4 @@
-'''this file contains basis functions for any representations that relie on them'''
+'''this file contains basis functions for any representations that rely on them'''
 
 '''the following dictionary contains the orbital basis
 for the respective nuclear charge of the atoms from H to Ca
