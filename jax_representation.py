@@ -22,7 +22,6 @@ def CM_full_unsorted_matrix(Z, R):
     Full Coulomb Matrix, dim(Z)xdim(Z)
     '''
     n = Z.shape[0]
-    print("size of matrix is %i" % n)
     D = jnp.zeros((n, n))
     
     #indexes need to be adapted to whatever form comes from xyz files
@@ -54,14 +53,10 @@ def CM_full_sorted(Z, R):
     '''
     
     unsorted_M = CM_full_unsorted_matrix(Z,R)
-    print("unsorted\n", unsorted_M)
     val_row = np.asarray([jnp.linalg.norm(row) for row in unsorted_M])
-    print(val_row)
     order = val_row.argsort()[::-1]
-    print(order)
     
     D = [[unsorted_M[i,j] for j in order] for i in order]
-    print(np.asarray(D))
     return(D, order)
     
             

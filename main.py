@@ -24,7 +24,6 @@ for xyzfile in os.listdir(database):
     print("compound %s" % xyzfile)
     iZ = compound.nuclear_charges
     cZ = iZ.astype(float)
-    print(type(cZ))
     cR = compound.coordinates
     cN = float(len(cZ))
     
@@ -43,22 +42,34 @@ for xyzfile in os.listdir(database):
     dim = len(order) #dimension of CM
     print("the CM Matrix of your compound is:")
     print(np.asarray(CM_sorted)) 
-    derive_by = 0 
+    
 
-    if derive_by == 0:
-        CM_d_sorted = np.zeros((dim, dim, dim))
-        print("derivation in order  by ", cZ)
-    elif derive_by == 1:
-        CM_d_sorted = np.zeros((dim,dim,dim,3))
-    else:
-        CM_d_sorted = np.zeros((dim,dim))
-        print("you'll only ever get 0 cause the CM is not dependent on the total number of electrons N")
+
+    derZ_ij = grad(jax_representation.CM_index, 0)
+    derR_ij = grad(jax_representation.CM_index, 1)
+    derN_ij = grad(jax_representation.CM_index, 2)
+
+
+    CM_derZ_sorted = np.zeros((dim, dim, dim))
+    CM_derR_sorted = np.zeros((dim,dim,dim,3))
+    CM_derN_sorted = np.zeros((dim,dim))
 
     for i in range(dim):
         for j in range(dim):
+            #print("derivative by Z, matrix field %i, %i" % (i, j))
+            dZunsort_ij = derZ_ij(cZ, cR, cN, i, j)
+            #assign derivative to correct field in sorted matrix
+            #reorder dZ_ij according to order (derivative by Z' needs to be considered)
+            dZsort_ij = np.asarray([dZunsort_ij[k] for k in order])
+            print("order is:", order)
+            print("unsorted:", dZunsort_ij)
+            print("sorted  :", dZsort_ij)
+            CM_derZ_sorted[][] = [dZ_ij[order[k]] for k in order]
+
+            '''
             der_ij = grad(jax_representation.CM_index, derive_by)
             new_value = der_ij(cZ, cR, i, j)
             dd_ij = new_value
             CM_d_sorted[i][j] = dd_ij
 
-    print(CM_d_sorted)
+    print(CM_d_sorted)'''
