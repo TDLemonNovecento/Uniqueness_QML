@@ -7,28 +7,63 @@ import basis
 from scipy import misc, special, linalg
 
 
-#Z and R should be jnp.array type, form might differ if uploaded from xyz
-Z = jnp.asarray([[8.,1., 1.]])
-R = jnp.asarray([[0.,0., 0.227],[0.,1.353,-0.908],[0.,-1.353,-0.908]])
-N = 3.
-
-def CM_trial(Z, R):
-    n = Z.shape[1]
+def CM_full_unsorted_matrix(Z, R):
+    ''' Calculates unsorted coulomb matrix
+    Parameters
+    ----------
+    Z : 1 x n dimensional array
+    contains nuclear charges
+    R : 3 x n dimensional array
+    contains nuclear positions
+    
+    Return
+    ------
+    D : 2D array (matrix)
+    Full Coulomb Matrix, dim(Z)xdim(Z)
+    '''
+    n = Z.shape[0]
     print("size of matrix is %i" % n)
     D = jnp.zeros((n, n))
     
     #indexes need to be adapted to whatever form comes from xyz files
     for i in range(n):
-        Zi = Z[0,i]
+        Zi = Z[i]
         D = ops.index_update(D, (i,i), Zi**(2.4)/2)
         for j in range(n):
             if j != i:
-                Zj = Z[0,j]
+                Zj = Z[j]
                 Ri = R[i, :]
                 Rj = R[j, :]
                 distance = jnp.linalg.norm(Ri-Rj)
                 D = ops.index_update(D, (i,j) , Zi*Zj/(distance))
     return(D)
+
+def CM_full_sorted(Z, R):
+    ''' Calculates sorted coulomb matrix
+    Parameters
+    ----------
+    Z : 1 x n dimensional array
+    contains nuclear charges
+    R : 3 x n dimensional array
+    contains nuclear positions
+    
+    Return
+    ------
+    D : 2D array (matrix)
+    Full Coulomb Matrix, dim(Z)xdim(Z)
+    '''
+    
+    unsorted_M = CM_full_unsorted_matrix(Z,R)
+    print("unsorted\n", unsorted_M)
+    val_row = np.asarray([jnp.linalg.norm(row) for row in unsorted_M])
+    print(val_row)
+    order = val_row.argsort()[::-1]
+    print(order)
+    
+    D = [[unsorted_M[i,j] for j in order] for i in order]
+    print(np.asarray(D))
+    return(D, order)
+    
             
 def CM_ev(Z, R, N =  0., i = 0):
     '''
@@ -61,85 +96,60 @@ def CM_ev(Z, R, N =  0., i = 0):
         return()
 
 def CM_index(Z, R, N, i = 0, j = 0):
-    n = Z.shape[1]
-    Zi = Z[0,i]
+    '''
+    Parameters
+    ----------
+    Z : 1 x n dimensional array
+        contains nuclear charges
+    R : 3 x n dimensional array
+        contains nuclear positions
+    N : float
+        number of electrons in system
+        here: meaningless, can remain empty
+    i : integer
+        identifies row to be returned
+    j : integer
+        identifies column to be returned
+
+    Return
+    ------
+    D[i,j] : scalar
+        Entry of Coulomb Matrix at position [i,j]
+    '''
+    n = Z.shape[0]
+    Zi = Z[i]
     if i == j:
         return(Zi**(2.4)/2)
     else:
-        Zj = Z[0,j]
+        Zj = Z[j]
         Ri = R[i, :]
         Rj = R[j, :]
         distance = jnp.linalg.norm(Ri-Rj)
         return( Zi*Zj/(distance))
 
-def OM_trial(Z, R, N):
-    covalent_rad = [rdkit.Chem.PeriodicTable.GetRCovalent(Z_i) for Z_i in Z]
-    return(covalent_rad)
 
-
-def OM_compute_norm(alpha, l, m, n):
-    '''compute normalization constant for overlap matrix'''
-
-    N = (2*alpha/np.pi)**(3/2)*(4*alpha)**(l+m+n) \
-            /(factorial2(2*l-1)*factorial2(2*m-1)*factorial2(2*n-1))
-    N = N**(1/2)
-    return(N)
-
-def factorial2(n):
-        if n <= 0:
-            return 1
-        else:
-            return n * factorial2(n - 2)
-
-
-def OM_compute_Si(qA, qB, rPAq, rPBq, gamma):
+def OM_full_matrix(Z, R):
     '''
-    Computes center between two curves by employing
-    Gaussian product theorem
+    The overlap matrix is constructed as described in the
+    'student-friendly guide to molecular integrals' by Murphy et al, 2018
+    STO-3G basis set (3 gaussian curves used to approximate the STO solution)
 
-    Variables
-    ---------
-    qA : integer
-          quantum number (l for Sx, m for Sy, n for Sz) for atom A
-    qB : integer
-          same for atom B
-    rP : array 3D
-          center between A and B
-    rAq : float
-          Cartesian coordinate of dimension q for atom A (rA[0] for Sx e.g.)
-    rBq : float
-             
-    
-    Returns
-    -------
+    Parameters
+    ----------
+    Z : 1 x n dimensional array
+        contains nuclear charges
+    R : 3 x n dimensional array
+        contains nuclear positions
+
+    Return
+    ------
+    D : 2D array (matrix)
+        Full Coulomb Matrix, dim(Z)xdim(Z)
     '''
-    def binomial(n, k):
-        '''fast way to calculate binomial coefficients by Andrew Dalke'''
-        if not 0 <= k <=n: return 0
-        b = 1
-        for t in range(min(k, n-k)):
-            b*=n
-            b /= (t + 1)
-            n -= 1
-        return b
-
-    def ck(l, m, a, b, k):
-        c = 0
-        for i in range(l+1):
-            for j in range(m+1):
-                if (j + i == k):
-                    c += binomial(l, i)*binomial(m,j)*a**(l-i)*b**(m - j)
-        return(c)
-
-    Sq = 0
-    
-    for k in range(int((qA + qB)/2)+1): #loop over only even numbers for sum(qA, qB)
-        c = ck(qA, qB, rPAq, rPBq, k)
-        Sq += c * (np.pi/ gamma)**(1/2) ** factorial2(2*k-1)/((2*gamma)**k)
-    return(Sq)
 
 
-def OM_build_S(basis, K):
+    trialbasis, K = basis.build_sto3Gbasis(Z, R)
+
     S = np.zeros((K,K))
     for a, bA in enumerate(basis):      #access row a of S matrix; unpack list from tuple
         for b, bB in enumerate(basis):  #same for B
@@ -170,7 +180,53 @@ def OM_build_S(basis, K):
                             OM_compute_Si(mA, mB, rPA[1], rPB[1], gamma) *\
                             OM_compute_Si(nA, nB, rPA[2], rPB[2], gamma)
 
-    return(S)
+    return(S, K)
+
+def OM_dimension(Z):
+    '''
+    Returns dimensions of OM matrix without calculating the basis explicitely
+
+    Variables
+    ---------
+    Z : 1 x n dimensional array
+        contains nuclear charges
+
+    Returns
+    -------
+    d : integer
+        dimentsion of OM matrix
+    '''
+    d = 0
+    for nuc in Z:
+        d += len(basis.orbital_configuration[nuc])
+    return d
+
+
+def OM_index(Z, R, N, i, j):
+    '''
+    Parameters
+    ----------
+    Z : 1 x n dimensional array
+        contains nuclear charges
+    R : 3 x n dimensional array
+        contains nuclear positions
+    N : float
+        number of electrons in system
+        here: meaningless, can remain empty
+    i : integer
+        identifies row to be returned
+    j : integer
+        identifies column to be returned
+
+    Return
+    ------
+    D[i,j] : scalar
+        Entry of Overlap Matrix at position [i,j]
+
+    '''
+
+    print('do nothing')
+    return
 
 
 def derivative(fun, dx = [0,0]):
@@ -192,20 +248,4 @@ def trial(i,j):
 
 
 
-trialbasis, K = basis.build_sto3Gbasis(Z, R)
-print(OM_build_S(trialbasis, K))
 
-
-sys.exit()
-der1 = grad(CM_index)
-der2 = grad(CM_index, 1)
-der3 = grad(CM_index, 2)
-
-
-for i in range(2):
-    for j in range(2):
-        print("derivative by Z, matrix field (%i,%i)" % (i, j))
-        print(der1(Z, R, i, j))
-        print("derivative by R, matrix field (%i,%i)" % (i, j))
-        print(der2(Z, R, i, j))
-        

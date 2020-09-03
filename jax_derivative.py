@@ -4,7 +4,7 @@
 import jax.numpy as jnp
 import jax_representation as jrep
 
-def j_derivative(fun, Z, R, N = 0, grad = 0, dx = "Z", ddx = "Z")
+def j_derivative(fun, Z, R, N = 0, grad = 0, dx = "Z", ddx = "Z"):
     '''Easy function to handle no, one dimensional or two dimensional derivatives with grad. Issue right now: no additional arguments can be passed to function, it therefore falls back to default for any further arguments beside Z, R and N.
     Parameters
     ----------
