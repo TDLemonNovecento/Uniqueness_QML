@@ -7,7 +7,7 @@ import jax_derivative
 ###import sympy as sp
 import numpy as np
 import sys
-from jax import grad
+from jax import grad, jacfwd, jacrev
 
 print("I see you")
 
@@ -42,13 +42,24 @@ for xyzfile in os.listdir(database):
     dim = len(order) #dimension of CM
     print("the CM Matrix of your compound is:")
     print(np.asarray(CM_sorted))
+    
+    print("direct derivative using jacobian:")
+    dCM_dZ = jacfwd(jax_representation.CM_full_sorted)
+    reference_dCM_dZ = dCM_dZ(cZ, cR)[0]
+    print(np.asarray(reference_dCM_dZ))
+    #assign derivative to correct field in sorted matrix by reordering derZ_ij to derZ_kl
+    dCMkl_dZkl = [[[column[m] for m in order] for column in row]for row in reference_dCM_dZ]
+    print("sorted derivatives\n", np.asarray(dCMkl_dZkl))
+    
 
+    print("and this is the manually done one:")
+
+    
     '''from here on i,j is used for unsorted basis and k,l for sorted basis'''
     derZ_ij = grad(jax_representation.CM_index, 0)
     derR_ij = grad(jax_representation.CM_index, 1)
     derN_ij = grad(jax_representation.CM_index, 2)
-
-
+    
     CM_derZ_sorted = np.zeros((dim, dim, dim))
     CM_derR_sorted = np.zeros((dim,dim,dim,3))
     CM_derN_sorted = np.zeros((dim,dim))
@@ -59,6 +70,10 @@ for xyzfile in os.listdir(database):
             dZunsort_kl = derZ_ij(cZ, cR, cN, order[k], order[l])
             #assign derivative to correct field in sorted matrix by reordering derZ_ij to derZ_kl
             dZsort_kl = np.asarray([dZunsort_kl[m] for m in order])
+            
+            
+        
+
             #print("order is:", order)
             #print("unsorted:", dZunsort_kl)
             #print("sorted  :", dZsort_kl)
