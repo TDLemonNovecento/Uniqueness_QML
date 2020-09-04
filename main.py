@@ -41,10 +41,9 @@ for xyzfile in os.listdir(database):
     CM_sorted, order = jax_representation.CM_full_sorted(cZ, cR)
     dim = len(order) #dimension of CM
     print("the CM Matrix of your compound is:")
-    print(np.asarray(CM_sorted)) 
-    
+    print(np.asarray(CM_sorted))
 
-
+    '''from here on i,j is used for unsorted basis and k,l for sorted basis'''
     derZ_ij = grad(jax_representation.CM_index, 0)
     derR_ij = grad(jax_representation.CM_index, 1)
     derN_ij = grad(jax_representation.CM_index, 2)
@@ -54,22 +53,20 @@ for xyzfile in os.listdir(database):
     CM_derR_sorted = np.zeros((dim,dim,dim,3))
     CM_derN_sorted = np.zeros((dim,dim))
 
-    for i in range(dim):
-        for j in range(dim):
-            #print("derivative by Z, matrix field %i, %i" % (i, j))
-            dZunsort_ij = derZ_ij(cZ, cR, cN, i, j)
-            #assign derivative to correct field in sorted matrix
-            #reorder dZ_ij according to order (derivative by Z' needs to be considered)
-            dZsort_ij = np.asarray([dZunsort_ij[k] for k in order])
-            print("order is:", order)
-            print("unsorted:", dZunsort_ij)
-            print("sorted  :", dZsort_ij)
-            CM_derZ_sorted[][] = [dZ_ij[order[k]] for k in order]
-
+    for k in range(dim):
+        for l in range(dim):
+            #i = order[k], j = order[l]. we're mapping to k,l here
+            dZunsort_kl = derZ_ij(cZ, cR, cN, order[k], order[l])
+            #assign derivative to correct field in sorted matrix by reordering derZ_ij to derZ_kl
+            dZsort_kl = np.asarray([dZunsort_kl[m] for m in order])
+            #print("order is:", order)
+            #print("unsorted:", dZunsort_kl)
+            #print("sorted  :", dZsort_kl)
+            CM_derZ_sorted[k][l] = dZsort_kl
             '''
             der_ij = grad(jax_representation.CM_index, derive_by)
             new_value = der_ij(cZ, cR, i, j)
             dd_ij = new_value
-            CM_d_sorted[i][j] = dd_ij
+            CM_d_sorted[i][j] = dd_ij'''
 
-    print(CM_d_sorted)'''
+    print(CM_derZ_sorted)
