@@ -37,7 +37,7 @@ def CM_full_unsorted_matrix(Z, R):
                 D = ops.index_update(D, (i,j) , Zi*Zj/(distance))
     return(D)
 
-def CM_full_sorted(Z, R):
+def CM_full_sorted(Z, R, N = 0):
     ''' Calculates sorted coulomb matrix
     Parameters
     ----------
@@ -55,8 +55,7 @@ def CM_full_sorted(Z, R):
     unsorted_M = CM_full_unsorted_matrix(Z,R)
     val_row = np.asarray([jnp.linalg.norm(row) for row in unsorted_M])
     order = val_row.argsort()[::-1]
-    
-    D = [[unsorted_M[i,j] for j in order] for i in order]
+    D = jnp.asarray([[unsorted_M[i,j] for j in order] for i in order])
     return(D, order)
     
             
