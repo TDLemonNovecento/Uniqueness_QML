@@ -8,10 +8,6 @@ import jax_norms as jnorm
 ###import sympy as sp
 import numpy as np
 import sys
-from jax import grad, jacfwd, jacrev
-
-def hessian(f):
-    return( jacfwd(jacfwd(f)))
 
 #define path to folder containing xyz files. All files are considered.
 database = "/home/stuke/Databases/XYZ_random/"
@@ -37,49 +33,12 @@ for xyzfile in os.listdir(database):
 ###    print("Filling in values from %s gives the following result:" % xyzfile)
 ###    eval_f = repro.subs_CM(f, cZ, cR, cN)    
 ###    print(eval_f)
-           
-    HM = jder.sort_derivative('CM', Z, R)
+    '''the derivative of a representation is calculated with the following code:'''           
+    HM = jder.sort_derivative('OM', Z, R, N)
     print('derivative', HM)
         
 
-'''in order to evaluate the derivative of the CM, the following code can be used'''
     
-'''dim = len(order) #dimension of CM
-    print("the CM Matrix of your compound is:")
-    print(np.asarray(CM_sorted))
-    
-    print("direct derivative using jacobian:")
-    dCM_dZ = jacfwd(jax_representation.CM_full_sorted)
-    reference_dCM_dZ = dCM_dZ(cZ, cR)[0]
-    print(np.asarray(reference_dCM_dZ))
-    #assign derivative to correct field in sorted matrix by reordering derZ_ij to derZ_kl
-    dCMkl_dZkl = [[[column[m] for m in order] for column in row]for row in reference_dCM_dZ]
-    print("sorted derivatives\n", np.asarray(dCMkl_dZkl))
-     
-    
-
-    print("second derivative")
-    #print(H[0][0][0])
-    #print(H[0][0][1])
-    print("order is:", order)
-    for i in range(dim):
-        for j in range(dim):
-            H_ZijdZij = Hraw[0][i][j]
-            print("unsorted is:", H_ZijdZij)
-            H_ZijdZkl = [[row[m] for m in order] for row in H_ZijdZij]
-            H_ZkldZkl = print("I fucking don't know")
-            print("sorted:", H_ZkldZkl)
-            #H_ZkldZkl = [[[column[m] for m in order] for column in row]for row in H_ZijdZij]
-            #Hformatted[i][j] = H_ZkldZkl
-    print(Hformatted)
-    sys.exit()
-
-    print("shape of hessian tupleoutput is:", type(H[0][0]), type(H[0][1]), type(H[1][0]))
-    print("elements in hessian tuple output:", len(H[0]))
-
-
-
-'''
 
 
 

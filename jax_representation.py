@@ -5,7 +5,7 @@ from jax import grad, ops
 import qml
 import basis
 from scipy import misc, special, linalg
-
+import jax_math as jmath
 
 def CM_full_unsorted_matrix(Z, R):
     ''' Calculates unsorted coulomb matrix
@@ -58,8 +58,32 @@ def CM_full_sorted(Z, R, N = 0):
     D = jnp.asarray([[unsorted_M[i,j] for j in order] for i in order])
     return(D, order)
     
-            
-def CM_ev(Z, R, N =  0., i = 0):
+def CM_ev(Z, R, N):
+    '''
+    Parameters
+    ----------
+    Z : 1 x n dimensional array
+        contains nuclear charges
+    R : 3 x n dimensional array
+        contains nuclear positions
+    N : float
+        number of electrons in system
+        here: meaningless, can remain empty
+    
+    Return
+    ------
+    ev : vector (1 x n dim.)
+        contains eigenvalues of sorted CM
+    (vectors: tuple
+        contains Eigenvectors of matrix (n dim.)
+        If i out of bounds, return none and print error)
+    '''
+
+    M, order = CM_full_sorted(Z,R)
+    ev, vectors = jnp.linalg.eigh(M)
+    return(ev, order)
+
+def CM_single_ev(Z, R, N =  0., i = 0):
     '''
     Parameters
     ----------
@@ -122,7 +146,7 @@ def CM_index(Z, R, N, i = 0, j = 0):
         return( Zi*Zj/(distance))
 
 
-def OM_full_matrix(Z, R):
+def OM_full_unsorted_matrix(Z, R, N):
     '''
     The overlap matrix is constructed as described in the
     'student-friendly guide to molecular integrals' by Murphy et al, 2018
@@ -142,11 +166,14 @@ def OM_full_matrix(Z, R):
     '''
 
 
-    trialbasis, K = basis.build_sto3Gbasis(Z, R)
-
+    thisbasis, K = basis.build_sto3Gbasis(Z, R)
+    print('K', K)
     S = np.zeros((K,K))
-    for a, bA in enumerate(basis):      #access row a of S matrix; unpack list from tuple
-        for b, bB in enumerate(basis):  #same for B
+    for a, bA in enumerate(thisbasis):
+        print('a:', a, 'bA', bA)
+    
+    for a, bA in enumerate(thisbasis):      #access row a of S matrix; unpack list from tuple
+        for b, bB in enumerate(thisbasis):  #same for B
             if (a == b):
                 S[a,b] = 1
             else:
@@ -166,15 +193,40 @@ def OM_full_matrix(Z, R):
                         
                         #Implement overlap element
                         gamma = alphaA + alphaB
-                        normA = OM_compute_norm(alphaA, lA, mA, nA) #compute norm for A
-                        normB = OM_compute_norm(alphaB, lB, mB, nB)
+                        normA = jmath.OM_compute_norm(alphaA, lA, mA, nA) #compute norm for A
+                        normB = jmath.OM_compute_norm(alphaB, lB, mB, nB)
                         S[a,b] += dA * dB * normA * normB *\
                             np.exp(-(alphaA*alphaB)/(alphaA + alphaB) * disAB**2) *\
-                            OM_compute_Si(lA, lB, rPA[0], rPB[0], gamma) *\
-                            OM_compute_Si(mA, mB, rPA[1], rPB[1], gamma) *\
-                            OM_compute_Si(nA, nB, rPA[2], rPB[2], gamma)
+                            jmath.OM_compute_Si(lA, lB, rPA[0], rPB[0], gamma) *\
+                            jmath.OM_compute_Si(mA, mB, rPA[1], rPB[1], gamma) *\
+                            jmath.OM_compute_Si(nA, nB, rPA[2], rPB[2], gamma)
 
     return(S, K)
+
+def OM_full_sorted(Z, R, N = 0):
+    ''' Calculates sorted coulomb matrix
+    Parameters
+    ----------
+    Z : 1 x n dimensional array
+    contains nuclear charges
+    R : 3 x n dimensional array
+    contains nuclear positions
+    
+    Return
+    ------
+    D : 2D array (matrix)
+    Full Coulomb Matrix, dim(Z)xdim(Z)
+    '''
+
+    M_unsorted = OM_full_unsorted_matrix(Z, R, N)[0]
+    val_row = np.asarray([jnp.linalg.norm(row) for row in M_unsorted])
+    order = val_row.argsort()[::-1]
+
+    print('order', order, 'unsorted_M', M_unsorted)
+    M_sorted = jnp.asarray([[M_unsorted[i,j] for j in order] for i in order])
+    print('sorted:', M_sorted)
+    return(M_sorted, order)
+
 
 def OM_dimension(Z):
     '''

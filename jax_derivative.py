@@ -5,7 +5,7 @@ import jax.numpy as jnp
 import jax_representation as jrep
 from jax import grad, jacfwd, jacrev
 
-def sort_derivative(representation, Z, R, N = 0, grad = 2, dx = "R", ddx = "R"):
+def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R"):
     '''Easy function to handle no, one dimensional or two dimensional derivatives with grad. Issue right now: no additional arguments can be passed to function, it therefore falls back to default for any further arguments beside Z, R and N.
     Parameters
     ----------
@@ -29,9 +29,9 @@ def sort_derivative(representation, Z, R, N = 0, grad = 2, dx = "R", ddx = "R"):
     '''
 
     #first, find out which representation was chosen and get appropriate function
-    fn_list = {'CM': jrep.CM_full_sorted, 'CM_EV': jrep.CM_ev}
-    dfn_list = {'CM': d_CM}
-    ddfn_list = {'CM': dd_CM}
+    fn_list = {'CM': jrep.CM_full_sorted, 'CM_EV': jrep.CM_ev, 'OM' : jrep.OM_full_matrix}
+    dfn_list = {'CM': d_CM, 'CM_EV' : d_CM_ev, 'OM' : d_OM}
+    ddfn_list = {'CM': dd_CM, 'CM_EV' : dd_CM_ev}
 
     try:
         fn = fn_list[representation]
@@ -117,6 +117,53 @@ def d_CM(Z, R, N, dx_index):
         return(reference_dCM)
 
 
+def d_CM_ev(Z, R, N, dx_index):
+    '''Calculates first derivative of CM_ev w.r.t. dx_index
+    sorts results (derivative is taken w.r.t. unsorted Z or R)
+    Parameters
+    ----------
+    Z : 1 x n dimensional array
+        contains nuclear charges
+    R : 3 x n dimensional array
+        contains nuclear positions
+    N : float
+        number of electrons in system
+        here: meaningless, can remain empty
+    dx_index : integer
+        identifies by which variable to derive by
+        (0 : Z, 1 : R, 2 : N)
+    Return
+    ------
+    J : Jacobian of CM_ev
+    '''
+
+    print("calculating Jacobian of Coulomb Matrix eigenvalues")
+    fM, order = jrep.CM_ev(Z, R, N) #get order of sorted representation
+    dim = len(order)
+    print('sorted CM eigenvalues :', fM)
+    print('order:', order)
+    #direct derivative as jacobian
+    Jraw = jacfwd(jrep.CM_ev, dx_index)
+    J = Jraw(Z, R, N)[0]
+    print('unsorted Jacobian is:', J)
+
+    '''Not sure about reordering below. definitely need to recheck. Not important for EV though, or is it?'''
+    if(dx_index == 0):
+        #assign derivative to correct field in sorted matrix by reordering derZ_ij to derZ_kl
+        J_dZkl = np.asarray([[J[l][m] for l in range(dim)] for m in order])
+        return(J_dZkl)
+    elif(dx_index == 1):
+        #unordered derivative taken from sorted matrix
+        J_dRkl = np.asarray([[[J[l][m][x] for l in range(dim)] for x in range(3)] for m in order])
+        return(J_dRkl)
+
+
+def d_OM(Z, R, N, dx_index = 0):
+    dim = jrep.OM_dimension(Z)
+    Jraw = jacfwd(jrep.OM_full_matrix, dx_index)
+    J = Jraw(Z, R, N)
+    print('jraw', Jraw, 'J', J)
+
 def dd_CM(Z, R, N, dx_index = 0, ddx_index = 0):
     fM_sorted, order = jrep.CM_full_sorted(Z, R, N)
     dim = len(order)
@@ -134,6 +181,12 @@ def dd_CM(Z, R, N, dx_index = 0, ddx_index = 0):
     print('Hsorted\n', H_ddkl)
 
     return(H_ddkl)
+
+def dd_CM_ev(Z, R, N, dx_index = 0, ddx_index = 0):
+    fM, order = jrep.CM_ev(Z, R, N)
+    dim = len(order)
+    Hraw = hessian(jrep.CM_ev, dx_index, ddx_index)(Z, R, N)[0]
+    print('Hraw:', Hraw)
 
 def hessian(f, dx, ddx):
     return jacfwd(jacfwd(f, dx), ddx)

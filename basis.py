@@ -184,9 +184,9 @@ def build_sto3Gbasis(Z, R):
 
     #loop through atoms array and append orbitals (dictionaries) to the basis array
     #each atom (nuclear number in Z) has an orbital configuration associated, append
-    for i in range(Z.shape[1]):
+    for i in range(len(Z)):
         #print(Z)
-        nuc = Z[0][i]
+        nuc = Z[i]
         #l, m, n correspond to components in slater-type orbitals
         #phi = N *(x**l)*(y**m)*(z**n)*exp(-apha*r)
         #where alpha is the exponential factor
