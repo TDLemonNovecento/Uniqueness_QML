@@ -20,8 +20,7 @@ for xyzfile in os.listdir(database):
     compound = qml.Compound(xyz_fullpath)
 
     print("compound %s" % xyzfile)
-    iZ = compound.nuclear_charges
-    Z = iZ.astype(float)
+    Z = compound.nuclear_charges.astype(float)
     R = compound.coordinates
     N = float(len(Z))
     

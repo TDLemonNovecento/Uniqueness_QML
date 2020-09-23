@@ -1,6 +1,5 @@
 import numpy as np
 
-
 def binomial(n, k):
     '''fast way to calculate binomial coefficients by Andrew Dalke'''
     if not 0 <= k <=n: return 0
@@ -30,18 +29,14 @@ def factorial2(n):
 
 def OM_compute_norm(alpha, l, m, n):
     '''compute normalization constant for overlap matrix'''
-
-    N = (2*alpha/np.pi)**(3/2)*(4*alpha)**(l+m+n) \
-            /(factorial2(2*l-1)*factorial2(2*m-1)*factorial2(2*n-1))
-    N = N**(1/2)
+    N = (4*alpha)**(l+m+n)
+    N /= factorial2(2*l-1)*factorial2(2*m-1)*factorial2(2*n-1)
+    N *= ((2*alpha)/np.pi)**(1.5)
+    N = N**(0.5)
     return(N)
 
-def OM_compute_Si(qA, qB, rPAq, rPBq, gamma):
-    '''
-    Computes center between two curves by employing
-    Gaussian product theorem
-
-    Variables
+def OM_compute_Si(qA, qB, gamma, rAi, rBi, rPi):
+    '''Variables
     ---------
     qA : integer
           quantum number (l for Sx, m for Sy, n for Sz) for atom A
@@ -49,19 +44,39 @@ def OM_compute_Si(qA, qB, rPAq, rPBq, gamma):
           same for atom B
     rP : array 3D
           center between A and B
-    rAq : float
+    rAi : float
           Cartesian coordinate of dimension q for atom A (rA[0] for Sx e.g.)
-    rBq : float
+    rBi : float
              
-    
     Returns
     -------
+    si
     '''
-
-    Sq = 0
+    si = 0.0
 
     for k in range(int((qA + qB)/2)+1): #loop over only even numbers for sum(qA, qB)
-        c = ck(qA, qB, rPAq, rPBq, k)
-        Sq += c * (np.pi/ gamma)**(1/2) ** factorial2(2*k-1)/((2*gamma)**k)
-    return(Sq)
+        c = ck(qA, qB, rPi-rAi, rPi - rBi, k*2) 
+        si += c *factorial2(2*k-1) / (2*gamma)**k
+        si *= np.sqrt(np.pi/gamma)
 
+    return(si)
+
+def OM_compute_Sxyz(rA, rB, alphaA, alphaB, lA, lB, mA, mB, nA, nB):
+    rP = OM_Gauss_Product(rA, rB, alphaA, alphaB)
+    
+    sx = OM_compute_Si(lA, lB, alphaA + alphaB, rA[0], rB[0], rP[0])
+    sy = OM_compute_Si(mA, mB, alphaA + alphaB, rA[1], rB[1], rP[1])
+    sz = OM_compute_Si(nA, nB, alphaA + alphaB, rA[2], rB[2], rP[2])
+
+    return(sx*sy*sz)
+
+def IJsq(rI, rJ):
+    return sum( (rI[i]-rJ[i])**2 for i in range(3))
+
+def OM_Gauss_Product(rA, rB, alphaA, alphaB):
+    gamma = alphaA + alphaB
+    P = []
+    for i in range(3):
+        P.append((alphaA*rA[i] + alphaB * rB[i])/gamma)
+    
+    return(P)

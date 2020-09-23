@@ -163,9 +163,9 @@ a = [
 
 
 
-sto3Gbasis = [] # instantiate the array representing MO 3G basis
 
 def build_sto3Gbasis(Z, R):
+    
     '''
     Variables
     ---------
@@ -180,6 +180,7 @@ def build_sto3Gbasis(Z, R):
     -------
     sto3Gbasis, dimensions of OM matrix
     '''
+    sto3Gbasis = []  #instantiate the array representing MO 3G basis
     K = 0 # instantiates atomic orbital counter (matrix dimension)
 
     #loop through atoms array and append orbitals (dictionaries) to the basis array
@@ -190,11 +191,9 @@ def build_sto3Gbasis(Z, R):
         #l, m, n correspond to components in slater-type orbitals
         #phi = N *(x**l)*(y**m)*(z**n)*exp(-apha*r)
         #where alpha is the exponential factor
-        print("STO3GBasis under construction:")
         #print("Atom:", i, "R:", R[i])
         nuc_charge = int(nuc)
         orbitalarray = orbital_configuration[nuc_charge]
-        print(orbitalarray) 
         for orbital in orbitalarray:
             if orbital == '1s':
                 sto3Gbasis.append(
