@@ -3,11 +3,9 @@ import jax_representation as jrep
 import oei
 import basis
 import numpy as np
-from jax_math import BoB_fill
 
 path = "/home/stuke/Databases/XYZ_random/H2O.xyz"
 compound = qml.Compound(path)
-
 
 '''get information from xyz file'''
 Z = compound.nuclear_charges.astype(float)
@@ -15,7 +13,7 @@ R = compound.coordinates
 N = float(len(Z))
 
 '''using my own basis'''
-M_ev  = jrep.BoB_full_sorted(Z, R, N)
+myOM, order  = jrep.OM_full_sorted(Z, R, N)
 
 
 '''using basis and S from literature'''
@@ -26,5 +24,5 @@ M_ev  = jrep.BoB_full_sorted(Z, R, N)
 '''print results nicely'''
 np.set_printoptions(precision=3, suppress=True)
 print('my OM is:')
-print(M_ev)
+print(myOM)
 

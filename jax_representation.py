@@ -4,8 +4,10 @@ import numpy as np
 from jax import grad, ops
 import qml
 import basis
+from basis import empty_BoB_dictionary
 from scipy import misc, special, linalg
 import jax_math as jmath
+import list_math as lmath
 
 def CM_full_unsorted_matrix(Z, R):
     ''' Calculates unsorted coulomb matrix
@@ -232,4 +234,96 @@ def OM_dimension(Z):
     for nuc in Z:
         d += len(basis.orbital_configuration[nuc])
     return d
+
+def OM_ev(Z, R, N):
+    '''
+    Parameters
+    ----------
+    Z : 1 x n dimensional array
+        contains nuclear charges
+    R : 3 x n dimensional array
+        contains nuclear positions
+    N : float
+        number of electrons in system
+        here: meaningless, can remain empty
+
+    Return
+    ------
+    ev : vector (1 x n dim.)
+        contains eigenvalues of sorted CM
+    (vectors: tuple
+        contains Eigenvectors of matrix (n dim.)
+        If i out of bounds, return none and print error)
+    '''
+
+    M, order = OM_full_sorted(Z,R)
+    ev, vectors = jnp.linalg.eigh(M)
+    return(ev, order)
+
+
+def BoB_full_sorted(Z, R, N = 0, k_dictionary = empty_BoB_dictionary ):
+    ''' Calculates sorted BoB
+    Parameters
+    ----------
+    Z : 1 x n dimensional array
+    contains nuclear charges
+    R : 3 x n dimensional array
+    contains nuclear positions
+    N : value
+    total charge of system
+    k_dictionary : 20-dim dictionary
+    contains nuclear charge and corresponding maximal number of incidences
+    used for dimensionality tracking across database
+    For values that are to be taken according to no. of occurances in passed molecules,
+    index is -1
+
+    Return
+    ------
+    D : 2D array (matrix)
+    Full Coulomb Matrix, dim(Z)xdim(Z)
+    '''
+    #replace -1 indices in k_dictionary by actual values
+    #get keys to be replaced
+    key_list = lmath.BoB_emptyZ(k_dictionary)
+    
+    unique, counts = np.unique(Z, return_counts = True)
+    this_k_dictionary = dict(zip(unique, counts))
+
+    for i in key_list:
+        try:
+            k_dictionary[i] = this_k_dictionary[i]
+        except KeyError:
+            k_dictionary.pop(i)
+
+    clean_k_dictionary = {x:y for x, y in k_dictionary.items() if y !=0}
+    
+    
+    #first bag corresponds to CM_diagonal
+    unsorted_first_bag =  [Zi**(2.4)/2 for Zi in Z]
+    sorted_first_bag = np.sort(unsorted_first_bag)[::-1]
+    bag0 = jmath.BoB_fill(sorted_first_bag, sum(clean_k_dictionary.values()))
+    
+    l = len(clean_k_dictionary)
+
+    for i in range(1, l+1):
+        for j in range(i, l+1)
+        bag_i = 
+
+            Zj = Z[j]
+        Ri = R[i, :]
+        Rj = R[j, :]
+        distance = jnp.linalg.norm(Ri-Rj)
+        return( Zi*Zj/(distance))
+
+
+        sorted_bag_i = np.sort(bag_i)[::-1]
+        padded_bag_i = jmath.BoB_fill(sorted_bag_i, k_dictionary[i]
+
+    M_unsorted, dim = OM_full_unsorted_matrix(Z, R, N)
+    val_row = np.asarray([jnp.linalg.norm(row) for row in M_unsorted])
+    order = val_row.argsort()[::-1]
+
+    M_sorted = jnp.asarray([[M_unsorted[i,j] for j in order] for i in order])
+    return(M_sorted, order)
+
 

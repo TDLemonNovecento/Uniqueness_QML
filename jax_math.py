@@ -80,3 +80,9 @@ def OM_Gauss_Product(rA, rB, alphaA, alphaB):
         P.append((alphaA*rA[i] + alphaB * rB[i])/gamma)
     
     return(P)
+
+
+def BoB_fill(sorted_bag, desired_length):
+    missing_zeros = desired_length - len(sorted_bag)
+    padded_bag = np.pad(sorted_bag, (0,missing_zeros), 'constant')
+    return (padded_bag)
