@@ -296,34 +296,87 @@ def BoB_full_sorted(Z, R, N = 0, k_dictionary = empty_BoB_dictionary ):
             k_dictionary.pop(i)
 
     clean_k_dictionary = {x:y for x, y in k_dictionary.items() if y !=0}
+    clean_Z = list(clean_k_dictionary.keys())
+    atomic_zipper = list(zip(Z, R))
     
-    
+
+
     #first bag corresponds to CM_diagonal
     unsorted_first_bag =  [Zi**(2.4)/2 for Zi in Z]
     sorted_first_bag = np.sort(unsorted_first_bag)[::-1]
     bag0 = jmath.BoB_fill(sorted_first_bag, sum(clean_k_dictionary.values()))
     
-    l = len(clean_k_dictionary)
+    l = len(clean_Z)
+    
+    #loop over all i, j in clean_Z to get all possible combinations of Zi and Zj for the bags
+    all_nonself_bags = []
+    #Zi,Zj values needed to sort bags according to sum(Zi, Zj) and to lower(Zi, Zj)
+    Zi_Zj_of_bags = []
 
-    for i in range(1, l+1):
-        for j in range(i, l+1)
-        bag_i = 
+    for i in range(l):
+        Zi = clean_Z[i]
+        i_zipper = [atom for atom in atomic_zipper if atom[0] == Zi]
+        for j in range(i, l):
+            bag_ij = []
+            #same element bags (HH, OO, NN, ...)
+            if (i == j):
+                Zj = Zi
+                Zi_Zj_of_bags.append([Zi, Zj])
+                for index_i in range(len(i_zipper)):
+                    for index_j in range(index_i + 1, len(i_zipper)):
+                        distance = jnp.linalg.norm(i_zipper[index_i][1] - i_zipper[index_j][1])
+                        entry = float(i_zipper[index_i][0]*i_zipper[index_j][0]/distance)
+                        bag_ij.append(entry)
+                
 
-            Zj = Z[j]
-        Ri = R[i, :]
-        Rj = R[j, :]
-        distance = jnp.linalg.norm(Ri-Rj)
-        return( Zi*Zj/(distance))
+            #different element bags (HO, HN, ON, ...)
+            else:
+                Zj = clean_Z[j]
+                Zi_Zj_of_bags.append([Zi, Zj])
+                j_zipper = [atom for atom in atomic_zipper if atom[0] == Zj]
+                #create ij bag
+                for atom_i in i_zipper:
+                    for atom_j in j_zipper:
+                        distance = jnp.linalg.norm(atom_i[1] - atom_j[1])
+                        entry = float(atom_i[0]*atom_j[0]/distance)
+                        bag_ij.append(entry)
+            #reverse sorting of bag_ij to get largest values at the beginning
+            sorted_bag_ij = np.sort(bag_ij)[::-1]
+            #pad bag with 0 to fit standard length of respective bag
+            padded_bag_ij = jmath.BoB_fill(sorted_bag_ij, clean_k_dictionary[Zi]*clean_k_dictionary[Zj])
+            all_nonself_bags.append( padded_bag_ij)
+    
+    sorted_nonself_vector = BoB_shuffle_bags(all_nonself_bags, Zi_Zj_of_bags)
+    BoB = np.append(bag0, sorted_nonself_vector)
+    
+    return(BoB)
+
+def BoB_shuffle_bags(unsorted_bags, Zi_Zj_array):
+    '''sort BoB bags according to Zi, Zj values and return vector (without self interactions of atoms)'''
+    index_list = []
+    lower_list = []
+
+    #calculate both Zi+Zj and get lower of the two values into list
+    for Zij in Zi_Zj_array:
+        index = Zij[0]+Zij[1]
+        lower = min(Zij[0], Zij[1])
+        index_list.append(index)
+        lower_list.append(lower)
+
+    #presort by lower Z value in case Zi+Zj values are equal (NN bag comes after CO bag)
+    order_lower = np.argsort(lower_list)
+    presorted_index = np.array(index_list)[order_lower]
+    presorted_bags = np.array(unsorted_bags)[order_lower]
+
+    #order by index Zi+Zj now
+    order_index = np.argsort(presorted_index)
+    sorted_bags = presorted_bags[order_index]
+    
+    #concatenate list of arrays into single np array
+    bags = np.concatenate(sorted_bags)
+
+    return(bags)
 
 
-        sorted_bag_i = np.sort(bag_i)[::-1]
-        padded_bag_i = jmath.BoB_fill(sorted_bag_i, k_dictionary[i]
-
-    M_unsorted, dim = OM_full_unsorted_matrix(Z, R, N)
-    val_row = np.asarray([jnp.linalg.norm(row) for row in M_unsorted])
-    order = val_row.argsort()[::-1]
-
-    M_sorted = jnp.asarray([[M_unsorted[i,j] for j in order] for i in order])
-    return(M_sorted, order)
 
 
