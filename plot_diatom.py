@@ -6,6 +6,8 @@ import jax_representation as jrep
 import matplotlib.pyplot as plt
 import qml
 import itertools
+import jax_math as jmath
+import numpy as np
 
 #path to xyz files
 database = "/home/stuke/Databases/XYZ_diatom/"
@@ -45,22 +47,45 @@ CM_lists = sorted(itertools.zip_longest(*[distance_vector, CM_overlap_vector]))
 new_x, OM_y = list(itertools.zip_longest(*OM_lists))
 new_x, CM_y = list(itertools.zip_longest(*CM_lists))
 
-
+OM_y = jmath.normed(np.array(OM_y), 1)
+CM_y = jmath.normed(np.array(CM_y), 1)
+print(CM_y)
 '''plot that stuff'''
-f, ax = plt.subplots()
-#ax.plot(new_x, OM_y, label = 'Overlap Matrix')
-ax.plot(new_x, CM_y, label = 'Coulomb Matrix')
+import seaborn as sns
+fontsize = 30
 
-every_nth = 4
-for n, label in enumerate(ax.xaxis.get_ticklabels()):
-    if n % every_nth != 0:
-        label.set_visible(False)
+plt.rc('font',       size=fontsize) # controls default text sizes
+plt.rc('axes',  titlesize=fontsize) # fontsize of the axes title
+plt.rc('axes',  labelsize=fontsize) # fontsize of the x and y labels
+plt.rc('xtick', labelsize=fontsize*0.8) # fontsize of the tick labels
+plt.rc('ytick', labelsize=fontsize*0.8) # fontsize of the tick labels
+plt.rc('legend', fontsize=fontsize*0.8) # legend fontsize
+plt.rc('figure',titlesize=fontsize*1.2) # fontsize of the figure title
+f, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (12, 8))
+#ax.plot(new_x, OM_y, label = 'Overlap Matrix')
+ax.plot(new_x, CM_y, label = 'Coulomb Matrix', linewidth=fontsize/8)
+ax.plot(new_x, OM_y, label = 'Overlap Matrix', linewidth=fontsize/8)
+
+ax.spines['right'].set_color('none')
+ax.spines['top'].set_color('none')
+#ax.spines['bottom'].set_position(('axes', -0.05))
+ax.spines['bottom'].set_color('black')
+ax.spines['left'].set_color('black')
+ax.yaxis.set_ticks_position('left')
+ax.xaxis.set_ticks_position('bottom')
+#ax.spines['left'].set_position(('axes', -0.05))
+plt.rcParams["legend.loc"] = 'upper right'
 
 ax.set_xlabel('Distance [$\AA$]')
-ax.set_ylabel('Overlap')
-ax.set_title('Cross interactions of HCl')
-ax.legend()
-plt.show()
-print(OM_overlap_vector)
-print(CM_overlap_vector)
+ax.legend(frameon=False)
+    
+plt.setp(ax, xticks = [0, 15, 30], xticklabels = ['0.0',  '1.5',  '3.0'], yticks = [0, 0.3, 0.6, 0.9], yticklabels = ['0.0', '0.3', '0.6', '0.9'])
+ax.set_ylabel('Relative Overlap [a.u.]')
+f.suptitle('Cross interactions of HCl')
+
+sns.set_style('whitegrid', {'grid.linestyle': '--'})
+sns.set_context("poster")
+
+f.savefig("HCl_overlap_OM_CM.png", bbox_inches = 'tight')
+f.savefig("HCl_overlap_OM_CM.pdf", bbox_inches = 'tight')
 
