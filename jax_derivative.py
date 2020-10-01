@@ -29,7 +29,7 @@ def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R"):
     '''
 
     #first, find out which representation was chosen and get appropriate function
-    fn_list = {'CM': jrep.CM_full_sorted, 'CM_EV': jrep.CM_ev, 'OM' : jrep.OM_full_matrix}
+    fn_list = {'CM': jrep.CM_full_sorted, 'CM_EV': jrep.CM_ev, 'OM' : jrep.OM_full_sorted}
     dfn_list = {'CM': d_CM, 'CM_EV' : d_CM_ev, 'OM' : d_OM}
     ddfn_list = {'CM': dd_CM, 'CM_EV' : dd_CM_ev}
 
@@ -97,13 +97,13 @@ def d_CM(Z, R, N, dx_index):
     print("calculating sorted second derivative of Coulomb Matrix")
     fM_sorted, order = jrep.CM_full_sorted(Z, R, N) #get order of sorted representation
     dim = len(order)
-    print('sorted CM :', fM_sorted)
-    print('order:', order)
+    #print('sorted CM :', fM_sorted)
+    #print('order:', order)
     #direct derivative as jacobian
     dCM = jacfwd(jrep.CM_full_sorted, dx_index)
     reference_dCM = dCM(Z, R, N)[0]
-    print('reference is', reference_dCM)
-
+    #print('reference is', reference_dCM)
+    print('unsorted derivative has successfully been calculated, starting ordering')
     '''Not sure about reordering below. definitely need to recheck. Not important for EV though, or is it?'''
     if(dx_index == 0):
         #assign derivative to correct field in sorted matrix by reordering derZ_ij to derZ_kl
