@@ -15,7 +15,7 @@ R = compound.coordinates
 N = float(len(Z))
 
 '''using my own basis'''
-M_ev  = jrep.BoB_full_sorted(Z, R, N)
+M_ev  = jrep.CM_eigenvectors_EVsorted(Z, R, N)
 
 
 '''using basis and S from literature'''

@@ -147,6 +147,42 @@ def CM_index(Z, R, N, i = 0, j = 0):
         distance = jnp.linalg.norm(Ri-Rj)
         return( Zi*Zj/(distance))
 
+def CM_eigenvectors_EVsorted(Z, R, N, cutoff = 8):
+    ''' Matrix containing eigenvalues of unsorted Coulomb matrix,
+    sorted by their eigenvalues. Cutoff possible at dedicated len.
+    or for certain sizes of eigenvalues
+
+
+    Parameters
+    ----------
+    Z : 1 x n dimensional array
+        contains nuclear charges
+    R : 3 x n dimensional array
+        contains nuclear positions
+    N : float
+        number of electrons in system
+        here: meaningless, can remain empty
+    
+    Return
+    ------
+    M : Matrix 
+        contains eigenvectors of sorted CM
+    (vectors: tuple
+        contains Eigenvectors of matrix (n dim.)
+        If i out of bounds, return none and print error)
+    '''
+    N = CM_full_unsorted_matrix(Z, R)
+    ev, evec = jnp.linalg.eigh(N)
+    order = jnp.argsort(ev)[:min(ev.size, cutoff)]
+        
+    sorted_evec = evec[order]
+    
+    return(sorted_evec)
+
+
+
+
+
 
 def OM_full_unsorted_matrix(Z, R, N):
     '''
