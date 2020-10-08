@@ -6,7 +6,7 @@ import jax_representation as jrep
 import matplotlib.pyplot as plt
 import qml
 import itertools
-import jax_math as jmath
+#import jax_math as jmath
 import numpy as np
 
 #path to xyz files
