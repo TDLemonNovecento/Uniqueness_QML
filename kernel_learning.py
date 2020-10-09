@@ -41,25 +41,26 @@ def calculate_energies(information_list):
 def my_kernel_ridge(folder, training_size, sigma = 1000):
     ''' Kernel ridge regression model
     y(X') = sum_i alpha_i K(X', X_i)
-
-    Input
-    -----
-    test_folder :  List of paths to .xyz files for testing
-    training_folder : List of paths to .xyz files for training
-    sigma : fitting coefficient
-    Return
-    ------
-    ?
-    '''
-    '''jnp.linalg.invert(kernel_matrix) #(do this everytime?)
-
+    
     K_{ij} = exp(- (||X_i-X_j||^2_2)/(2\sigma^2))
     This is the Gaussian Kernel matrix
 
     Regression koefficients are given by 
     \alpha = (K + \lambda I)-1 \cdot y
 
-    
+
+    Input
+    -----
+    folder :  path to folder containing .xyz files
+    training_size : desired size of training set
+    sigma : fitting coefficient
+
+    Return
+    ------
+    training_energies: np array of energies for training set for learning
+    test_energies: np array of energies for test set as reference
+    predicted_energies: np array of energies
+    prediction_errors
     '''
 
     Identity = jnp.zeros((training_size , training_size))
@@ -82,9 +83,8 @@ def my_kernel_ridge(folder, training_size, sigma = 1000):
     alphas = get_alphas(K, training_energies, training_size)
 
     results, errors = predict_new(sigma, alphas, represented_training_set, represented_test_set, test_energies)
-    print('results', results)
-    print('errors', errors)
-    print('test energies', test_energies)
+    type(errors)
+    return(training_energies, test_energies, results, errors)
 
 def gaussian_kernel(x, y, sigma):
     distance = jnp.subtract(x,y)
@@ -111,18 +111,15 @@ def predict_new(sigma, alphas, list_represented_training, list_represented_test,
     '''
     print("calculating new properties")
     predicted_properties = []
-    print('there are ', len(list_represented_test), ' items for which properties are being calculated')
+    
     for test_X in list_represented_test:
         test_prop = 0.0
         for alpha_i, training_i in zip(alphas, list_represented_training):
             i_element = alpha_i * gaussian_kernel(test_X, training_i, sigma)
-            print('i element', i_element)
             test_prop += i_element
-            print('test_prop after this i', test_prop)
         
         predicted_properties.append(test_prop)
     
-    print('number of predicted properties is ', len(predicted_properties), '\n', predicted_properties)
     prediction_errors = np.subtract(test_properties, np.array(predicted_properties))
     
     return(np.array(predicted_properties), np.array(prediction_errors))
@@ -205,11 +202,19 @@ def build_kernel_matrix(dataset_represented, dim, sigma, kernel_used = gaussian_
     return(K)
 
 def get_alphas(K, properties, dim, lamda = 1.0e-3):
+    '''calculates alpha coefficients
+    Variables
+    ---------
+    K : Kernel Matrix based on training set
+    properties: jax numpy array of properties related to training set
+    dim: int, dimension of training set
+    '''
     lamdaI = lamda*np.identity(dim)
     invertable = jnp.add(K, lamdaI)
     inverted = jnp.linalg.inv(invertable)
-    alpha = jnp.multiply(inverted, properties)
+    alpha = jnp.dot(inverted, properties)
     return(alpha)
 
 
-my_kernel_ridge(datapath, 10) 
+
+#my_kernel_ridge(datapath, 10) 

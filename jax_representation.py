@@ -11,7 +11,7 @@ import list_math as lmath
 
 
 
-def CM_full_unsorted_matrix(Z, R):
+def CM_full_unsorted_matrix(Z, R, size = 9):
     ''' Calculates unsorted coulomb matrix
     Parameters
     ----------
@@ -26,7 +26,7 @@ def CM_full_unsorted_matrix(Z, R):
     Full Coulomb Matrix, dim(Z)xdim(Z)
     '''
     n = Z.shape[0]
-    D = jnp.zeros((n, n))
+    D = jnp.zeros((size, size))
     
     #indexes need to be adapted to whatever form comes from xyz files
     for i in range(n):
