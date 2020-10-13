@@ -7,35 +7,53 @@ import os
 import random
 from xtb.interface import Calculator
 from xtb.utils import get_method
+from basis import atomic_energy_dictionary, atomic_signs
 
 final_file = "/home/stuke/Databases/QM9_XYZ_below10/learning_data.dat"
 
 datapath = "/home/stuke/Databases/XYZ_ethin/"
 
 #representation to be used: CM_eigenvectors_EVsorted(Z, R, N, cutoff = 8)
-def calculate_energies(information_list):
+def calculate_energies(information_list, has_energies = False ):
     '''
     Variables
     ---------
     information_list : list of lists, with
-                       information_list[i] = ['name of file', [Z], [R], [N], [atomtypes]]
+                       information_list[i] = ['name of file', [Z], [R], [N], [atomtypes], [energies] ]
                        [Z].type and [R].type is np.array
+    has_energies : True if energies are at end of information_list
     Returns
     -------
-    energies : np.array with energies of the moelcules
+    energies : np.array with atomization energies of the moelcules
     '''
-    energies = []
-    
+
+    if has_energies == False:
+        mol[5] = []
+    #calculate total energy of molecules based on molecular information 
+        for mol in information_list:
+            Z = mol[1]
+            R = mol[2]
+            #create xtb calculator
+            calc = Calculator(get_method("GFN2-xTB"), Z, R)
+            results = calc.singlepoint()
+            energy = results.get_energy()
+            mol[5].append(energy)
+
+    #make new list to store all atomization energies        
+    atomization_energies = []
+
+    #calculate atomization energy for every molecule
     for mol in information_list:
         Z = mol[1]
-        R = mol[2]
-        #create xtb calculator
-        calc = Calculator(get_method("GFN2-xTB"), Z, R)
-        results = calc.singlepoint()
-        energy = results.get_energy()
-        energies.append(energy)
+        energy = mol[5]
+        #calculate atomic energy of molecule
+        total_atomic_energy = 0
+        for atom in Z:
+            total_atomic_energy += atomic_energy_dictionary[atom]
+        #atomization energy = total energy - atomic energy, add to list    
+        atomization_energy.append(np.array(energy - total_atomic_energy))
 
-    return(np.array(energies))
+    return(np.array(atomization_energies))
 
 
 def my_kernel_ridge(folder, training_size, sigma = 1000):
@@ -125,7 +143,7 @@ def predict_new(sigma, alphas, list_represented_training, list_represented_test,
     return(np.array(predicted_properties), np.array(prediction_errors))
 
 
-def read_files(file_list, representation = jrep.CM_eigenvectors_EVsorted):
+def read_xyz(file_list, representation = jrep.CM_eigenvectors_EVsorted):
     ''' Opens files and stores Z, R and N data + makes representation
     Variables
     ---------
@@ -143,15 +161,33 @@ def read_files(file_list, representation = jrep.CM_eigenvectors_EVsorted):
 
     compound_list = []
     represented_list = []
+    
     for xyzfile in file_list:
-        compound = qml.Compound(xyzfile)
+        atoms = []
+        R = []
+        #open file and read lines
+        with open(xyzfile, 'r') as f:
+            content = f.readlines()
+        
+        N = int(content[0])
 
-        Z = compound.nuclear_charges.astype(float)
-        R = compound.coordinates
-        N = float(len(Z))
-        atomtypes = compound.atomtypes
-       
-        compound_list.append([xyzfile,Z, R, N, atomtypes])
+        #in the QM9 database, the comment line contains information on the molecule. See https://www.nature.com/articles/sdata201422/tables/4 for more info.
+        comment = content[1].split()
+        #extract internal energy at 0K in Hartree
+        zero_point_energy = comment[12]
+
+        #read in atomic information from xyz file
+        for line in range(2, N+2):
+            atom, x, y, z, mulliken_charge = content[line].split()
+            atoms.append(atom)
+            R.append(np.array([float(x), float(y), float(z)]))
+        
+        #transform to np arrays for further use
+        Z = np.array([atomic_signs[atom] for atom in atoms])
+        R = np.array(R)
+
+        #create list of compound information and represented information
+        compound_list.append([xyzfile,Z, R, N, atoms, zero_point_energy])
         represented = representation(Z,R,N)
         represented_list.append(represented)
 

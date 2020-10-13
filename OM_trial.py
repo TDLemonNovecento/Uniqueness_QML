@@ -1,6 +1,6 @@
 import qml
 import jax_representation as jrep
-import oei
+import jax_derivadive as jder
 import basis
 import numpy as np
 
@@ -14,7 +14,7 @@ N = float(len(Z))
 
 '''using my own basis'''
 myOM, order  = jrep.OM_full_sorted(Z, R, N)
-
+derOM = jder.sort_derivative('OM', Z, R, N)
 
 '''using basis and S from literature'''
 #thisbasis, k = basis.build_sto3Gbasis(Z,R)

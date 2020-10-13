@@ -30,8 +30,9 @@ def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R"):
 
     #first, find out which representation was chosen and get appropriate function
     fn_list = {'CM': jrep.CM_full_sorted, 'CM_EV': jrep.CM_ev, 'OM' : jrep.OM_full_sorted}
-    dfn_list = {'CM': d_CM, 'CM_EV' : d_CM_ev, 'OM' : d_OM}
-    ddfn_list = {'CM': dd_CM, 'CM_EV' : dd_CM_ev}
+    dfn_list = {'CM': d_CM, 'CM_EV' : d_CM_ev, 'OM' : d_OM, 'OM_EV' : d_OM_ev}
+    ddfn_list = {'CM': dd_CM, 'CM_EV' : dd_CM_ev, 'OM' : dd_OM, 'OM_EV' : dd_OM_ev}
+    
 
     try:
         fn = fn_list[representation]
@@ -160,9 +161,22 @@ def d_CM_ev(Z, R, N, dx_index):
 
 def d_OM(Z, R, N, dx_index = 0):
     dim = jrep.OM_dimension(Z)
-    Jraw = jacfwd(jrep.OM_full_matrix, dx_index)
+    Jraw = jacfwd(jrep.OM_full_sorted, dx_index)
     J = Jraw(Z, R, N)
     print('jraw', Jraw, 'J', J)
+    return(J)
+
+def dd_OM(Z, R, N, dx_index = 0, ddx_index = 0):
+    dim = jrep.OM_dimension(Z)
+    Hraw = hessian(jrep.OM_full_sorted, dx_index, ddx_index)(Z, R, N)[0]
+    
+    print('the matrix was not sorted according to derivatives')
+    return(Hraw)
+
+def d_OM_ev(Z, R, N, dx_index = 0):
+    dim = jrep.OM_dimension(Z)
+
+
 
 def dd_CM(Z, R, N, dx_index = 0, ddx_index = 0):
     fM_sorted, order = jrep.CM_full_sorted(Z, R, N)

@@ -1,14 +1,7 @@
-from xtb.interface import Calculator
-from xtb.utils import get_method
-import numpy as np
+import kernel_learning as kler
 
-Z = np.array([8, 1, 1])
-R = np.array([[ 0.00000000000000, 0.00000000000000,-0.73578586109551],[ 1.44183152868459, 0.00000000000000, 0.36789293054775],[-1.44183152868459, 0.00000000000000, 0.36789293054775]])
+datapath = "/home/stuke/Databases/QM9_XYZ"
 
-calc = Calculator(get_method("GFN2-xTB"), Z, R)
-
-res = calc.singlepoint()
-energy = res.get_energy()
-
-
+represented, compound = kler.read_xyz([datapath + '/dsgdb9nsd_000001.xyz'])
+print(compound)
 

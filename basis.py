@@ -29,6 +29,39 @@ empty_BoB_dictionary = {
         20:-1
         }
 
+#this dictionary contains the atomic energies. This can be used to get the atomization energies from the total energy. Source: QM9 dataset.@298.15 K, in Hartree 
+atomic_energy_dictionary = {
+        1:-0.498857,
+        6:-37.845355,
+        7:-54.582445,
+        8:-75.063163,
+        9:-99.717314,
+        }
+
+#this dictionary contains the atomic charges in relation to their signs. Used for reading xyz files 
+atomic_signs = {
+        'H' : 1,
+        'He': 2,
+        'Li': 3,
+        'Be': 4,
+        'B' : 5,
+        'C' : 6,
+        'N' : 7,
+        'O' : 8,
+        'F' : 9,
+        'Ne':10,
+        'Na':11,
+        'Mg':12,
+        'Al':13,
+        'Si':14,
+        'P' :15,
+        'S' :16,
+        'Cl':17,
+        'Ar':18,
+        'K' :19,
+        'Ca':20
+        }
+
 #orbital configuration, used for OM
 orbital_configuration = {
         1:['1s'],
