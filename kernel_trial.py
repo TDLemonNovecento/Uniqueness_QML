@@ -1,7 +1,10 @@
 import kernel_learning as kler
+import kernel_plot as kplot
+datapath = "/home/stuke/Databases/XYZ_ethin/" #always has to end with /
+final_file = datapath+'/trial_learningresults.obj'
 
-datapath = "/home/stuke/Databases/QM9_XYZ"
+#results, metadata = kler.full_kernel_ridge(datapath, final_file, [1, 3, 5, 8, 11], [4, 40], [1e-13, 1e-11], rep_no = 2 )
+#print(results)
 
-represented, compound = kler.read_xyz([datapath + '/dsgdb9nsd_000001.xyz'])
-print(compound)
-
+curves = kplot.cleanup_results(final_file)
+print(curves)

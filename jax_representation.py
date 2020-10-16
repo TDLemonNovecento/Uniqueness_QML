@@ -149,7 +149,7 @@ def CM_index(Z, R, N, i = 0, j = 0):
         distance = jnp.linalg.norm(Ri-Rj)
         return( Zi*Zj/(distance))
 
-def CM_eigenvectors_EVsorted(Z, R, N, cutoff = 8):
+def CM_eigenvectors_EVsorted(Z, R, N, cutoff = 10):
     ''' Matrix containing eigenvalues of unsorted Coulomb matrix,
     sorted by their eigenvalues. Cutoff possible at dedicated len.
     or for certain sizes of eigenvalues

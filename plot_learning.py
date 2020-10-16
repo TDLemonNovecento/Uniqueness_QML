@@ -1,35 +1,59 @@
 import numpy as np
-import kernel_learning as krnl
+import kernel_learning as kler
 import matplotlib.pyplot as plt
 
 datapath = "/home/stuke/Databases/QM9_XYZ_below10/"
 
-class LearningResults(lamda, sigma, set_sizes, maes, perc_maes):
-    def __init__(self):
-        self.lamda = lamda
-        self.sigma = sigma
-        self.set_sizes = set_sizes
-        self.maes = maes
-        self.perc_maes = perc_maes
+class Curve:
+    def __init__(self, name):
+        self.xlist = []
+        self.ylist = []
+        self.xerror = []
+        self.yerror = []
+        self.name = name
 
-def my_learning_curves(folder, sigma = 20, set_sizes = [10, 20, 40, 80, 160, 300], lamda = 1.0e-12):
-    maes = []
-    percent_maes = []
-
-    for size in set_sizes:
-        training_e, test_e, result, errors = krnl.my_kernel_ridge(folder, size)
-        percent_errors = np.divide(errors, test_e)*100
-        percent_mae = sum(abs(percent_errors))/(len(errors))
-        mae = sum(abs(errors))/(len(errors))
-        maes.append(mae)
-        percent_maes.append(percent_mae)
+def cleanup_results(resultsfile, multiple_runs = True):
+    ''' gets data from resultfile and returns plottable Curve objects
+    Variables
+    ---------
+    resultsfile : string, path to file containing pickled Result objects
+    multiple_runs : if True, calculate mean of runs with same lamda and sigma
     
+    Returns
+    -------
+    this_curve : LearningResults object
+    '''
 
-    print('set_sizes\n', set_sizes)
-    print('maes\n', maes)
-    print('percentile maes\n', percent_maes)
-    return(set_sizes, maes, percent_maes, lamda)
+    plottable_curves = []
     
+    if multiple_runs:
+        print("you wanted to add maes")
+        lamdas = []
+        sigmas = []
+        xlists = []
+        ylists = []
+
+
+    results_list = kler.get_all_Results(resultsfile)
+    
+    for result in results_list:
+        lamda = result.lamda
+        sigma = result.sigma
+        xlist = result.set_sizes
+        ylist = result.maes
+    
+        if !(multiple_runs):
+            print("you did not want to add maes")
+
+
+
+    return(plottable_curves)
+
+def curve_name(sigma, lamda):
+    name = 'sigma = $s, lambda = %s'% (str(sigma), str(lamda))
+    return(name)
+
+
 #for plotting:
 fontsize = 30
 
