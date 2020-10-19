@@ -7,4 +7,4 @@ final_file = datapath+'/trial_learningresults.obj'
 #print(results)
 
 curves = kplot.cleanup_results(final_file)
-print(curves)
+kplot.plot_curves(curves)

@@ -1,15 +1,16 @@
 import numpy as np
 import kernel_learning as kler
 import matplotlib.pyplot as plt
+import jax_math as jmath
 
 datapath = "/home/stuke/Databases/QM9_XYZ_below10/"
 
 class CurveObj:
     def __init__(self, name):
-        self.xlist = []
-        self.ylist = []
-        self.xerror = []
-        self.yerror = []
+        self.xnparray = None
+        self.ynparray = None
+        self.xerror = None
+        self.yerror = None
         self.name = name
 
 def cleanup_results(resultsfile, multiple_runs = True):
@@ -29,9 +30,6 @@ def cleanup_results(resultsfile, multiple_runs = True):
     if multiple_runs:
         lamdas = []
         sigmas = []
-        xlists = []
-        ylists = []
-
 
     results_list = kler.get_all_Results(resultsfile)
     
@@ -40,29 +38,42 @@ def cleanup_results(resultsfile, multiple_runs = True):
         sigma = result.sigma
         xlist = result.set_sizes
         ylist = result.maes
-    
         if not multiple_runs:
             name = curve_name(sigma, lamda)
             curve = CurveObj(name)
-            curve.xlist = xlist
-            curve.ylist = ylist
+            curve.xnparray = xlist
+            curve.ynparray = ylist
 
             plottable_curves.append(curve)
             
         else:
             lamdas.append(lamda)
             sigmas.append(sigma)
-            xlists.append(xlists)
-            ylists.append(ylists)
     
     #probably plottable_curves could already be returned here for False
     if multiple_runs:
-        zipped = list(zip(lamdas, sigmas, xlists, ylists))
-        for i in range(len(lamdas)):
-            for j in range(i, len(lamdas)):
-                if zipped[i][0] == zipped[j][0]:
-                    if zipped[i][1] == zipped[j][1]:
-                        print("a matching run was found. idk what to do now")
+        for l in list(set(lamdas)): #get all unique occurances for lamda
+            for s in list(set(sigmas)): #get all unique occurances for sigma
+                same_x = []
+                same_y = []
+
+                #find all results with these s and l
+                for result in results_list:
+                    if result.lamda == l and result.sigma == s:
+                        same_x.append(result.set_sizes)
+                        same_y.append(result.maes)
+                        
+                #calculate average now
+                av_ylist, yerror = jmath.calculate_mean(same_y)
+                
+                #add Curve object
+                name = curve_name(s,l)
+                curve = CurveObj(name)
+                curve.xnparray = same_x[0]
+                curve.ynparray = av_ylist
+                curve.yerror = yerror
+
+                plottable_curves.append(curve)
 
 
     return(plottable_curves)
@@ -91,33 +102,27 @@ def plot_curves(curve_list):
     plt.rcParams['axes.titlepad'] = 20 
     
     
-    f, ax = plt.subplots(nrows = 2, ncols = 1, figsize = (12, 8))
-    st = f.suptitle('Learning Curves of CM Eigenvector Repro on QM9 Dataset\n of Molecules with 9 Atoms or less')
+    f, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (12, 8))
+    st = f.suptitle('Learning Curves of CM Eigenvector Representation on QM9 Dataset\n 1000 molecules, 2 Runs averaged')
     # shift subplots down and to the left to give title and legend space:
     st.set_y(0.95)
     f.subplots_adjust(top=0.8, left = 0.05, right = 0.78, wspace = 0.1)
 
-    ax[0].set_xlabel('Training Set Size')
-    ax[1].set_xlabel('Training Set Size')
-    ax[0].set_ylabel('MAE')
-    ax[1].set_ylabel('percentile MAE')
+    ax.set_xlabel('Training Set Size')
+    ax.set_ylabel('MAE')
 
     
-#all the plotting has to be done below
-    for l in [1.e-7,1.e-9,1.e-11,1.e-13]:
-        sigma = 4
-        set_sizes, maes, percent_maes, thislamda = my_learning_curves(datapath, sigma, [10, 20, 40, 80, 160, 300],l)
-        learning_results = kernel_obj(l, sigma, set_sizes, maes, percent_maes)
-        plot_learning(set_sizes, maes, percent_maes, title = "s = %s; l = %s" % (str(sigma), str(l)))
-
-
+    #all the plotting has to be done below
+    for curve in curve_list:
+        ax.loglog(curve.xnparray, curve.ynparray, label = curve.name)
+        ax.errorbar(curve.xnparray, curve.ynparray, yerr = curve.yerror, fmt = '-o')
 
     #all the plotting has to be done above
 
-    handles, labels = ax[0].get_legend_handles_labels()
+    handles, labels = ax.get_legend_handles_labels()
 
     f.legend(handles, labels, title = 'Variables:', loc = 'center right')
-
+    f.show()
     f.savefig('learning.png', bbox_inches = 'tight')
     f.savefig('learning.pdf', bbox_inches = 'tight')
     return()

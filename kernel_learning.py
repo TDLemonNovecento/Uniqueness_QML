@@ -335,7 +335,7 @@ def full_kernel_ridge(folder, result_file, set_sizes , sigmas = [], lambdas = []
                     save_raw_data(filename, tr_energies, tr_fileindex, tst_energies, results, tst_fileindex)
                     
                 #add learning result to list
-                learning_list.append(LearningResults(l, s, set_sizes, maes))
+                learning_list.append(LearningResults(l, s, np.array(set_sizes), np.array(maes)))
         print("round %i successfully finished" % (i+ 1))
     
     #save maes with data so it can be plotted

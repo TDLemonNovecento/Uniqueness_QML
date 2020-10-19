@@ -92,3 +92,17 @@ def normed(vector, maximum):
     v_max = np.amax(vector)
     normed_vector = vector / v_max 
     return(normed_vector)
+
+def calculate_mean(list_nparrays):
+    'calculates average of list of arrays'
+    n = len(list_nparrays)
+    added = sum(list_nparrays)
+
+    #calculate average value
+    average = np.true_divide(added, n)
+    #calculate mean squared error
+    sqrd_errors = [(nparray - average)**2 for nparray in list_nparrays]
+    error = np.true_divide(sum(sqrd_errors), n)
+   
+    return(average, error)
+    
