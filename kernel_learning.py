@@ -197,8 +197,15 @@ def read_xyz(folder, representation = jrep.CM_eigenvectors_EVsorted, get_energy 
             for line in range(2, N+2):
                 atominfo = content[line].split()
                 atoms.append(atominfo[0])
-                R.append(np.array([float(atominfo[1]), float(atominfo[2]), float(atominfo[3])]))
-        
+                try:
+                    R.append(np.array([float(atominfo[1]), float(atominfo[2]), float(atominfo[3])]))
+                except ValueError:
+                    print("a Value Error occured while reading the xyz file. The following line caused Errors:")
+                    print(atominfo)
+                    for i in range(1, 4):
+                        atominfo[i] = atominfo[i].replace("*^","e") 
+                    R.append(np.array([float(atominfo[1]), float(atominfo[2]), float(atominfo[3])]))
+
             #transform to np arrays for further use
             Z = np.array([atomic_signs[atom] for atom in atoms])
             R = np.array(R)
@@ -269,7 +276,7 @@ def make_training_test(represented_list, compound_list, training_size, print_ind
 -	Kernel ridge regression function		-
 -							-
 ----------------------------------------------------'''
-def full_kernel_ridge(folder, result_file, set_sizes , sigmas = [], lambdas = [], rep_no = 1, representation = jrep.CM_eigenvectors_EVsorted):
+def full_kernel_ridge(folder, result_file, set_sizes , sigmas = [], lambdas = [], rep_no = 1, representation = jrep.CM_eigenvectors_EVsorted, total_compounds = 1000):
     ''' Kernel ridge regression model
     y(X') = sum_i alpha_i K(X', X_i)
     
@@ -305,7 +312,7 @@ def full_kernel_ridge(folder, result_file, set_sizes , sigmas = [], lambdas = []
 
                 for sets in set_sizes:
                     #make training and test list:
-                    training, test, tr_size = make_training_test(represented, compound, sets)
+                    training, test, tr_size = make_training_test(represented, compound, sets, upperlim = total_compounds)
                     
                     tr_list = training[0]
                     tr_info = training[1]

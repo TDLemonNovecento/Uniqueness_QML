@@ -62,17 +62,17 @@ def cleanup_results(resultsfile, multiple_runs = True):
                     if result.lamda == l and result.sigma == s:
                         same_x.append(result.set_sizes)
                         same_y.append(result.maes)
-                        
+                print("all arrays of same y:\n", same_y)        
                 #calculate average now
                 av_ylist, yerror = jmath.calculate_mean(same_y)
-                
+                print("the calculated mean and it's error are:\n mean:", av_ylist, "\n error:", yerror)
                 #add Curve object
                 name = curve_name(s,l)
                 curve = CurveObj(name)
                 curve.xnparray = same_x[0]
                 curve.ynparray = av_ylist
                 curve.yerror = yerror
-
+                
                 plottable_curves.append(curve)
 
 
@@ -88,7 +88,7 @@ def plot_learning(set_sizes = [10, 20, 40, 80, 160, 300], maes = [2.035934924620
     ax[1].loglog(set_sizes, perc_maes, label = title, linewidth = fontsize/8)
     return()
 
-def plot_curves(curve_list):
+def plot_curves(curve_list, plottitle = 'Learning Curves of CM Eigenvector Representation on QM9 Dataset\n 1000 molecules, 2 Runs Averaged', xtitle = 'MAE [hartree]', ytitle = 'Training Set Size'):
     #standard settings for plotting:
     fontsize = 30
     
@@ -103,17 +103,19 @@ def plot_curves(curve_list):
     
     
     f, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (12, 8))
-    st = f.suptitle('Learning Curves of CM Eigenvector Representation on QM9 Dataset\n 1000 molecules, 2 Runs averaged')
+    st = f.suptitle(plottitle)
     # shift subplots down and to the left to give title and legend space:
     st.set_y(0.95)
     f.subplots_adjust(top=0.8, left = 0.05, right = 0.78, wspace = 0.1)
 
-    ax.set_xlabel('Training Set Size')
-    ax.set_ylabel('MAE')
+    ax.set_xlabel(xtitle)
+    ax.set_ylabel(ytitle)
 
     
     #all the plotting has to be done below
     for curve in curve_list:
+        print('a curve with the following x and y arrays was plotted')
+        print('x:' ,curve.xnparray,'\ny:', curve.ynparray)
         ax.loglog(curve.xnparray, curve.ynparray, label = curve.name)
         ax.errorbar(curve.xnparray, curve.ynparray, yerr = curve.yerror, fmt = '-o')
 

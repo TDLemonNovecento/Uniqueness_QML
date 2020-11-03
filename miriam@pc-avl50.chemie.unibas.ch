@@ -1,5 +1,6 @@
 '''In this package representation functions are stored and their derivatives returned'''
 import jax.numpy as jnp
+import numpy as np
 from jax import grad, ops
 import qml
 import basis
@@ -56,7 +57,7 @@ def CM_full_sorted(Z, R, N = 0):
     '''
     
     unsorted_M = CM_full_unsorted_matrix(Z,R)
-    val_row = jnp.asarray([jnp.linalg.norm(row) for row in unsorted_M])
+    val_row = np.asarray([jnp.linalg.norm(row) for row in unsorted_M])
     order = val_row.argsort()[::-1]
     D = jnp.asarray([[unsorted_M[i,j] for j in order] for i in order])
     return(D, order)
@@ -206,7 +207,7 @@ def OM_full_unsorted_matrix(Z, R, N):
 
 
     thisbasis, K = basis.build_sto3Gbasis(Z, R)
-    S = jnp.zeros((K,K))
+    S = np.zeros((K,K))
     
     for a, bA in enumerate(thisbasis):      #access row a of S matrix; unpack list from tuple
         for b, bB in enumerate(thisbasis):  #same for B
@@ -226,7 +227,7 @@ def OM_full_unsorted_matrix(Z, R, N):
                     S_xyz = jmath.OM_compute_Sxyz(rA, rB, alphaA, alphaB, lA, lB, mA, mB, nA, nB)
                     exponent = np.exp(-alphaA*alphaB *jmath.IJsq(rA, rB)/(alphaA + alphaB))
 
-                    S = S.at[a,b].add(dA * dB * normA * normB *exponent* S_xyz)
+                    S[a,b] += dA * dB * normA * normB *exponent* S_xyz
 
     return(S, K)
 
@@ -323,7 +324,7 @@ def BoB_full_sorted(Z, R, N = 0, k_dictionary = empty_BoB_dictionary ):
     #get keys to be replaced
     key_list = lmath.BoB_emptyZ(k_dictionary)
     
-    unique, counts = jnp.unique(Z, return_counts = True)
+    unique, counts = np.unique(Z, return_counts = True)
     this_k_dictionary = dict(zip(unique, counts))
 
     for i in key_list:
@@ -384,7 +385,7 @@ def BoB_full_sorted(Z, R, N = 0, k_dictionary = empty_BoB_dictionary ):
             all_nonself_bags.append( padded_bag_ij)
     
     sorted_nonself_vector = BoB_shuffle_bags(all_nonself_bags, Zi_Zj_of_bags)
-    BoB = jnp.append(bag0, sorted_nonself_vector)
+    BoB = np.append(bag0, sorted_nonself_vector)
     
     return(BoB)
 
@@ -401,16 +402,16 @@ def BoB_shuffle_bags(unsorted_bags, Zi_Zj_array):
         lower_list.append(lower)
 
     #presort by lower Z value in case Zi+Zj values are equal (NN bag comes after CO bag)
-    order_lower = jnp.argsort(lower_list)
-    presorted_index = jnp.array(index_list)[order_lower]
-    presorted_bags = jnp.array(unsorted_bags)[order_lower]
+    order_lower = np.argsort(lower_list)
+    presorted_index = np.array(index_list)[order_lower]
+    presorted_bags = np.array(unsorted_bags)[order_lower]
 
     #order by index Zi+Zj now
-    order_index = jnp.argsort(presorted_index)
+    order_index = np.argsort(presorted_index)
     sorted_bags = presorted_bags[order_index]
     
     #concatenate list of arrays into single np array
-    bags = jnp.concatenate(sorted_bags)
+    bags = np.concatenate(sorted_bags)
 
     return(bags)
 
