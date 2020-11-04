@@ -1,12 +1,12 @@
 '''In this package representation functions are stored and their derivatives returned'''
 import jax.numpy as jnp
 from jax import grad, ops
-import qml
-import basis
-from basis import empty_BoB_dictionary
+#import qml
+import jax_basis
+from jax_basis import empty_BoB_dictionary, BoB_emptyZ
 from scipy import misc, special, linalg
 import jax_math as jmath
-import list_math as lmath
+
 
 
 
@@ -321,7 +321,7 @@ def BoB_full_sorted(Z, R, N = 0, k_dictionary = empty_BoB_dictionary ):
     '''
     #replace -1 indices in k_dictionary by actual values
     #get keys to be replaced
-    key_list = lmath.BoB_emptyZ(k_dictionary)
+    key_list = BoB_emptyZ(k_dictionary)
     
     unique, counts = jnp.unique(Z, return_counts = True)
     this_k_dictionary = dict(zip(unique, counts))

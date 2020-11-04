@@ -29,6 +29,18 @@ empty_BoB_dictionary = {
         20:-1
         }
 
+'''
+Function for BoB:
+Get a list of keys from dictionary which has value -1
+'''
+def BoB_emptyZ(dictionary):
+    list_of_keys = list()
+    list_of_items = dictionary.items()
+    for item  in list_of_items:
+        if item[1] == -1:
+            list_of_keys.append(item[0])
+    return(list_of_keys)
+
 #this dictionary contains the atomic energies. This can be used to get the atomization energies from the total energy. Source: QM9 dataset.@298.15 K, in Hartree 
 atomic_energy_dictionary = {
         1:-0.498857,
