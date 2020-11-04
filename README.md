@@ -1,5 +1,5 @@
 # Uniqueness_QML
-Investigates breakdown of uniqueness for corse grained representations. Uses: QM9 dataset, jax package for the derivatives
+This branch contains kernel ridge regression learning codes that work with the representations in the master branch (jax_representation and jax_derivative)
 
 Will be cleaned up in March 2021 at the latest
 
