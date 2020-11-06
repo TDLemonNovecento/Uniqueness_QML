@@ -155,11 +155,11 @@ def d_CM_ev(Z, R, N, dx_index):
     '''Not sure about reordering below. definitely need to recheck. Not important for EV though, or is it?'''
     if(dx_index == 0):
         #assign derivative to correct field in sorted matrix by reordering derZ_ij to derZ_kl
-        J_dZkl = np.asarray([[J[l][m] for l in range(dim)] for m in order])
+        J_dZkl = jnp.asarray([[J[l][m] for l in range(dim)] for m in order])
         return(J_dZkl)
     elif(dx_index == 1):
         #unordered derivative taken from sorted matrix
-        J_dRkl = np.asarray([[[J[l][m][x] for l in range(dim)] for x in range(3)] for m in order])
+        J_dRkl = jnp.asarray([[[J[l][m][x] for l in range(dim)] for x in range(3)] for m in order])
         return(J_dRkl)
 
 
@@ -189,19 +189,34 @@ def dd_CM(Z, R, N, dx_index = 0, ddx_index = 0):
     fM_sorted, order = jrep.CM_full_sorted(Z, R, N)
     dim = len(order)
 
-    Hraw = hessian(jrep.CM_full_sorted, dx_index, ddx_index)(Z, R, N)[0]
-    
-    if (dx_index == 0):
+    #calculates dZdZ
+    if (dx_index ==0):
         if (ddx_index == 0):
-            H_ddkl = np.asarray([[[[Hraw[k][l][m][n] for  m in order] for n in order] for k in range(dim)] for l in range(dim)])
-    elif (dx_index == 1):
+            HdZraw = hessian(jrep.CM_full_sorted, dx_index, ddx_index)(Z, R, N)[0]
+            HdZordered = jnp.asarray([[HdZraw[k,l] for k in order] for l in order])
+            return(HdZordered)
+    
+    #calculates dRdR
+    if (dx_index == 1):
         if (ddx_index == 1):
-            H_ddkl = np.asarray([[[[[[Hraw[k][l][m][x][n][y] for l in range(dim)] for k in range(dim)] for n in order] for m in order] for x in range(3)] for y in range(3)])
+            
+            HdRraw = hessian(jrep.CM_full_sorted, dx_index, ddx_index)(Z, R, N)[0]
+            #this reordering is false, need to fix
+            print("shape of results", HdRraw.shape)
+            
+            print("do dRdR sorting")
+            
+            dRdR_sorted = jnp.asarray([[[[[[HdRraw[n, m, i, x, j, y] for n in order] for m in order] for y in range(3)] for j in range(4)] for x in range(3)] for i in range(4)])
 
-    print('Hraw \n', Hraw)
-    print('Hsorted\n', H_ddkl)
+            return(dRdR_sorted)
 
-    return(H_ddkl)
+    if (dx_index == 0 and ddx_index == 1 ) or (dx_index == 1 and ddx_index == 0):
+        print("you want to calculate dZdR or dRdZ")
+        HdZdRraw = hessian(jrep.CM_full_sorted, 0, 1)(Z, R, N)[0]
+        print("shape of results", HdZdRraw.shape)
+        dZdR_sorted = jnp.asarray([[[[[HdZdRraw[n, m, i, x, j] for n in order] for m in order] for x in range(3)] for j in range(4)] for i in range(4)])
+
+        return(dZdR_sorted)
 
 def dd_CM_ev(Z, R, N, dx_index = 0, ddx_index = 0):
     fM, order = jrep.CM_ev(Z, R, N)
@@ -210,5 +225,6 @@ def dd_CM_ev(Z, R, N, dx_index = 0, ddx_index = 0):
     print('Hraw:', Hraw)
 
 def hessian(f, dx, ddx):
-    return jacfwd(jacfwd(f, dx), ddx)
+    H = jacfwd(jacfwd(f, dx), ddx)
+    return(H)
 

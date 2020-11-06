@@ -1,17 +1,15 @@
-#In this program routines and subroutines are called depending on what shoud be done. Unused parts should be hashed and parts that conflict with each other marked with exclamation marks and special characters respectively twice that character. Written by Miriam Stuke.
-### signifies sympy use, other approach than jax
+'''In this program routines and subroutines are called depending on what shoud be done. Unused parts should be hashed and parts that conflict with each other marked with exclamation marks and special characters respectively twice that character. Written by Miriam Stuke.
+'''
 import os
 import qml
 import jax_representation as jrep
 import jax_derivative as jder
 import jax_norms as jnorm
-###import sympy as sp
 import numpy as np
 import sys
 
 #define path to folder containing xyz files. All files are considered.
 database = "/home/stuke/Databases/XYZ_random/"
-###f = repro.Eigenvalue_CM_FM(R, Z, N, 3, 1, [0, 0, 0], [0, 0, 0])
 
 
 print("iterate over all molecules")
@@ -24,14 +22,6 @@ for xyzfile in os.listdir(database):
     R = compound.coordinates
     N = float(len(Z))
     
-###    print("calculate Coulomb Matrix Representations")
-###    f = repro.Coulomb_Matrix_FM(R, Z, N, cN , 0, [0, 0, 0], [0, 0, 0])
-###    print("Representation we're currently working with:")
-###    print(f)
-
-###    print("Filling in values from %s gives the following result:" % xyzfile)
-###    eval_f = repro.subs_CM(f, cZ, cR, cN)    
-###    print(eval_f)
     '''the derivative of a representation is calculated with the following code:'''           
     HM = jder.sort_derivative('OM', Z, R, N)
     print('derivative', HM)
