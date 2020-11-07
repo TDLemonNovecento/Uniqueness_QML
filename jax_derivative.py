@@ -80,30 +80,97 @@ def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R"):
 
     return(dd_fn(Z, R, N, dx_index, ddx_index))
 
+
+
+
+
+'''
+The following functions are for calling all derivatives and printing or processing them one by one
+'''
+
+def cal_print_1stder(repro, Z, R, N):
+    dim = len(Z)
+    '''calculates all derivatives and prints them nicely'''
+    dZ = jder.sort_derivative(repro, Z, R, N, 1, 'Z')
+    dN = jder.sort_derivative(repro, Z, R, N, 1, 'N')
+    dR = jder.sort_derivative(repro, Z, R, N, 1, 'R')
+
+    print('first derivatives:\n------------------')
+    for i in range(dim): #3 atoms in H2O
+        print('dZ%i' % (i+1))
+        print(dZ[i])
+
+    xyz_labels = ['x', 'y', 'z']
+    for xyz in range(3): #x, y and z
+        for i in range(dim): #3 atoms in H2O
+            print('d%s%i' % (xyz_labels[xyz], (i+1)))
+            print(dR[i][xyz]) #derivatives are unsorted
+
+def cal_print_2ndder(repro, Z, R, N):
+    dim = len(Z)
+    which_return = [False, True, False]
+    '''calculates all second derivatives'''
+    if which_return[0]:
+        dZdZ = jder.sort_derivative(repro, Z, R, N, 2, 'Z', 'Z')
+        for i in range(dim): #3 atoms in H2O
+            for j in range(dim): #second dZ over 3 atoms in H2O
+                print('dZ%idZ%i' %(i+1, j+1))
+                print(dZdZ[i,j])
+
+    if which_return[1]:
+        dZdR = jder.sort_derivative(repro, Z, R, N, 2, 'Z', 'R')
+
+        print("dZdR derivatives:")
+
+        xyz = [[0,'x'],[1,'y'],[2,'z']]
+        for i in range(dim): #3 atoms in H2O
+            for j in range(dim):
+                for x in xyz:
+                    print('dZ%id%s%i' %(i+1, x[1], j+1))
+                    print(dZdR[i, j, x[0]])
+
+    if which_return[2]:
+        dRdR = jder.sort_derivative(repro, Z, R, N, 2, 'R', 'R')
+        print("dRdR derivatives:")
+
+        xyz = [[0,'x'],[1,'y'],[2,'z']]
+        for i in range(dim): #3 atoms in H2O
+            for x in xyz:
+                for j in range(dim):
+                    for y in xyz:
+                        print('d%s%id%s%i' %(x[1], i+1, y[1], j+1))
+                        print(dRdR[i,x[0], j, y[0]])
+
+
+
+
+
 '''Below follow function specific derivatives with corresponding sorting'''
 
-
-
-
-
-
-
-
-
-
-
 def d_CM(Z, R, N, dx_index):
-    
+    '''this function calculates the derivatives of the sorted Coulomb matrix
+    variables:
+    ----------
+    Z: jnp array, nuclear charges, unsorted
+    R: jnp array of 3dim arrays, xyz coordinates, unsorted
+    N: total electronic charges (irrelevant, for derivative necessary)
+    dx_index: int, either 0, 1, or 2, if Z, R or by N should be derived
+
+    returns:
+    --------
+    dCM*: jnp array, contains sorted derivatives.
+        i.e. dZidZj can be retrieved by dCM[i,j]
+        dxidyj by dCM[i,x,j,y]
+        
+    '''
     print("calculating sorted second derivative of Coulomb Matrix")
     fM_sorted, order = jrep.CM_full_sorted(Z, R, N) #get order of sorted representation
     dim = len(order)
-    #print('sorted CM :', fM_sorted)
-    #print('order:', order)
+    
     #direct derivative as jacobian
     dCM = jacfwd(jrep.CM_full_sorted, dx_index)
     reference_dCM = dCM(Z, R, N)[0]
-    #print('reference is', reference_dCM)
-    #print('unsorted derivative has successfully been calculated, starting ordering')
+    
     '''reordering is correct, but signs unclear, check if values of EV are important
     '''
     if(dx_index == 0): #derivative by dZ
@@ -193,7 +260,7 @@ def dd_CM(Z, R, N, dx_index = 0, ddx_index = 0):
     if (dx_index ==0):
         if (ddx_index == 0):
             HdZraw = hessian(jrep.CM_full_sorted, dx_index, ddx_index)(Z, R, N)[0]
-            HdZordered = jnp.asarray([[HdZraw[k,l] for k in order] for l in order])
+            HdZordered = jnp.asarray([[[[HdZraw[k,l, m, n] for k in range(dim)] for l in range(dim)] for m in order] for n in order])
             return(HdZordered)
     
     #calculates dRdR
@@ -206,7 +273,7 @@ def dd_CM(Z, R, N, dx_index = 0, ddx_index = 0):
             
             print("do dRdR sorting")
             
-            dRdR_sorted = jnp.asarray([[[[[[HdRraw[n, m, i, x, j, y] for n in order] for m in order] for y in range(3)] for j in range(4)] for x in range(3)] for i in range(4)])
+            dRdR_sorted = jnp.asarray([[[[[[HdRraw[n, m, i, x, j, y] for n in range(dim)] for m in range(dim)] for y in range(3)] for j in order] for x in range(3)] for i in order])
 
             return(dRdR_sorted)
 
@@ -214,7 +281,7 @@ def dd_CM(Z, R, N, dx_index = 0, ddx_index = 0):
         print("you want to calculate dZdR or dRdZ")
         HdZdRraw = hessian(jrep.CM_full_sorted, 0, 1)(Z, R, N)[0]
         print("shape of results", HdZdRraw.shape)
-        dZdR_sorted = jnp.asarray([[[[[HdZdRraw[n, m, i, x, j] for n in order] for m in order] for x in range(3)] for j in range(4)] for i in range(4)])
+        dZdR_sorted = jnp.asarray([[[[[HdZdRraw[n, m, i, j, x] for n in range(dim)] for m in range(dim)] for x in range(3)] for j in order] for i in order])
 
         return(dZdR_sorted)
 
