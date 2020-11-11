@@ -8,6 +8,7 @@ import jax_basis as jbas
 class compound():
     '''
     stores information of molecules
+    how can I force Z entries to be of type float?
     '''
     def __init__(self, filename, Z, R, N):
         self.Z = Z
@@ -30,7 +31,22 @@ class compound():
 
         return(heavy_atoms)
 
+class derivative_results():
+    '''
+    stores dZ, dR, ect. data
+    '''
+    def __init__(self, filename):
+        self.filename = filename
     
+    def add_all_RZev(self, dZ_ev, dR_ev, ddZ_ev, ddR_ev, dZdR_ev):
+        self.dZ_ev = dZ_ev
+        self.dR_ev = dR_ev
+        self.ddZ_ev = ddZ_ev
+        self.ddR_ev = ddR_ev
+        self.dZdR_ev = dZdR_ev
+
+
+
 
 def read_xyz_energies(folder, get_energy = True):
     ''' Opens files in xyz folder and stores Z, R and N data + makes representation

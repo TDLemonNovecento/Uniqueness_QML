@@ -16,6 +16,9 @@ plt.rc('legend', fontsize=fontsize*0.8) # legend fontsize
 plt.rc('figure',titlesize=fontsize*1.2) # fontsize of the figure title
 
 
+def plot_percentage_zeroEV():
+    label_dX = x
+
 def pandaseries_dR(eigenvalues, dimZ):
     label_dR = [['dx%i' %(i+1) , 'dy%i' %(i+1) , 'dz%i' %(i+1)]  for i in range(dimZ)]
     listof_series = []

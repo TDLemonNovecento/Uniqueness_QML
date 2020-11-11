@@ -3,6 +3,7 @@
 import jax.numpy as jnp
 import jax_representation as jrep
 from jax import grad, jacfwd, jacrev
+import time
 
 def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R"):
     '''Easy function to handle no, one dimensional or two dimensional derivatives with grad. Issue right now: no additional arguments can be passed to function, it therefore falls back to default for any further arguments beside Z, R and N.
@@ -252,15 +253,27 @@ def dd_OM_ev(Z, R, N, dx_index = 0, ddx_index = 0):
     return()
 
 
-def dd_CM(Z, R, N, dx_index = 0, ddx_index = 0):
+def dd_CM(Z, R, N, dx_index = 0, ddx_index = 0, time_calculations = True):
+    '''
+    calculates and sorts second derivatives
+    '''
+    if time_calculations:
+        start_time = time.time()
     fM_sorted, order = jrep.CM_full_sorted(Z, R, N)
     dim = len(order)
-
+    
+    
     #calculates dZdZ
     if (dx_index ==0):
         if (ddx_index == 0):
             HdZraw = hessian(jrep.CM_full_sorted, dx_index, ddx_index)(Z, R, N)[0]
+            if time_calculations:
+                middle_time = time.time()
+
             HdZordered = jnp.asarray([[[[HdZraw[k,l, m, n] for k in range(dim)] for l in range(dim)] for m in order] for n in order])
+            if time_calculations:
+                end_time = time.time()
+                print("DDZ TIMES:\n calculation time: ", start_time-middle_time, "reordering time: ", middle_time - end_time)
             return(HdZordered)
     
     #calculates dRdR
@@ -269,19 +282,27 @@ def dd_CM(Z, R, N, dx_index = 0, ddx_index = 0):
             
             HdRraw = hessian(jrep.CM_full_sorted, dx_index, ddx_index)(Z, R, N)[0]
             #this reordering is false, need to fix
-            print("shape of results", HdRraw.shape)
-            
+            #print("shape of results", HdRraw.shape)
+            if time_calculations:
+                middle_time = time.time()
             print("do dRdR sorting")
             
             dRdR_sorted = jnp.asarray([[[[[[HdRraw[n, m, i, x, j, y] for n in range(dim)] for m in range(dim)] for y in range(3)] for j in order] for x in range(3)] for i in order])
-
+            if time_calculations:
+                end_time = time.time()
+                print("DDR TIMES:\n calculation time: ", start_time-middle_time, "reordering time: ", middle_time - end_time)
             return(dRdR_sorted)
 
     if (dx_index == 0 and ddx_index == 1 ) or (dx_index == 1 and ddx_index == 0):
         print("you want to calculate dZdR or dRdZ")
         HdZdRraw = hessian(jrep.CM_full_sorted, 0, 1)(Z, R, N)[0]
-        print("shape of results", HdZdRraw.shape)
+        if time_calculations:
+            middle_time = time.time()
+        #print("shape of results", HdZdRraw.shape)
         dZdR_sorted = jnp.asarray([[[[[HdZdRraw[n, m, i, j, x] for n in range(dim)] for m in range(dim)] for x in range(3)] for j in order] for i in order])
+        if time_calculations:
+            end_time = time.time()
+            print("DRDZ TIMES:\n calculation time: ", start_time-middle_time, "reordering time: ", middle_time - end_time)
 
         return(dZdR_sorted)
 
