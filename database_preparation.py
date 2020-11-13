@@ -35,19 +35,47 @@ class derivative_results():
     '''
     stores dZ, dR, ect. data
     '''
-    def __init__(self, filename):
+    def __init__(self, filename, Z):
         self.filename = filename
+        self.Z = Z
     
-    def add_all_RZev(self, dZ_ev, dR_ev, ddZ_ev, ddR_ev, dZdR_ev):
+    def add_all_RZev(self, dZ_ev, dR_ev, dZdZ_ev, dRdR_ev, dZdR_ev):
         self.dZ_ev = dZ_ev
         self.dR_ev = dR_ev
-        self.ddZ_ev = ddZ_ev
-        self.ddR_ev = ddR_ev
+        self.dRdZ_ev = dZdZ_ev
+        self.dRdR_ev = dZdR_ev
         self.dZdR_ev = dZdR_ev
 
+    def calculate_percentage(self):
+        self.dZ_perc = 
+        self.dR_perc = []
+        slef.dZdZ_perc = []
+        self.dRdR_perc = []
+        self.dZdR_perc = []
+
+        #dZ
+        for eigenvals in dZ_ev:
+            ev = jnp.real(eigenvals)
+            nz = jnp.count_nonzero(ev)
+            perc = nz/ max_ev
+            self.dZ_perc.append(perc)
+
+        #dR
+        for eigenvals in dR_ev:
 
 
+        def calculate_perc(listed_ev):
+            shape = listed_ev.shape
+            
+            for i in 
+            for eigenvals in listed_ev:
+                ev = jnp.real(eigenvals)
+                nz = jnp.count_nonzero(ev)
+                perc = nz/ max_ev
+                self.dZ_perc.append(perc)
+            return(perc_list)
 
+            
 def read_xyz_energies(folder, get_energy = True):
     ''' Opens files in xyz folder and stores Z, R and N data + makes representation
     Variables

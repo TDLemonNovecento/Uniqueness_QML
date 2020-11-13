@@ -1,5 +1,5 @@
 #here we calculate the first and second derivajtives to the basis of chemical space depending on the chosen representation and placeholder. Matrix and vector reconstruction may be included, too.
-
+import numpy as np
 import jax.numpy as jnp
 import jax_representation as jrep
 from jax import grad, jacfwd, jacrev
@@ -109,29 +109,17 @@ def cal_print_1stder(repro, Z, R, N):
 
 def cal_print_2ndder(repro, Z, R, N):
     dim = len(Z)
-    which_return = [False, True, False]
+    which_return = [False, False, True]
     '''calculates all second derivatives'''
     if which_return[0]:
-        dZdZ = jder.sort_derivative(repro, Z, R, N, 2, 'Z', 'Z')
+        dZdZ = sort_derivative(repro, Z, R, N, 2, 'Z', 'Z')
         for i in range(dim): #3 atoms in H2O
             for j in range(dim): #second dZ over 3 atoms in H2O
                 print('dZ%idZ%i' %(i+1, j+1))
                 print(dZdZ[i,j])
 
     if which_return[1]:
-        dZdR = jder.sort_derivative(repro, Z, R, N, 2, 'Z', 'R')
-
-        print("dZdR derivatives:")
-
-        xyz = [[0,'x'],[1,'y'],[2,'z']]
-        for i in range(dim): #3 atoms in H2O
-            for j in range(dim):
-                for x in xyz:
-                    print('dZ%id%s%i' %(i+1, x[1], j+1))
-                    print(dZdR[i, j, x[0]])
-
-    if which_return[2]:
-        dRdR = jder.sort_derivative(repro, Z, R, N, 2, 'R', 'R')
+        dRdR = sort_derivative(repro, Z, R, N, 2, 'R', 'R')
         print("dRdR derivatives:")
 
         xyz = [[0,'x'],[1,'y'],[2,'z']]
@@ -141,8 +129,18 @@ def cal_print_2ndder(repro, Z, R, N):
                     for y in xyz:
                         print('d%s%id%s%i' %(x[1], i+1, y[1], j+1))
                         print(dRdR[i,x[0], j, y[0]])
+    
+    if which_return[2]:
+        dZdR = sort_derivative(repro, Z, R, N, 2, 'Z', 'R')
 
+        print("dZdR derivatives:")
 
+        xyz = [[0,'x'],[1,'y'],[2,'z']]
+        for i in range(dim): #3 atoms in H2O
+            for j in range(dim):
+                for x in xyz:
+                    print('dZ%id%s%i' %(i+1, x[1], j+1))
+                    print(dZdR[i, j, x[0]])
 
 
 
@@ -257,57 +255,71 @@ def dd_CM(Z, R, N, dx_index = 0, ddx_index = 0, time_calculations = True):
     '''
     calculates and sorts second derivatives
     '''
-    if time_calculations:
-        start_time = time.time()
     fM_sorted, order = jrep.CM_full_sorted(Z, R, N)
     dim = len(order)
-    
     
     #calculates dZdZ
     if (dx_index ==0):
         if (ddx_index == 0):
             HdZraw = hessian(jrep.CM_full_sorted, dx_index, ddx_index)(Z, R, N)[0]
-            if time_calculations:
-                middle_time = time.time()
-
-            HdZordered = jnp.asarray([[[[HdZraw[k,l, m, n] for k in range(dim)] for l in range(dim)] for m in order] for n in order])
-            if time_calculations:
-                end_time = time.time()
-                print("DDZ TIMES:\n calculation time: ", start_time-middle_time, "reordering time: ", middle_time - end_time)
-            return(HdZordered)
+            
+            '''
+            sorting function, performs the following rearrangement:
+            [[[[HdZraw[k,l, m, n] for k in range(dim)] for l in range(dim)] for m in order] for n in order])
+            '''
+                        
+            dZdZ_ordered = np.transpose(HdZraw,(2, 3, 0, 1))
+            
+            dZdZ_sorted = np.copy(dZdZ_ordered)
+            for i in range(dZdZ_ordered.shape[0]):
+                for j in range(dZdZ_ordered.shape[1]):
+                    dZdZ_sorted[i, j] = dZdZ_ordered[order[i], order[j]]
+            
+            return(dZdZ_sorted)
     
     #calculates dRdR
     if (dx_index == 1):
         if (ddx_index == 1):
             
             HdRraw = hessian(jrep.CM_full_sorted, dx_index, ddx_index)(Z, R, N)[0]
-            #this reordering is false, need to fix
-            #print("shape of results", HdRraw.shape)
-            if time_calculations:
-                middle_time = time.time()
+            
             print("do dRdR sorting")
             
-            dRdR_sorted = jnp.asarray([[[[[[HdRraw[n, m, i, x, j, y] for n in range(dim)] for m in range(dim)] for y in range(3)] for j in order] for x in range(3)] for i in order])
-            if time_calculations:
-                end_time = time.time()
-                print("DDR TIMES:\n calculation time: ", start_time-middle_time, "reordering time: ", middle_time - end_time)
+            '''
+            sorting function, performs the following rearrangement:
+            [[[[[[HdRraw[n, m, i, x, j, y] for n in range(dim)] for m in range(dim)] for y in range(3)] for j in order] for x in range(3)] for i in order])
+            '''
+            dRdR_ordered = np.transpose(HdRraw,(2, 3, 4, 5, 0, 1))
+            
+            dRdR_sorted = np.copy(dRdR_ordered)
+            for i in range(dRdR_ordered.shape[0]):
+                for x in range(3):
+                    for j in range(dRdR_ordered.shape[2]):
+                        for y in range(3):
+                            dRdR_sorted[i, x, j, y] = dRdR_ordered[order[i], x, order[j], y]
+            
             return(dRdR_sorted)
 
     if (dx_index == 0 and ddx_index == 1 ) or (dx_index == 1 and ddx_index == 0):
         print("you want to calculate dZdR or dRdZ")
-        HdZdRraw = hessian(jrep.CM_full_sorted, 0, 1)(Z, R, N)[0]
-        if time_calculations:
-            middle_time = time.time()
-        #print("shape of results", HdZdRraw.shape)
-        dZdR_sorted = jnp.asarray([[[[[HdZdRraw[n, m, i, j, x] for n in range(dim)] for m in range(dim)] for x in range(3)] for j in order] for i in order])
-        if time_calculations:
-            end_time = time.time()
-            print("DRDZ TIMES:\n calculation time: ", start_time-middle_time, "reordering time: ", middle_time - end_time)
 
+        HdZdRraw = hessian(jrep.CM_full_sorted, 0, 1)(Z, R, N)[0]
+        
+        '''sorting function, performs the following reordering but in fast
+        [[[[[HdZdRraw[n, m, i, j, x] for n in range(dim)] for m in range(dim)] for x in range(3)] for j in order] for i in order]
+        '''
+        dZdR_ordered = np.transpose(HdZdRraw,(2, 3, 4, 0, 1))
+        dZdR_sorted = np.copy(dZdR_ordered)
+        
+        for i in range(dZdR_ordered.shape[0]):
+            for j in range(dZdR_ordered.shape[1]):
+                for x in range(3):
+                    dZdR_sorted[i,j,x] = dZdR_ordered[order[i], order[j], x]
+                    
         return(dZdR_sorted)
 
 def dd_CM_ev(Z, R, N, dx_index = 0, ddx_index = 0):
-    fM, order = jrep.CM_ev(Z, R, N)
+    fM, order = jrep.CcM_ev(Z, R, N)
     dim = len(order)
     Hraw = hessian(jrep.CM_ev, dx_index, ddx_index)(Z, R, N)[0]
     print('Hraw:', Hraw)

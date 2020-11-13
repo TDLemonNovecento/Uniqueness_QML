@@ -30,5 +30,5 @@ print('Representation:\n------------------')
 print(M)
 
 
-jder.cal_print_1stder('CM', Z, R, N)
+#jder.cal_print_1stder('CM', Z, R, N)
 jder.cal_print_2ndder('CM', Z, R, N)
