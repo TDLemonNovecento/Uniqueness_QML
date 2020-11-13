@@ -35,45 +35,53 @@ class derivative_results():
     '''
     stores dZ, dR, ect. data
     '''
-    def __init__(self, filename, Z):
+    def __init__(self, filename, Z, M):
+        '''
+        filename: string
+        Z: np array, nuclear charges
+        M: np tuple, represented compound
+        '''
+
         self.filename = filename
         self.Z = Z
+        self.norm = jnp.linalg.norm(M, ord = 'nuc')
+        
+        self.dZ_ev = None
+        self.dR_ev = None
+        self.dZdZ_ev = None
+        self.dRdR_ev = None
+        self.dZdR_ev = None
+
+        self.dZ_perc = None
+        self.dR_perc = None
+        self.dZdZ_perc = None
+        self.dRdR_perc = None
+        self.dZdR_perc = None
+
     
     def add_all_RZev(self, dZ_ev, dR_ev, dZdZ_ev, dRdR_ev, dZdR_ev):
         self.dZ_ev = dZ_ev
         self.dR_ev = dR_ev
-        self.dRdZ_ev = dZdZ_ev
-        self.dRdR_ev = dZdR_ev
+        self.dZdZ_ev = dZdZ_ev
+        self.dRdR_ev = dRdR_ev
         self.dZdR_ev = dZdR_ev
+    
+    def add_Z_norm(self, Z, M):
+        self.Z = Z
+        self.dim = M.shape[0]
+        self.norm = jnp.linalg.norm(M, ord = 'nuc')
 
     def calculate_percentage(self):
-        self.dZ_perc = 
-        self.dR_perc = []
-        slef.dZdZ_perc = []
-        self.dRdR_perc = []
-        self.dZdR_perc = []
+        
+        self.dZ_perc = jnp.count_nonzero(jnp.asarray(self.dZ_ev))/len(self.dZ_ev)
+        self.dR_perc = jnp.count_nonzero(jnp.asarray(self.dR_ev))/len(self.dR_ev)
+        #self.dZdZ_perc = jnp.count_nonzero(jnp.asarray(self.dZdZ_ev))/len(self.dZdZ_ev)
+        self.dRdR_perc = jnp.count_nonzero(jnp.asarray(self.dRdR_ev))/len(self.dRdR_ev)
+        self.dZdR_perc = jnp.count_nonzero(jnp.asarray(self.dZdR_ev))/len(self.dZdR_ev)
+        dZdZ_perc = 0.5
 
-        #dZ
-        for eigenvals in dZ_ev:
-            ev = jnp.real(eigenvals)
-            nz = jnp.count_nonzero(ev)
-            perc = nz/ max_ev
-            self.dZ_perc.append(perc)
-
-        #dR
-        for eigenvals in dR_ev:
-
-
-        def calculate_perc(listed_ev):
-            shape = listed_ev.shape
-            
-            for i in 
-            for eigenvals in listed_ev:
-                ev = jnp.real(eigenvals)
-                nz = jnp.count_nonzero(ev)
-                perc = nz/ max_ev
-                self.dZ_perc.append(perc)
-            return(perc_list)
+        return(self.dZ_perc, self.dR_perc, self.dZdZ_perc, self.dRdR_perc, self.dZdR_perc)
+        
 
             
 def read_xyz_energies(folder, get_energy = True):

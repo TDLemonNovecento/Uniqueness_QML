@@ -16,8 +16,10 @@ plt.rc('legend', fontsize=fontsize*0.8) # legend fontsize
 plt.rc('figure',titlesize=fontsize*1.2) # fontsize of the figure title
 
 
-def plot_percentage_zeroEV():
-    label_dX = x
+
+def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis, title):
+    plt.scatter(norm_xaxis, percentages_yaxis)
+    plt.show()
 
 def pandaseries_dR(eigenvalues, dimZ):
     label_dR = [['dx%i' %(i+1) , 'dy%i' %(i+1) , 'dz%i' %(i+1)]  for i in range(dimZ)]
@@ -129,4 +131,3 @@ def merge_plot_with_svg(figname, imagepath):
     # save generated SVG files
     fig.save("fig_final.svg")
 
-merge_plot_with_svg("ethin.svg", "ethin.svg") #not working
