@@ -1,9 +1,10 @@
 '''contains all sorts of functions used to plot derivatives'''
-import pandas as pd
+#import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import sys
-import svgutils.transform as sg
+import numpy as np
+#import svgutils.transform as sg
 
 '''standard settings for matplotlib plots'''
 fontsize = 24
@@ -17,9 +18,56 @@ plt.rc('figure',titlesize=fontsize*1.2) # fontsize of the figure title
 
 
 
-def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis, title):
-    plt.scatter(norm_xaxis, percentages_yaxis)
+def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis, title, savetofile = "perc_nonzeroEV_CM_test", oneplot = True):
+    #general figure settings
+    if oneplot:
+        fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize=(12,8), sharey = True, sharex = True)
+    else:
+        fig, ax = plt.subplots(nrows = 3, ncols = 2, figsize=(12,8), sharey = True, sharex = True)
+
+    fig.tight_layout()
+    
+    #add all plots
+    if oneplot:
+        for y in percentages_yaxis:
+            ax.scatter(norm_xaxis, y[0], label = y[1])
+    else:
+        for i in range(len(percentages_yaxis)):
+            if i > 1:
+                j = 1
+                k = i - 2
+            else:
+                j = 0
+                k = i
+            y = percentages_yaxis[i]
+            ax[k][j].scatter(norm_xaxis, y[0])
+            ax[k][j].title.set_text(y[1])
+
+    #title, axis and legend
+    st = fig.suptitle(title)
+
+    if oneplot:
+        handles, labels = ax.get_legend_handles_labels()
+        fig.legend(handles, labels, loc="lower right", title = 'Derivatives')
+    
+    
+    #add a big axis, hide frame
+    fig.add_subplot(111, frameon = False)
+    plt.xlabel('Norm of Coulomb Matrix')
+    plt.ylabel('Fraction of Nonzero Eigenvalues')
+    
+    # shift subplots down and to the left to give title and legend space:
+    st.set_y(0.95)
+    fig.subplots_adjust(top=0.85, left = 0.15, right = 0.82, wspace = 0.1)
+
+    
+    #save and display plot
+    name = savetofile + "svg"
+    plt.savefig(name, transparent = True)
     plt.show()
+    
+
+    return(print("plots have been saved to %s" % name))
 
 def pandaseries_dR(eigenvalues, dimZ):
     label_dR = [['dx%i' %(i+1) , 'dy%i' %(i+1) , 'dz%i' %(i+1)]  for i in range(dimZ)]

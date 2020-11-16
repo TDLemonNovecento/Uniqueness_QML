@@ -39,12 +39,12 @@ database = "/home/linux-miriam/Databases/QM9_XYZ/"
 database_file = "/home/linux-miriam/Uniqueness_QML/Pickled/qm9.pickle"
 dat_ha_file = "/home/linux-miriam/Uniqueness_QML/Pickled/qm7.pickle"
 trial_file = "/home/linux-miriam/Uniqueness_QML/Pickled/XYZ_random_ha5.txt"
-result_file = "/home/linux-miriam/Databases/results.pickle"
+result_file = "/home/linux-miriam/Uniqueness_QML/results.pickle"
 
 
 #qm7_compounds = datprep.read_compounds(dat_ha_file)
 compound_ls = datprep.read_compounds(trial_file)
-def: 
+ 
 eigenvalues = []
 for c in compound_ls:
     Z = jnp.asarray([float(i)for i in c.Z])
@@ -61,38 +61,10 @@ for c in compound_ls:
     dZdR = jder.sort_derivative('CM', Z, R, N, 2, 'R', 'Z')
     ddR = jder.sort_derivative('CM', Z, R, N, 2, 'R', 'R')
 
-    #calculate dZ eigenvalues
-    dZ_ev = []
-    dR_ev = []
-
-    ddZ_ev = []
-    dZdR_ev = []
-    ddR_ev = []
-    
-    for i in range(dim):
-        print(dZ[i].shape)
-        eigenvals, eigenvec = jnp.linalg.eig(dZ[i])
-        dZ_ev.append(eigenvals)
-
-        for x in range(3):
-            eigenvals, eigenvec = jnp.linalg.eig(dR[i,x])
-            dR_ev.append(eigenvals)
-
-            for j in range(dim):
-                eigenvals, eigenvec = jnp.linalg.eig(dZdR[i, j, x])
-                dZdR_ev.append(eigenvals)
-
-                for y in range(3):
-                    eigenvals, eigenvec = jnp.linalg.eig(ddR[i, x, j, y])
-                    ddR_ev.append(eigenvals)
-        
-        for j in range(dim):
-            eigenvals, eigenvec = jnp.linalg.eig(ddZ[i,j])
-            ddZ_ev.append(eigenvals)
-
     #now save results somewhere
-    der_result = datprep.derivative_results(c.filename)
-    der_result.add_all_RZev(dZ_ev, dR_ev, ddZ_ev, ddR_ev, dZdR_ev)
+    der_result = datprep.derivative_results(c.filename, Z, CM)
+    der_result.add_all_RZev(dZ, dR, ddZ, ddR, dZdR)
+    percentile_results = der_result.calculate_percentage()
 
     eigenvalues.append(der_result)
 

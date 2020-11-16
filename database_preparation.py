@@ -59,7 +59,37 @@ class derivative_results():
         self.dZdR_perc = None
 
     
-    def add_all_RZev(self, dZ_ev, dR_ev, dZdZ_ev, dRdR_ev, dZdR_ev):
+    def add_all_RZev(self, dZ, dR, dZdZ, dRdR, dZdR):
+        
+        dZ_ev = []
+        dR_ev = []
+
+        ddZ_ev = []
+        dZdR_ev = []
+        ddR_ev = []
+
+        for i in range(dim):
+            print(dZ[i].shape)
+            eigenvals, eigenvec = jnp.linalg.eig(dZ[i])
+            dZ_ev.append(eigenvals)
+
+        for x in range(3):
+            eigenvals, eigenvec = jnp.linalg.eig(dR[i,x])
+            dR_ev.append(eigenvals)
+
+            for j in range(dim):
+                eigenvals, eigenvec = jnp.linalg.eig(dZdR[i, j, x])
+                dZdR_ev.append(eigenvals)
+
+                for y in range(3):
+                    eigenvals, eigenvec = jnp.linalg.eig(ddR[i, x, j, y])
+                    ddR_ev.append(eigenvals)
+
+        for j in range(dim):
+            eigenvals, eigenvec = jnp.linalg.eig(ddZ[i,j])
+            ddZ_ev.append(eigenvals)
+
+        
         self.dZ_ev = dZ_ev
         self.dR_ev = dR_ev
         self.dZdZ_ev = dZdZ_ev
@@ -72,13 +102,14 @@ class derivative_results():
         self.norm = jnp.linalg.norm(M, ord = 'nuc')
 
     def calculate_percentage(self):
-        
-        self.dZ_perc = jnp.count_nonzero(jnp.asarray(self.dZ_ev))/len(self.dZ_ev)
-        self.dR_perc = jnp.count_nonzero(jnp.asarray(self.dR_ev))/len(self.dR_ev)
-        #self.dZdZ_perc = jnp.count_nonzero(jnp.asarray(self.dZdZ_ev))/len(self.dZdZ_ev)
-        self.dRdR_perc = jnp.count_nonzero(jnp.asarray(self.dRdR_ev))/len(self.dRdR_ev)
-        self.dZdR_perc = jnp.count_nonzero(jnp.asarray(self.dZdR_ev))/len(self.dZdR_ev)
-        dZdZ_perc = 0.5
+        try:
+            self.dZ_perc = len(self.dZ_ev)/jnp.count_nonzero(jnp.asarray(self.dZ_ev))
+            self.dR_perc = len(self.dR_ev)/jnp.count_nonzero(jnp.asarray(self.dR_ev))
+            self.dZdZ_perc = len(self.dZdZ_ev)/jnp.count_nonzero(jnp.asarray(self.dZdZ_ev))
+            self.dRdR_perc = len(self.dRdR_ev)/jnp.count_nonzero(jnp.asarray(self.dRdR_ev))
+            self.dZdR_perc = len(self.dZdR_ev)/jnp.count_nonzero(jnp.asarray(self.dZdR_ev))
+        except ValueError:
+            print("an error occured while calculating percentage")
 
         return(self.dZ_perc, self.dR_perc, self.dZdZ_perc, self.dRdR_perc, self.dZdR_perc)
         

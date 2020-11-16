@@ -11,14 +11,13 @@ import plot_derivative as pltder
 database = "/home/linux-miriam/Databases/QM9_XYZ/"
 database_file = "/home/linux-miriam/Uniqueness_QML/Pickled/qm9.pickle"
 dat_ha_file = "/home/linux-miriam/Uniqueness_QML/Pickled/qm7.pickle"
-trial_file = "/home/stuke/Uniqueness_QML/Pickled/XYZ_random_ha5.txt"
-result_file = "/home/stuke/Uniqueness_QML/results.pickle"
-new_result_file = "/home/stuke/Uniqueness_QML/new_results.pickle"
+trial_file = "/home/linux-miriam/Uniqueness_QML/Pickled/XYZ_random_ha5.txt"
+result_file = "/home/linux-miriam/Uniqueness_QML/results.pickle"
+new_result_file = "/home/linux-miriam/Uniqueness_QML/new_results.pickle"
 
 
 #qm7_compounds = datprep.read_compounds(dat_ha_file)
 results = datprep.read_compounds(result_file)
-data = datprep.read_compounds(trial_file)
 
 dZ_percentages = []
 dR_percentages = []
@@ -28,26 +27,16 @@ dZdR_percentages = []
 
 norms = []
 
-for i in range(len(data)):
-    Z = data[i].Z
-    R = data[i].R
-    M, order = jrep.CM_full_sorted(Z,R)
-    results[i].add_Z_norm(Z, M)
-    norm = results[i].norm
-    dZ_perc, dR_perc, dZdZ_perc, dRdR_perc, dZdR_perc = results[i].calculate_percentage()
-    
-    norms.append(norm)
-    dZ_percentages.append(dZ_perc)
-    dR_percentages.append(dR_perc)
-    dZdZ_percentages.append(dZdZ_perc)
-    dRdR_percentages.append(dRdR_perc)
-    dZdR_percentages.append(dZdR_perc)
+for i in range(len(results)):
+    norms.append(results[i].norm)
+    results_perc = results[i].calculate_percentage()
+    print(results_perc)
+    dZ_percentages.append(results[i].dZ_perc)
+    dR_percentages.append(results[i].dR_perc)
+    dZdZ_percentages.append(results[i].dZdZ_perc)
+    dRdR_percentages.append(results[i].dRdR_perc)
+    dZdR_percentages.append(results[i].dZdR_perc)
 
-datprep.store_compounds(results, new_result_file)
+ylist_toplot = [[jnp.asarray(dZ_percentages), "dZ"],[jnp.asarray(dR_percentages), "dR"],[jnp.asarray(dZdZ_percentages), "dZdZ"] ,[jnp.asarray(dZdR_percentages), "dZdR"], [jnp.asarray(dZdZ_percentages), "dZdZ"]]
 
-pltder.plot_percentage_zeroEV(np.asarray(norms), np.asarray(dZ_percentages), title = "dZ Derivatives")
-pltder.plot_percentage_zeroEV(np.asarray(norms), np.asarray(dR_percentages), title = "dR Derivatives")
-pltder.plot_percentage_zeroEV(np.asarray(norms), np.asarray(dZdZ_percentages), title = "dZdZ Derivatives")
-pltder.plot_percentage_zeroEV(np.asarray(norms), np.asarray(dZdR_percentages), title = "dZdR Derivatives")
-pltder.plot_percentage_zeroEV(np.asarray(norms), np.asarray(dRdR_percentages), title = "dRdR Derivatives")
-
+pltder.plot_percentage_zeroEV(jnp.asarray(norms), ylist_toplot, "Nonzero Eigenvalues of Derivatives")
