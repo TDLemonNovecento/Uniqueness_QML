@@ -30,7 +30,6 @@ norms = []
 for i in range(len(results)):
     norms.append(results[i].norm)
     results_perc = results[i].calculate_percentage()
-    print(results_perc)
     dZ_percentages.append(results[i].dZ_perc)
     dR_percentages.append(results[i].dR_perc)
     dZdZ_percentages.append(results[i].dZdZ_perc)
@@ -39,4 +38,6 @@ for i in range(len(results)):
 
 ylist_toplot = [[jnp.asarray(dZ_percentages), "dZ"],[jnp.asarray(dR_percentages), "dR"],[jnp.asarray(dZdZ_percentages), "dZdZ"] ,[jnp.asarray(dZdR_percentages), "dZdR"], [jnp.asarray(dZdZ_percentages), "dZdZ"]]
 
-pltder.plot_percentage_zeroEV(jnp.asarray(norms), ylist_toplot, "Nonzero Eigenvalues of Derivatives")
+pltder.plot_percentage_zeroEV(jnp.asarray(norms), ylist_toplot, "Nonzero Eigenvalues of CM Derivatives", "perc_nonzeroEV_CM_one", True)
+pltder.plot_percentage_zeroEV(jnp.asarray(norms), ylist_toplot, "Nonzero Eigenvalues of CM Derivatives", "perc_nonzeroEV_CM_panel", False)
+

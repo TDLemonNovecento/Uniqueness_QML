@@ -18,53 +18,71 @@ plt.rc('figure',titlesize=fontsize*1.2) # fontsize of the figure title
 
 
 
-def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis, title, savetofile = "perc_nonzeroEV_CM_test", oneplot = True):
+def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis, title, savetofile = "perc_nonzeroEV_CM_test", oneplot = False):
     #general figure settings
     if oneplot:
-        fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize=(12,8), sharey = True, sharex = True)
+        fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize=(12,8))
     else:
-        fig, ax = plt.subplots(nrows = 3, ncols = 2, figsize=(12,8), sharey = True, sharex = True)
+        fig = plt.figure(figsize = (12,8))
+        ax = fig.add_subplot(111) #main subfigure for titles and stuff
+        ax_d1 = fig.add_subplot(221) #first single derivative
+        ax_d2 = fig.add_subplot(223) #second single derivative
+        ax_dd1 = fig.add_subplot(322) #first double derivative
+        ax_dd2 = fig.add_subplot(324) #second double derivative
+        ax_dd3 = fig.add_subplot(326) #third double derivative
 
     fig.tight_layout()
-    
+ 
     #add all plots
     if oneplot:
         for y in percentages_yaxis:
             ax.scatter(norm_xaxis, y[0], label = y[1])
     else:
-        for i in range(len(percentages_yaxis)):
-            if i > 1:
-                j = 1
-                k = i - 2
-            else:
-                j = 0
-                k = i
-            y = percentages_yaxis[i]
-            ax[k][j].scatter(norm_xaxis, y[0])
-            ax[k][j].title.set_text(y[1])
+        y = percentages_yaxis #for simplicity
+        ax_d1.scatter(norm_xaxis, y[0][0])
+        ax_d1.title.set_text(y[0][1])
+        ax_d2.scatter(norm_xaxis, y[1][0])
+        ax_d2.title.set_text(y[1][1])
+        ax_dd1.scatter(norm_xaxis, y[2][0])
+        ax_dd1.title.set_text(y[2][1])
+        ax_dd2.scatter(norm_xaxis, y[3][0])
+        ax_dd2.title.set_text(y[3][1])
+        ax_dd3.scatter(norm_xaxis, y[4][0])
+        ax_dd3.title.set_text(y[4][1])
+        
+        #turn off ticks and so on for outer subfigure
+        ax.xaxis.set_ticks([])
+        ax.yaxis.set_ticks([])
+        ax.spines['top'].set_color('none')
+        ax.spines['bottom'].set_color('none')
+        ax.spines['left'].set_color('none')
+        ax.spines['right'].set_color('none')
+
+        ax.set_xlabel('Norm of Coulomb Matrix', labelpad = 30)
+        ax.set_ylabel('Fraction of Nonzero Eigenvalues', labelpad = 50)
+
+
 
     #title, axis and legend
     st = fig.suptitle(title)
 
     if oneplot:
         handles, labels = ax.get_legend_handles_labels()
-        fig.legend(handles, labels, loc="lower right", title = 'Derivatives')
+        ax.legend(handles, labels, title = 'Derivatives')
     
-    
-    #add a big axis, hide frame
-    fig.add_subplot(111, frameon = False)
-    plt.xlabel('Norm of Coulomb Matrix')
-    plt.ylabel('Fraction of Nonzero Eigenvalues')
-    
-    # shift subplots down and to the left to give title and legend space:
-    st.set_y(0.95)
-    fig.subplots_adjust(top=0.85, left = 0.15, right = 0.82, wspace = 0.1)
+        plt.xlabel('Norm of Coulomb Matrix')
+        plt.ylabel('Fraction of Nonzero Eigenvalues')
+        fig.subplots_adjust(top=0.92, bottom = 0.1, left = 0.12, right = 0.97)
 
+        # shift subplots down and to the left to give title and legend space:
+        #hspace, wspace increases space between subplots
+    else:
+        fig.subplots_adjust(top=0.90, left = 0.10, right = 0.97,  wspace = 0.2, hspace = 0.5) #right = 0.82
+    
     
     #save and display plot
-    name = savetofile + "svg"
+    name = savetofile
     plt.savefig(name, transparent = True)
-    plt.show()
     
 
     return(print("plots have been saved to %s" % name))
