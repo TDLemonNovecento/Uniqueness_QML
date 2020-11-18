@@ -64,9 +64,11 @@ class derivative_results():
         dZ_ev = []
         dR_ev = []
 
-        ddZ_ev = []
+        dZdZ_ev = []
         dZdR_ev = []
-        ddR_ev = []
+        dRdR_ev = []
+        
+        dim = len(self.Z)
 
         for i in range(dim):
             print(dZ[i].shape)
@@ -82,12 +84,12 @@ class derivative_results():
                 dZdR_ev.append(eigenvals)
 
                 for y in range(3):
-                    eigenvals, eigenvec = jnp.linalg.eig(ddR[i, x, j, y])
-                    ddR_ev.append(eigenvals)
+                    eigenvals, eigenvec = jnp.linalg.eig(dRdR[i, x, j, y])
+                    dRdR_ev.append(eigenvals)
 
         for j in range(dim):
-            eigenvals, eigenvec = jnp.linalg.eig(ddZ[i,j])
-            ddZ_ev.append(eigenvals)
+            eigenvals, eigenvec = jnp.linalg.eig(dZdZ[i,j])
+            dZdZ_ev.append(eigenvals)
 
         
         self.dZ_ev = dZ_ev
@@ -231,13 +233,19 @@ def sortby_heavyatoms(source_file, destination_file, heavy_atoms):
     all_compounds = read_compounds(source_file)
 
     ha_compliant_compounds = []
+    max_atoms = 0
 
     for c in all_compounds:
         if (c.heavy_atoms() <= heavy_atoms):
             ha_compliant_compounds.append(c)
+            if len(c.Z) > max_atoms:
+                max_atoms = len(c.Z)
+            
 
     store_compounds(ha_compliant_compounds, destination_file)
-    return(print("a new compound list containing only files/n with up to %i heavy atoms has been saved to %s" %(heavy_atoms, destination_file)))
+    print("a new compound list containing only files/n with up to %i heavy atoms has been saved to %s" %(heavy_atoms, destination_file))
+
+    return(max_atoms)
 
 
 def read_xyz_qml(pathway):
@@ -269,4 +277,3 @@ def read_xyz_qml(pathway):
         ZRN_data.append(Z, R, N)
 
     return(compoundlist, ZRN_data)
-

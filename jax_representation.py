@@ -10,7 +10,7 @@ import jax_math as jmath
 
 
 
-def CM_full_unsorted_matrix(Z, R, size = 9):
+def CM_full_unsorted_matrix(Z, R, size = 23):
     ''' Calculates unsorted coulomb matrix
     Parameters
     ----------
@@ -48,6 +48,7 @@ def CM_full_sorted(Z, R, N = 0):
     contains nuclear charges
     R : 3 x n dimensional array
     contains nuclear positions
+    N : int, total charge, irrelevant for CM but needed for derivatives
     
     Return
     ------

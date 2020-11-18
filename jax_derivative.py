@@ -4,8 +4,9 @@ import jax.numpy as jnp
 import jax_representation as jrep
 from jax import grad, jacfwd, jacrev
 import time
+import database_preparation as datprep
 
-def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R"):
+def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R", M = None, order = None):
     '''Easy function to handle no, one dimensional or two dimensional derivatives with grad. Issue right now: no additional arguments can be passed to function, it therefore falls back to default for any further arguments beside Z, R and N.
     Parameters
     ----------
@@ -44,8 +45,12 @@ def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R"):
 
 
     if grad == 0:
-        return( fn(Z, R, N)[0])
+        if M == None:
+            return( fn(Z, R, N)[0])
+        else:
+            return(M)
     
+    #get correct derivative in jax_derivative function depending on which data should be derived by
     diff_list = {'Z' : 0, 'R' : 1, 'N' : 2}
     try:
         dx_index = diff_list[dx]
@@ -61,7 +66,7 @@ def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R"):
             d_fn = dfn_list['CM']
             print("your representation was not found. falling back to 'CM' for first derivative")
         
-        return(d_fn(Z, R, N, dx_index))
+        return(d_fn(Z, R, N, dx_index, M, order))
     
 
     #grad is 2 or bigger, second derivative is calculated
@@ -79,7 +84,7 @@ def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R"):
         print("your ddx value cannot be derived by. falling back to 'Z'")
     
 
-    return(dd_fn(Z, R, N, dx_index, ddx_index))
+    return(dd_fn(Z, R, N, dx_index, ddx_index, M, order))
 
 
 
@@ -88,6 +93,46 @@ def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R"):
 '''
 The following functions are for calling all derivatives and printing or processing them one by one
 '''
+def calculate_eigenvalues(repro, compoundlist):
+    '''calculates eigenvalues of derived matrices
+
+    Returns:
+    --------
+    resultlist: list of derivative_result instances, a class
+                which contains both norm as well as derivatives,
+                eigenvalues and fractual eigenvalue information
+    '''
+    resultlist = []
+    #extract atomic data from compound
+    for c in compoundlist:
+        Z = jnp.asarray([float(i)for i in c.Z])
+        R = c.R
+        N = float(c.N)
+
+        #calculate derivatives and representation
+        M, order = jrep.CM_full_sorted(Z, R, N)
+        #dim = M.shape[0]
+
+        dZ = sort_derivative(repro, Z, R, N, 1, 'Z', M, order)
+        dR = sort_derivative(repro, Z, R, N, 1, 'R', M, order)
+        
+        ddZ = sort_derivative(repro, Z, R, N, 2, 'Z', 'Z', M, order)
+        dZdR = sort_derivative(repro, Z, R, N, 2, 'R', 'Z', M, order)
+        ddR = sort_derivative(repro, Z, R, N, 2, 'R', 'R', M, order)
+
+        #create derivative results instance
+        der_result = datprep.derivative_results(c.filename, Z, M)
+        
+        #get all derivative eigenvalues for the derivatives and add to results instance
+        der_result.add_all_RZev(dZ, dR, ddZ, ddR, dZdR)
+
+        #calculate percentile results and add to results
+        percentile_results = der_result.calculate_percentage()
+
+        resultlist.append(der_result)
+
+    return(resultlist)
+
 
 def cal_print_1stder(repro, Z, R, N):
     dim = len(Z)
@@ -146,7 +191,7 @@ def cal_print_2ndder(repro, Z, R, N):
 
 '''Below follow function specific derivatives with corresponding sorting'''
 
-def d_CM(Z, R, N, dx_index):
+def d_CM(Z, R, N, dx_index, M = None, order = None):
     '''this function calculates the derivatives of the sorted Coulomb matrix
     variables:
     ----------
@@ -163,9 +208,10 @@ def d_CM(Z, R, N, dx_index):
         
     '''
     print("calculating sorted second derivative of Coulomb Matrix")
+
     fM_sorted, order = jrep.CM_full_sorted(Z, R, N) #get order of sorted representation
-    dim = len(order)
     
+    dim = len(order)
     #direct derivative as jacobian
     dCM = jacfwd(jrep.CM_full_sorted, dx_index)
     reference_dCM = dCM(Z, R, N)[0]
@@ -251,11 +297,14 @@ def dd_OM_ev(Z, R, N, dx_index = 0, ddx_index = 0):
     return()
 
 
-def dd_CM(Z, R, N, dx_index = 0, ddx_index = 0, time_calculations = True):
+def dd_CM(Z, R, N, dx_index = 0, ddx_index = 0, M = None, order = None, time_calculations = True):
     '''
     calculates and sorts second derivatives
     '''
-    fM_sorted, order = jrep.CM_full_sorted(Z, R, N)
+    if M == None:
+        fM_sorted, order = jrep.CM_full_sorted(Z, R, N)
+    else:
+        fM_sorted = M
     dim = len(order)
     
     #calculates dZdZ

@@ -16,8 +16,9 @@ result_file = "/home/linux-miriam/Uniqueness_QML/results.pickle"
 new_result_file = "/home/linux-miriam/Uniqueness_QML/new_results.pickle"
 
 
-#qm7_compounds = datprep.read_compounds(dat_ha_file)
-results = datprep.read_compounds(result_file)
+compounds = datprep.read_compounds(dat_ha_file)
+print(len(compounds))
+exit()
 
 dZ_percentages = []
 dR_percentages = []
