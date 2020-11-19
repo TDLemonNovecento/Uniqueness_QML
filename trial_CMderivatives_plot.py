@@ -4,6 +4,13 @@ import database_preparation as datprep
 import jax_derivative as jder
 import jax_representation as jrep
 import jax.numpy as jnp
+import sys
+
+try:
+	init, end = int(sys.argv[1]), int(sys.argv[2])
+except IndexError:
+	init = int(input("starting point"))
+	end = int(input("end point"))
 
 '''
 PROBLEM:
@@ -35,10 +42,10 @@ calculation time:  -1.537632703781128 reordering time:  -169.21404123306274
 '''
 
 #define path to folder containing xyz files. All files are considered.
-database = "/home/linux-miriam/Databases/QM9_XYZ/"
-database_file = "/home/linux-miriam/Uniqueness_QML/Pickled/qm9.pickle"
-dat_ha_file = "/home/linux-miriam/Uniqueness_QML/Pickled/qm7.pickle"
-result_file = "/home/linux-miriam/Uniqueness_QML/results.pickle"
+database = "/home/miriam/Databases/QM9_XYZ/"
+database_file = "/home/miriam/Uniqueness_QML/Pickled/qm9.pickle"
+dat_ha_file = "/home/miriam/Uniqueness_QML/Pickled/qm7.pickle"
+result_folder = "/home/miriam/Uniqueness_QML/Pickled/"
 
 '''
 #read xyzfiles and store into a molecular list as well as a compound list
@@ -55,12 +62,22 @@ print("all CM should have size " , max_atoms)
 input("Press enter once you have made sure the size of the unsorted CM matrix has been adapted accordingly")
 '''
 #read list of compounds from data file
-compound_ls = datprep.read_compounds(dat_ha_file)
+full_compound_ls = datprep.read_compounds(dat_ha_file)
+print(len(full_compound_ls), " compounds in full data file")
+try:
+	compound_ls = full_compound_ls[init : end]
+except IndexError:
+	print("Your indices were out of bound, restart. min: 0, max: ", len(full_compound_ls))
+	exit()
+
+print(len(compound_ls), " of which are being processed")
 
 #create new list of results from list of compounds
 results = jder.calculate_eigenvalues('CM', compound_ls)
 
+
 #store list of results in result_file
+result_file = result_folder + "results_%i-%i.pickle" %(init, end)
 datprep.store_compounds(results, result_file)
 
 #prepare plotting

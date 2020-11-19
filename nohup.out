@@ -1,0 +1,3573 @@
+3993  compounds in full data file
+166  of which are being processed
+WARNING:absl:No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
+calculating sorted second derivative of Coulomb Matrix
+Traceback (most recent call last):
+  File "trial_CMderivatives_plot.py", line 76, in <module>
+    results = jder.calculate_eigenvalues('CM', compound_ls)
+  File "/home/miriam/Uniqueness_QML/jax_derivative.py", line 116, in calculate_eigenvalues
+    dZ = sort_derivative(repro, Z, R, N, 1, 'Z', M, order)
+  File "/home/miriam/Uniqueness_QML/jax_derivative.py", line 69, in sort_derivative
+    return(d_fn(Z, R, N, dx_index, M, order))
+  File "/home/miriam/Uniqueness_QML/jax_derivative.py", line 217, in d_CM
+    reference_dCM = dCM(Z, R, N)[0]
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/api.py", line 912, in jacfun
+    y, jac = vmap(pushfwd, out_axes=(None, -1))(_std_basis(dyn_args))
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/traceback_util.py", line 133, in reraise_with_filtered_traceback
+    return fun(*args, **kwargs)
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/api.py", line 1232, in batched_fun
+    out_flat = batching.batch(flat_fun, args_flat, in_axes_flat,
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/interpreters/batching.py", line 36, in batch
+    return batched_fun.call_wrapped(*in_vals)
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/linear_util.py", line 160, in call_wrapped
+    ans = self.f(*args, **dict(self.params, **kwargs))
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/api.py", line 1685, in _jvp
+    out_primals, out_tangents = ad.jvp(flat_fun).call_wrapped(ps_flat, ts_flat)
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/linear_util.py", line 160, in call_wrapped
+    ans = self.f(*args, **dict(self.params, **kwargs))
+  File "/home/miriam/Uniqueness_QML/jax_representation.py", line 62, in CM_full_sorted
+    D = jnp.asarray([[unsorted_M[i,j] for j in order] for i in order])
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/_src/numpy/lax_numpy.py", line 2573, in asarray
+    return array(a, dtype=dtype, copy=False, order=order)
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/_src/numpy/lax_numpy.py", line 2544, in array
+    out = stack([array(elt, dtype=dtype) for elt in object])
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/_src/numpy/lax_numpy.py", line 2544, in <listcomp>
+    out = stack([array(elt, dtype=dtype) for elt in object])
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/_src/numpy/lax_numpy.py", line 2544, in array
+    out = stack([array(elt, dtype=dtype) for elt in object])
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/_src/numpy/lax_numpy.py", line 2362, in stack
+    new_arrays.append(expand_dims(a, axis))
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/_src/numpy/lax_numpy.py", line 1346, in expand_dims
+    return lax.expand_dims(a, axis)
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/_src/lax/lax.py", line 3399, in expand_dims
+    return broadcast_in_dim(array, result_shape, broadcast_dims)
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/_src/lax/lax.py", line 669, in broadcast_in_dim
+    return broadcast_in_dim_p.bind(
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/core.py", line 266, in bind
+    out = top_trace.process_primitive(self, tracers, params)
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/interpreters/ad.py", line 272, in process_primitive
+    primal_out, tangent_out = jvp(primals_in, tangents_in, **params)
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/interpreters/ad.py", line 405, in linear_jvp
+    return val_out, primitive.bind(*tangents, **params)
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/core.py", line 266, in bind
+    out = top_trace.process_primitive(self, tracers, params)
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/interpreters/batching.py", line 157, in process_primitive
+    val_out, dim_out = batched_primitive(vals_in, dims_in, **params)
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/_src/lax/lax.py", line 3161, in _broadcast_in_dim_batch_rule
+    return broadcast_in_dim(new_operand, new_shape, new_broadcast_dimensions), 0
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/_src/lax/lax.py", line 669, in broadcast_in_dim
+    return broadcast_in_dim_p.bind(
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/core.py", line 266, in bind
+    out = top_trace.process_primitive(self, tracers, params)
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/core.py", line 576, in process_primitive
+    return primitive.impl(*tracers, **params)
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/jax/_src/lax/lax.py", line 3108, in _broadcast_in_dim_impl
+    np.equal(operand.shape, np.take(shape, broadcast_dimensions))):
+  File "<__array_function__ internals>", line 5, in take
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/numpy/core/fromnumeric.py", line 191, in take
+    return _wrapfunc(a, 'take', indices, axis=axis, out=out, mode=mode)
+  File "/home/miriam/miniconda3/envs/masters/lib/python3.8/site-packages/numpy/core/fromnumeric.py", line 52, in _wrapfunc
+    def _wrapfunc(obj, method, *args, **kwds):
+KeyboardInterrupt
+3993  compounds in full data file
+166  of which are being processed
+WARNING:absl:No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+starting pointTraceback (most recent call last):
+  File "trial_CMderivatives_plot.py", line 10, in <module>
+    init, end = int(sys.argv[1]), int(sys.argv[2])
+IndexError: list index out of range
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "trial_CMderivatives_plot.py", line 12, in <module>
+    init = int(input("starting point"))
+OSError: [Errno 9] Bad file descriptor
+starting pointTraceback (most recent call last):
+  File "trial_CMderivatives_plot.py", line 10, in <module>
+    init, end = int(sys.argv[1]), int(sys.argv[2])
+IndexError: list index out of range
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "trial_CMderivatives_plot.py", line 12, in <module>
+    init = int(input("starting point"))
+OSError: [Errno 9] Bad file descriptor
+starting pointTraceback (most recent call last):
+  File "trial_CMderivatives_plot.py", line 10, in <module>
+    init, end = int(sys.argv[1]), int(sys.argv[2])
+IndexError: list index out of range
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "trial_CMderivatives_plot.py", line 12, in <module>
+    init = int(input("starting point"))
+OSError: [Errno 9] Bad file descriptor
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+calculating sorted second derivative of Coulomb Matrix
+calculating sorted second derivative of Coulomb Matrix
+I am calculating the second derivative
+I am calculating the second derivative
+you want to calculate dZdR or dRdZ
+I am calculating the second derivative
+do dRdR sorting
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+(23, 23)
+Traceback (most recent call last):
+  File "trial_CMderivatives_plot.py", line 103, in <module>
+    pltder.plot_percentage_zeroEV(jnp.asarray(norms), ylist_toplot, "Nonzero Eigenvalues of CM Derivatives", "perc_nonzeroEV_CM_one", True)
+NameError: name 'pltder' is not defined
