@@ -105,7 +105,7 @@ class derivative_results():
 
     def calculate_percentage(self):
         try:
-            self.dZ_perc = len(self.dZ_ev)/jnp.count_nonzero(jnp.asarray(self.dZ_ev))
+            self.dZ_perc = self.Z.size()/jnp.count_nonzero(jnp.asarray(self.dZ_ev))
             self.dR_perc = len(self.dR_ev)/jnp.count_nonzero(jnp.asarray(self.dR_ev))
             self.dZdZ_perc = len(self.dZdZ_ev)/jnp.count_nonzero(jnp.asarray(self.dZdZ_ev))
             self.dRdR_perc = len(self.dRdR_ev)/jnp.count_nonzero(jnp.asarray(self.dRdR_ev))

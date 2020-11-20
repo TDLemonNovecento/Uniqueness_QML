@@ -77,7 +77,7 @@ def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis, title, savetofile = "p
         # shift subplots down and to the left to give title and legend space:
         #hspace, wspace increases space between subplots
     else:
-        fig.subplots_adjust(top=0.90, left = 0.10, right = 0.97,  wspace = 0.2, hspace = 0.5) #right = 0.82
+        fig.subplots_adjust(top=0.87, left = 0.10, right = 0.97,  wspace = 0.2, hspace = 0.5) #right = 0.82
     
     
     #save and display plot

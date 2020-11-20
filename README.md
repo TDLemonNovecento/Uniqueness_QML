@@ -18,8 +18,9 @@ jax_math.py: contains functions used to calculate the representations.
 jax_derivative.py: contains derivative functions for all representations.
 
 plot_*: files that contain plotting functions_
+plot_derivative.py: contains plotting functions for compounds, representations, ect.
 plot_CMderivatives.py: plots CM derivatives
 
 trial_*: group of code examples dealing with whatever comes after _
 trial_OM: file that calls a OM representation and prints it
-trial_CMderivatives: code that writes down all derivatives
+trial_CMderivatives_plot.py: file that contains full walkthrough from extracting data from xyz file up to ploting the derivatives of a sorted CM representation
