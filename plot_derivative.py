@@ -18,7 +18,7 @@ plt.rc('figure',titlesize=fontsize*1.2) # fontsize of the figure title
 
 
 
-def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis, title, savetofile = "perc_nonzeroEV_CM_test", oneplot = False):
+def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis, title = "Nonzero Eigenvalues of Derivatives of CM", savetofile = "perc_nonzeroEV_CM_test", oneplot = True):
     #general figure settings
     if oneplot:
         fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize=(12,8))

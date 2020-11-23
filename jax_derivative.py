@@ -103,6 +103,9 @@ def calculate_eigenvalues(repro, compoundlist):
                 eigenvalues and fractual eigenvalue information
     '''
     resultlist = []
+    old_results = []
+    corr_results = []
+    new_results = []
     #extract atomic data from compound
     for c in compoundlist:
         Z = jnp.asarray([float(i)for i in c.Z])
@@ -127,11 +130,14 @@ def calculate_eigenvalues(repro, compoundlist):
         der_result.add_all_RZev(dZ, dR, ddZ, ddR, dZdR)
 
         #calculate percentile results and add to results
-        percentile_results = der_result.calculate_percentage()
-
+        old_res, corr_res, new_res = der_result.calculate_percentage()
+        
+        old_results.append(old_res)
+        corr_results.append(corr_res)
+        new_results.append(new_res)
         resultlist.append(der_result)
 
-    return(resultlist)
+    return(resultlist, old_results, corr_results, new_results)
 
 
 def cal_print_1stder(repro, Z, R, N):

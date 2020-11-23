@@ -10,15 +10,15 @@ import jax_representation as jrep
 import plot_derivative as pltder
 import jax.numpy as jnp
 import sys
-<<<<<<< HEAD
-=======
+
+
 
 try:
 	init, end = int(sys.argv[1]), int(sys.argv[2])
 except IndexError:
 	init = int(input("starting point"))
 	end = int(input("end point"))
->>>>>>> 94223862f9d9d84c5aa0041c2c237e8108c83fa8
+
 
 ###B)
 '''
@@ -80,15 +80,14 @@ except IndexError:
 	exit()
 '''
 
-<<<<<<< HEAD
+
 #print(len(compound_ls), " of which are being processed")
-=======
+
 #define path to folder containing xyz files. All files are considered.
 database = "/home/miriam/Databases/QM9_XYZ/"
 database_file = "/home/miriam/Uniqueness_QML/Pickled/qm9.pickle"
 dat_ha_file = "/home/miriam/Uniqueness_QML/Pickled/qm7.pickle"
 result_folder = "/home/miriam/Uniqueness_QML/Pickled/"
->>>>>>> 94223862f9d9d84c5aa0041c2c237e8108c83fa8
 
 ###B)
 ###create new list of results from list of compounds
