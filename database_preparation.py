@@ -105,44 +105,19 @@ class derivative_results():
 
     def calculate_percentage(self):
         dim = len(self.Z)
-        print("Z:", self.Z, "len Z:", dim)
         try:
-            dZdZ_len = jnp.asarray(self.dZdZ_ev).shape[0]
-            dZdZ_evno = jnp.count_nonzero(jnp.asarray(self.dZdZ_ev))
-            print("dZdZ ev:\n", jnp.asarray(self.dZdZ_ev), "\nlen of dZdZ (shape): ", dZdZ_len, "len of dZdZ calculated:", dim**3, "nonzero EV: ", dZdZ_evno)
-
-            old_dZ_perc = len(self.dZ_ev)/jnp.count_nonzero(jnp.asarray(self.dZ_ev))
-            corr_dZ_perc = jnp.count_nonzero(jnp.asarray(self.dZ_ev))/jnp.asarray(self.dZ_ev).shape[0]
             self.dZ_perc = jnp.count_nonzero(jnp.asarray(self.dZ_ev))/(dim**2) #is 2*dim Z the max number of EV?
-            
-            old_dR_perc = len(self.dR_ev)/jnp.count_nonzero(jnp.asarray(self.dR_ev))
-            corr_dR_perc = jnp.count_nonzero(jnp.asarray(self.dR_ev))/ jnp.asarray(self.dZ_ev).shape[0]
             self.dR_perc = jnp.count_nonzero(jnp.asarray(self.dR_ev))/(3*dim**2)
-            
-            old_dZdZ_perc = len(self.dZdZ_ev)/jnp.count_nonzero(jnp.asarray(self.dZdZ_ev))
-            corr_dZdZ_perc = jnp.count_nonzero(jnp.asarray(self.dZdZ_ev))/jnp.asarray(self.dZdZ_ev).shape[0]
             self.dZdZ_perc = jnp.count_nonzero(jnp.asarray(self.dZdZ_ev))/(dim**3)
-            
-            dRdR_evno = jnp.count_nonzero(jnp.asarray(self.dRdR_ev))
-            dRdR_array = jnp.asarray(self.dRdR_ev)
-            print("dRdR ev:\n", dRdR_array, "\nnonzero EV: ", dRdR_evno, "calculated nu of max EV: ", 9*dim**3)
-
-            old_dRdR_perc = len(self.dRdR_ev)/jnp.count_nonzero(jnp.asarray(self.dRdR_ev))
-            corr_dRdR_perc = jnp.count_nonzero(jnp.asarray(self.dRdR_ev))/jnp.asarray(self.dRdR_ev).shape[0]
             self.dRdR_perc = jnp.count_nonzero(jnp.asarray(self.dRdR_ev))/(9*dim**3)
-            
-            old_dZdR_perc = len(self.dZdR_ev)/jnp.count_nonzero(jnp.asarray(self.dZdR_ev))
-            corr_dZdR_perc = jnp.count_nonzero(jnp.asarray(self.dZdR_ev))/jnp.asarray(self.dZdR_ev).shape[0]
             self.dZdR_perc = jnp.count_nonzero(jnp.asarray(self.dZdR_ev))/(3*dim**3)
 
         except ValueError:
             print("an error occured while calculating percentage")
 
-        old_values = [old_dZ_perc, old_dR_perc, old_dZdZ_perc, old_dRdR_perc, old_dZdR_perc]
-        corrected_values = [corr_dZ_perc, corr_dR_perc, corr_dZdZ_perc, corr_dRdR_perc, corr_dZdR_perc]
-        new_values = [self.dZ_perc, self.dR_perc, self.dZdZ_perc, self.dRdR_perc, self.dZdR_perc]
+        fractions = [self.dZ_perc, self.dR_perc, self.dZdZ_perc, self.dRdR_perc, self.dZdR_perc]
 
-        return(old_values, corrected_values, new_values)
+        return(fractions)
         
 
             
