@@ -30,6 +30,9 @@ def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R", 
     '''
 
     #first, find out which representation was chosen and get appropriate function
+    ''' idea: the whole code might be more efficient if representation and order were passed on
+    instead of calculated freshly at every derivative
+    '''
     fn_list = {'CM': jrep.CM_full_sorted, 'CM_EV': jrep.CM_ev, 'OM' : jrep.OM_full_sorted}
     dfn_list = {'CM': d_CM, 'CM_EV' : d_CM_ev, 'OM' : d_OM, 'OM_EV' : d_OM_ev}
     ddfn_list = {'CM': dd_CM, 'CM_EV' : dd_CM_ev, 'OM' : dd_OM, 'OM_EV' : dd_OM_ev}
@@ -66,7 +69,7 @@ def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R", 
             d_fn = dfn_list['CM']
             print("your representation was not found. falling back to 'CM' for first derivative")
         
-        return(d_fn(Z, R, N, dx_index, M, order))
+        return(d_fn(Z, R, N, dx_index))
     
 
     #grad is 2 or bigger, second derivative is calculated
@@ -84,7 +87,7 @@ def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R", 
         print("your ddx value cannot be derived by. falling back to 'Z'")
     
 
-    return(dd_fn(Z, R, N, dx_index, ddx_index, M, order))
+    return(dd_fn(Z, R, N, dx_index, ddx_index))
 
 
 
@@ -94,18 +97,25 @@ def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R", 
 The following functions are for calling all derivatives and printing or processing them one by one
 '''
 def calculate_eigenvalues(repro, compoundlist):
-    '''calculates eigenvalues of derived matrices
+    '''calculates eigenvalues of derived matrices from compounds
+    only functions as translator between the compound object, the derivative_result object
+    and the sorted_derivative function.
+
+    Arguments:
+    ----------
+    repro: representation, such as 'CM' for coulomb matrix ect, as is used in sorted_derivative function
+    compoundlist: list of database_preparation.compound objects
 
     Returns:
     --------
     resultlist: list of derivative_result instances, a class
                 which contains both norm as well as derivatives,
                 eigenvalues and fractual eigenvalue information
+    results: list of fractions of nonzero eigenvalues,
+            structure: [[compound 1: dZ_ev, dR_ev, ...], [compound 2: ...],...]
     '''
     resultlist = []
-    old_results = []
-    corr_results = []
-    new_results = []
+    results = []
     #extract atomic data from compound
     for c in compoundlist:
         Z = jnp.asarray([float(i)for i in c.Z])
@@ -130,14 +140,12 @@ def calculate_eigenvalues(repro, compoundlist):
         der_result.add_all_RZev(dZ, dR, ddZ, ddR, dZdR)
 
         #calculate percentile results and add to results
-        old_res, corr_res, new_res = der_result.calculate_percentage()
+        res = der_result.calculate_percentage()
         
-        old_results.append(old_res)
-        corr_results.append(corr_res)
-        new_results.append(new_res)
+        results.append(res)
         resultlist.append(der_result)
 
-    return(resultlist, old_results, corr_results, new_results)
+    return(resultlist, results)
 
 
 def cal_print_1stder(repro, Z, R, N):
@@ -197,7 +205,7 @@ def cal_print_2ndder(repro, Z, R, N):
 
 '''Below follow function specific derivatives with corresponding sorting'''
 
-def d_CM(Z, R, N, dx_index, M = None, order = None):
+def d_CM(Z, R, N, dx_index):
     '''this function calculates the derivatives of the sorted Coulomb matrix
     variables:
     ----------
@@ -265,9 +273,10 @@ def d_CM_ev(Z, R, N, dx_index):
     dim = len(order)
     print('sorted CM eigenvalues :', fM)
     print('order:', order)
+    
     #direct derivative as jacobian
     Jraw = jacfwd(jrep.CM_ev, dx_index)
-    J = Jraw(Z, R, N)[0]
+    J = Jraw(Z.astype(float), R.astype(float), float(N))
     print('unsorted Jacobian is:', J)
 
     '''Not sure about reordering below. definitely need to recheck. Not important for EV though, or is it?'''

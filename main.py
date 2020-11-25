@@ -8,48 +8,15 @@ import jax.numpy as jnp
 import plot_derivative as pltder
 
 #define path to folder containing xyz files. All files are considered.
-database = "/home/linux-miriam/Databases/QM9_XYZ/"
-database_file = "/home/linux-miriam/Uniqueness_QML/Pickled/qm9.pickle"
+database = "/home/linux-miriam/Uniqueness_QML/Pickled/qm7.pickle"
+small_data_file = "/home/linux-miriam/Uniqueness_QML/Pickled/fourcompounds.pickle"
 dat_ha_file = "/home/linux-miriam/Uniqueness_QML/Pickled/qm7.pickle"
-re_file = "/home/linux-miriam/Uniqueness_QML/Pickled/results"
-result_file = "/home/linux-miriam/Databases/Pickled/qm7_CM_results.pickle"
 
-numbers = ["0-166", "166-332", "332-498", "498-550", "550-600", "600-664", "664-830", "830-996", "996-1162", "1162-1328", "1328-1494", "1494-1660", "1660-1826", "1494-1660", "1660-1826", "1826-1992", "1992-2158", "2158-2324", "2324-2490", "2490-2656", "2656-2822", "2822-2988", "2988-3154", "3154-3320", "3320-3486", "3486-3652", "3652-3818", "3818-3993"] 
+compounds = datprep.read_compounds(small_data_file)
 
-compounds = []
+for c in compounds:
+    ev, vectors = jrep.CM_ev(c.Z, c.R, c.N)
+    print("name of compound:", c.filename)
+    print("eigenvalue repro:\n", ev)
 
-for n in numbers:
-    filename = re_file + "_" + n + ".pickle"
-    compoundlist = datprep.read_compounds(filename)
-    print("number of compounds in sublist: ", len(compoundlist))
-    
-    compounds.extend(compoundlist)
-
-print("number of compounds: ", len(compounds))
-
-
-datprep.store_compounds(compounds, result_file)
-for res in compounds:
-    results = res.calculate_percentage()
-
-dZ_percentages = []
-dR_percentages = []
-dZdZ_percentages = []
-dRdR_percentages = []
-dZdR_percentages = []
-
-norms = []
-
-for i in range(len(compounds)):
-    norms.append(compounds[i].norm)
-    dZ_percentages.append(compounds[i].dZ_perc)
-    dR_percentages.append(compounds[i].dR_perc)
-    dZdZ_percentages.append(compounds[i].dZdZ_perc)
-    dRdR_percentages.append(compounds[i].dRdR_perc)
-    dZdR_percentages.append(compounds[i].dZdR_perc)
-
-ylist_toplot = [[jnp.asarray(dZ_percentages), "dZ"],[jnp.asarray(dR_percentages), "dR"],[jnp.asarray(dZdZ_percentages), "dZdZ"] ,[jnp.asarray(dRdR_percentages), "dRdR"], [jnp.asarray(dZdR_percentages), "dZdR"]]
-
-pltder.plot_percentage_zeroEV(jnp.asarray(norms), ylist_toplot, "Nonzero Eigenvalues of CM Derivatives", "QM7_perc_nonzeroEV_CM_one", True)
-pltder.plot_percentage_zeroEV(jnp.asarray(norms), ylist_toplot, "Nonzero Eigenvalues of CM Derivatives", "QM7_perc_nonzeroEV_CM_panel", False)
-
+    derivative = jder.sort_derivative('CM_EV', c.Z, c.R)

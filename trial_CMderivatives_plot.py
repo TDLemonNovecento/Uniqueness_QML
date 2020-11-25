@@ -104,11 +104,10 @@ result_file = result_folder + "results_%i-%i.pickle" %(init, end)
 
 #C) 
 '''
-<<<<<<< HEAD
 #If you want to plot from multiple pickle results file, use this code:
 #these are used as file identifiers for the results_%i-%i.pickle files
 numbers = ["0-166", "166-332", "332-498", "498-664", "664-830", "830-996", "996-1162", "1162-1328", "1328-1494", "1494-1660", "1660-1826", "1494-1660", "1660-1826", "1826-1992", "1992-2158", "2158-2324", "2324-2490", "2490-2656", "2656-2822", "2822-2988", "2988-3154", "3154-3320", "3320-3486", "3486-3652", "3652-3818", "3818-3993"] 
-=======
+
 #read list of compounds from data file
 full_compound_ls = datprep.read_compounds(dat_ha_file)
 print(len(full_compound_ls), " compounds in full data file")
@@ -119,20 +118,16 @@ except IndexError:
 	exit()
 
 print(len(compound_ls), " of which are being processed")
->>>>>>> 94223862f9d9d84c5aa0041c2c237e8108c83fa8
 
 #we'll be reading the results anew.
 #This part of the program should therefore be executed after the top part
 #has been executed for all the files which can then be called by referencing to the "numbers" list
 
-<<<<<<< HEAD
 results = []
-=======
 
 #store list of results in result_file
 result_file = result_folder + "results_%i-%i.pickle" %(init, end)
 datprep.store_compounds(results, result_file)
->>>>>>> 94223862f9d9d84c5aa0041c2c237e8108c83fa8
 
 for n in numbers:
     filename = result_file + "_" + n + ".pickle"
