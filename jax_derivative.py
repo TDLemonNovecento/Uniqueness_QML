@@ -48,6 +48,7 @@ def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R", 
 
 
     if grad == 0:
+        print("calculating the representation itself")
         if M == None:
             return( fn(Z, R, N)[0])
         else:
@@ -62,7 +63,7 @@ def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R", 
         print("your dx value cannot be derived by. falling back to 'Z'")
 
     if grad == 1:#first derivative is calculated
-
+        print("calculating the first derivative of the representation")
         try:
             d_fn = dfn_list[representation]
         except ValueError:
@@ -73,7 +74,7 @@ def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R", 
     
 
     #grad is 2 or bigger, second derivative is calculated
-    print("I am calculating the second derivative")
+    print("calculating the second derivative of the representation")
     try: #  get derivation function
         dd_fn = ddfn_list[representation]
     except ValueError:
@@ -271,23 +272,24 @@ def d_CM_ev(Z, R, N, dx_index):
     print("calculating Jacobian of Coulomb Matrix eigenvalues")
     fM, order = jrep.CM_ev(Z, R, N) #get order of sorted representation
     dim = len(order)
-    print('sorted CM eigenvalues :', fM)
-    print('order:', order)
     
     #direct derivative as jacobian
-    Jraw = jacfwd(jrep.CM_ev, dx_index)
-    J = Jraw(Z.astype(float), R.astype(float), float(N))
-    print('unsorted Jacobian is:', J)
-
-    '''Not sure about reordering below. definitely need to recheck. Not important for EV though, or is it?'''
+    dCM_ev = jacfwd(jrep.CM_ev, dx_index)
+    ref_dCM_ev = dCM_ev(Z.astype(float), R.astype(float), float(N))[0]
+    
+    print("derivative:\n", ref_dCM_ev)
+    '''Not sure about reordering and values below. definitely need to recheck'''
     if(dx_index == 0):
         #assign derivative to correct field in sorted matrix by reordering derZ_ij to derZ_kl
-        J_dZkl = jnp.asarray([[J[l][m] for l in range(dim)] for m in order])
+        J_dZkl = jnp.asarray([[ref_dCM_ev[l][m] for l in range(dim)] for m in order])
         return(J_dZkl)
     elif(dx_index == 1):
         #unordered derivative taken from sorted matrix
-        J_dRkl = jnp.asarray([[[J[l][m][x] for l in range(dim)] for x in range(3)] for m in order])
+        J_dRkl = jnp.asarray([[[ref_dCM_ev[l][m][x] for l in range(dim)] for x in range(3)] for m in order])
         return(J_dRkl)
+    else:
+        return(ref_dCM_ev)
+
 
 
 def d_OM(Z, R, N, dx_index = 0):
@@ -316,6 +318,7 @@ def dd_CM(Z, R, N, dx_index = 0, ddx_index = 0, M = None, order = None, time_cal
     '''
     calculates and sorts second derivatives
     '''
+    
     if M == None:
         fM_sorted, order = jrep.CM_full_sorted(Z, R, N)
     else:
@@ -329,15 +332,15 @@ def dd_CM(Z, R, N, dx_index = 0, ddx_index = 0, M = None, order = None, time_cal
             
             '''
             sorting function, performs the following rearrangement:
-            [[[[HdZraw[k,l, m, n] for k in range(dim)] for l in range(dim)] for m in order] for n in order])
+            [[[[HdZraw[k,m, n] for k in range(dim)] for m in order] for n in order])
             '''
                         
-            dZdZ_ordered = np.transpose(HdZraw,(2, 3, 0, 1))
+            dZdZ_ordered = np.transpose(HdZraw,(2, 0, 1))
             
             dZdZ_sorted = np.copy(dZdZ_ordered)
-            for i in range(dZdZ_ordered.shape[0]):
-                for j in range(dZdZ_ordered.shape[1]):
-                    dZdZ_sorted[i, j] = dZdZ_ordered[order[i], order[j]]
+            for m in range(dZdZ_ordered.shape[0]):
+                for n in range(dZdZ_ordered.shape[1]):
+                    dZdZ_sorted[m, n] = dZdZ_ordered[order[m], order[n]]
             
             return(dZdZ_sorted)
     
@@ -383,10 +386,79 @@ def dd_CM(Z, R, N, dx_index = 0, ddx_index = 0, M = None, order = None, time_cal
         return(dZdR_sorted)
 
 def dd_CM_ev(Z, R, N, dx_index = 0, ddx_index = 0):
-    fM, order = jrep.CcM_ev(Z, R, N)
-    dim = len(order)
+   
+    Z = Z.astype(float)
+    R = R.astype(float)
+    N = float(N)
+    
+    fM, order = jrep.CM_ev(Z, R, N)
+    dim = len(Z)
+    print(len(order), order, "order")
     Hraw = hessian(jrep.CM_ev, dx_index, ddx_index)(Z, R, N)[0]
-    print('Hraw:', Hraw)
+
+    '''
+    calculates and sorts second derivatives
+    '''
+    fM_sorted, order = jrep.CM_full_sorted(Z, R,N)
+    dim = len(order)
+
+    #calculates dZdZ
+    if (dx_index ==0):
+        if (ddx_index == 0):
+            '''
+            sorting function, performs the following rearrangement:
+            [[[[HdZraw[k, m, n] for k in range(dim)] for m in order] for n in order])
+            '''
+            dZdZ_ordered = np.transpose(Hraw,(2, 0, 1))
+
+            dZdZ_sorted = np.copy(dZdZ_ordered)
+            for i in range(dZdZ_ordered.shape[0]):
+                for j in range(dZdZ_ordered.shape[1]):
+                    dZdZ_sorted[i, j] = dZdZ_ordered[order[i], order[j]]
+
+            return(dZdZ_sorted)
+    
+    #calculates dRdR
+    if (dx_index == 1):
+        if (ddx_index == 1):
+
+            print("do dRdR sorting")
+            '''
+            sorting function, performs the following rearrangement:
+            [[[[[[HdRraw[n, i, x, j, y] for n in range(dim)] for y in range(3)] for j in order] for x in range(3)] for i in order])
+            '''
+            dRdR_ordered = np.transpose(Hraw,(1, 2, 3, 4, 0))
+
+            dRdR_sorted = np.copy(dRdR_ordered)
+            for i in range(dRdR_ordered.shape[0]):
+                for x in range(3):
+                    for j in range(dRdR_ordered.shape[0]):#why does dim not work?? 
+                        for y in range(3):
+                            dRdR_sorted[i, x, j, y] = dRdR_ordered[order[i], x, order[j], y]
+
+            return(dRdR_sorted)
+
+    if (dx_index == 0 and ddx_index == 1 ) or (dx_index == 1 and ddx_index == 0):
+        print("you want to calculate dZdR or dRdZ")
+
+        '''sorting function, performs the following reordering but in fast
+        [[[[[HdZdRraw[n, m, i, j, x] for n in range(dim)] for m in range(dim)] for x in range(3)] for j in order] for i in order]
+        '''
+        dZdR_ordered = np.transpose(Hraw,(2, 3, 4, 0, 1))
+        dZdR_sorted = np.copy(dZdR_ordered)
+
+        for i in range(dZdR_ordered.shape[0]):
+            for j in range(dZdR_ordered.shape[1]):
+                for x in range(3):
+                    dZdR_sorted[i,j,x] = dZdR_ordered[order[i], order[j], x]
+
+        return(dZdR_sorted)
+    
+    if (dx_index == 2 or ddx_index == 2):
+        return(Hraw)
+
+
+
 
 def hessian(f, dx, ddx):
     H = jacfwd(jacfwd(f, dx), ddx)

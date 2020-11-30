@@ -17,6 +17,7 @@ compounds = datprep.read_compounds(small_data_file)
 for c in compounds:
     ev, vectors = jrep.CM_ev(c.Z, c.R, c.N)
     print("name of compound:", c.filename)
-    print("eigenvalue repro:\n", ev)
-
-    derivative = jder.sort_derivative('CM_EV', c.Z, c.R)
+    #print("eigenvalue repro:\n", ev)
+    
+    derivative = jder.sort_derivative('CM_EV', c.Z, c.R, c.N, 2, "R", "R")
+    print(derivative)

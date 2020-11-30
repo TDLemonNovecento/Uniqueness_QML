@@ -55,7 +55,6 @@ def CM_full_sorted(Z, R, N = 0):
     D : 2D array (matrix)
     Full Coulomb Matrix, dim(Z)xdim(Z)
     '''
-    
     unsorted_M = CM_full_unsorted_matrix(Z,R)
     val_row = jnp.asarray([jnp.linalg.norm(row) for row in unsorted_M])
     order = val_row.argsort()[::-1]
