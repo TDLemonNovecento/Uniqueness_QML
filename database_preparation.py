@@ -69,28 +69,49 @@ class derivative_results():
         dRdR_ev = []
         
         dim = len(self.Z)
+        #for matrix like representations, calculate eigenvalues. for the rest, leave as it is
+        
+        matrix = False
+        try:
+            if(dZ[0].shape[0] == dZ[0].shape[1]):
+                matrix = True
+        except IndexError:
+            print("your representation has not the shape of a matrix")
 
-        for i in range(dim):
-            print(dZ[i].shape)
-            eigenvals, eigenvec = jnp.linalg.eig(dZ[i])
-            dZ_ev.append(eigenvals)
+        if matrix:            
+            for i in range(dim):
+                print(dZ[i].shape)
+                eigenvals, eigenvec = jnp.linalg.eig(dZ[i])
+                dZ_ev.append(eigenvals)
 
-        for x in range(3):
-            eigenvals, eigenvec = jnp.linalg.eig(dR[i,x])
-            dR_ev.append(eigenvals)
+                for x in range(3):
+                    eigenvals, eigenvec = jnp.linalg.eig(dR[i,x])
+                    dR_ev.append(eigenvals)
 
-            for j in range(dim):
-                eigenvals, eigenvec = jnp.linalg.eig(dZdR[i, j, x])
-                dZdR_ev.append(eigenvals)
+                    for j in range(dim):
+                        eigenvals, eigenvec = jnp.linalg.eig(dZdR[i, j, x])
+                        dZdR_ev.append(eigenvals)
 
-                for y in range(3):
-                    eigenvals, eigenvec = jnp.linalg.eig(dRdR[i, x, j, y])
-                    dRdR_ev.append(eigenvals)
+                        for y in range(3):
+                            eigenvals, eigenvec = jnp.linalg.eig(dRdR[i, x, j, y])
+                            dRdR_ev.append(eigenvals)
 
-        for j in range(dim):
-            eigenvals, eigenvec = jnp.linalg.eig(dZdZ[i,j])
-            dZdZ_ev.append(eigenvals)
-
+                for j in range(dim):
+                    eigenvals, eigenvec = jnp.linalg.eig(dZdZ[i,j])
+                    dZdZ_ev.append(eigenvals)
+        
+        else:
+            print("dZdR size:", len(dZdR), len(dZdR[0]), len(dZdR[0][0]))
+            for i in range(dim):
+                dZ_ev.append(dZ[i])
+                for x in range(3):
+                    dR_ev.append(dR[i,x])
+                    for j in range(dim):
+                        dZdR_ev.append(dZdR[i,j, x])
+                        for y in range(3):
+                            dRdR_ev.append(dRdR[i,x,j,y])
+                for j in range(dim):
+                    dZdZ_ev.append(dZdZ[i,j])
         
         self.dZ_ev = dZ_ev
         self.dR_ev = dR_ev
