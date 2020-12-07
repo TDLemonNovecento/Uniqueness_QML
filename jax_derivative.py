@@ -172,6 +172,14 @@ def cal_print_1stder(repro, Z, R, N):
 def cal_print_2ndder(repro, Z, R, N):
     dim = len(Z)
     which_return = [False, False, True]
+    matrix = False
+    try:
+        if(repro  == 'CM' or repro == 'OM'):
+            matrix = True
+    except IndexError:
+        print("your representation has not the shape of a matrix")
+
+    
     '''calculates all second derivatives'''
     if which_return[0]:
         dZdZ = sort_derivative(repro, Z, R, N, 2, 'Z', 'Z')
@@ -179,6 +187,7 @@ def cal_print_2ndder(repro, Z, R, N):
             for j in range(dim): #second dZ over 3 atoms in H2O
                 print('dZ%idZ%i' %(i+1, j+1))
                 print(dZdZ[i,j])
+
 
     if which_return[1]:
         dRdR = sort_derivative(repro, Z, R, N, 2, 'R', 'R')
@@ -202,7 +211,7 @@ def cal_print_2ndder(repro, Z, R, N):
             for j in range(dim):
                 for x in xyz:
                     print('dZ%id%s%i' %(i+1, x[1], j+1))
-                    print(dZdR[i, j, x[0]])
+                    print(dZdR[i, x[0], j])
 
 
 
