@@ -215,7 +215,7 @@ def cal_print_2ndder(repro, Z, R, N):
                     print(dZdR[i, x[0], j])
 
 
-def num_first_derivative(f, ZRN, ZRNplus, ZRNminus, method='central', h = 0.1):
+def num_first_derivative(f, ZRN, ZRNplus, ZRNminus, method='central', h = 0.1, dim =3):
     '''Compute the difference formula for f'(a) with step size h.
 
     Parameters
@@ -238,11 +238,8 @@ def num_first_derivative(f, ZRN, ZRNplus, ZRNminus, method='central', h = 0.1):
             backward: f(a) - f(a-h))/h            
     '''
     if method == 'central':
-        print("Z", ZRN[0], "Zplus", ZRNplus[0], "Zminus", ZRNminus[0])
-        plus = f(ZRNplus[0], ZRNplus[1], ZRNplus[2])[0]
-        minus = f(ZRNminus[0], ZRNminus[1], ZRNminus[2])[0]
-        print("plus:\n", plus)
-        print("minus: \n", minus)
+        plus = f(ZRNplus[0], ZRNplus[1], ZRNplus[2], dim, True)[0]
+        minus = f(ZRNminus[0], ZRNminus[1], ZRNminus[2], dim, True)[0]
         
         return( (plus - minus)/(2*h))
     elif method == 'forward':
@@ -252,7 +249,7 @@ def num_first_derivative(f, ZRN, ZRNplus, ZRNminus, method='central', h = 0.1):
     else:
         raise ValueError("Method must be 'central', 'forward' or 'backward'.")
 
-def num_second_mixed_derivative(f, ZRNplusplus, ZRNplusminus, ZRNminusplus, ZRNminusminus, h1 = 0.1, h2 = 0.1):
+def num_second_mixed_derivative(f, ZRNplusplus, ZRNplusminus, ZRNminusplus, ZRNminusminus, h1 = 0.1, h2 = 0.1, dim = 3):
     '''Compute the difference formula for f'(a) with step size h.
 
     Parameters
@@ -281,14 +278,14 @@ def num_second_mixed_derivative(f, ZRNplusplus, ZRNplusminus, ZRNminusplus, ZRNm
             central: f(a+h_1, b+h_2) - f(a+h_1, b-h_2) - f(a-h_1, b+h_2) + f(a-h_1, b-h_2))/(4h_1*h_2)
 
     '''
-    plusplus = f(ZRNplusplus[0], ZRNplusplus[1], ZRNplusplus[2])[0]
-    plusminus = f(ZRNplusminus[0], ZRNplusminus[1], ZRNplusminus[2])[0]
-    minusplus = f(ZRNminusplus[0], ZRNminusplus[1], ZRNminusplus[2])[0]
-    minusminus = f(ZRNminusminus[0], ZRNminusminus[1], ZRNminusminus[2])[0]
+    plusplus = f(ZRNplusplus[0], ZRNplusplus[1], ZRNplusplus[2], dim, True)[0]
+    plusminus = f(ZRNplusminus[0], ZRNplusminus[1], ZRNplusminus[2], dim, True)[0]
+    minusplus = f(ZRNminusplus[0], ZRNminusplus[1], ZRNminusplus[2], dim, True)[0]
+    minusminus = f(ZRNminusminus[0], ZRNminusminus[1], ZRNminusminus[2], dim, True)[0]
 
     return((plusplus - plusminus - minusplus + minusminus)/(4*h1*h2))
 
-def num_second_pure_derivative(f, ZRN, ZRNplusplus, ZRNplus, ZRNminus, ZRNminusminus, method='central', h = 0.1):
+def num_second_pure_derivative(f, ZRN, ZRNplusplus, ZRNplus, ZRNminus, ZRNminusminus, method='central', h1 = 0.1, h2 = 0.1, dim = 3):
     '''Compute the difference formula for f'(a) with step size h.
 
     Parameters
@@ -319,18 +316,18 @@ def num_second_pure_derivative(f, ZRN, ZRNplusplus, ZRNplus, ZRNminus, ZRNminusm
         five point centered difference:
             central: (-f(a+2h) + 16f(a+h)-30f(a) +16f(a-h) - f(a-2h))/12h²
     '''
-    normal = f(ZRN[0], ZRN[1], ZRN[2])[0]
+    normal = f(ZRN[0], ZRN[1], ZRN[2], dim, True)[0]
 
     if method == 'five_point':
-        plusplus = f(ZRNplusplus[0], ZRNplusplus[1], ZRNplusplus[2])[0]
-        minusminus = f(ZRNminusminus[0], ZRNminusminus[1], ZRNminusminus[2])[0]
-        plus = f(ZRNplus[0], ZRNplus[1], ZRNplus[2])[0]
-        minus = f(ZRNminus[0], ZRNminus[1], ZRNminus[2])[0]
-        return (-plusplus + 16*plus -30*normal + 16*minus - minusminus)/(12*h*h)
+        plusplus = f(ZRNplusplus[0], ZRNplusplus[1], ZRNplusplus[2], dim, True)[0]
+        minusminus = f(ZRNminusminus[0], ZRNminusminus[1], ZRNminusminus[2], dim, True)[0]
+        plus = f(ZRNplus[0], ZRNplus[1], ZRNplus[2],dim, True)[0]
+        minus = f(ZRNminus[0], ZRNminus[1], ZRNminus[2], dim, True)[0]
+        return (-plusplus + 16*plus -30*normal + 16*minus - minusminus)/(12*h1*h2)
     elif method == 'central':
-        plus = f(ZRNplus[0], ZRNplus[1], ZRNplus[2])[0]
-        minus = f(ZRNminus[0], ZRNminus[1], ZRNminus[2])[0]
-        return((plus - 2*normal *minus) /( h**2))
+        plus = f(ZRNplus[0], ZRNplus[1], ZRNplus[2], dim, True)[0]
+        minus = f(ZRNminus[0], ZRNminus[1], ZRNminus[2],dim, True)[0]
+        return((plus - 2*normal *minus) /( h1*h2))
     elif method == 'forward':
         return (f(a + h) - f(a))/h
     elif method == 'backward':
