@@ -164,6 +164,9 @@ def read_xyz_energies(folder, get_energy = True):
             filename = folder + xyzfile
             atoms = []
             R = []
+
+
+
             #open file and read lines
             with open(filename, 'r') as f:
                 content = f.readlines()
@@ -217,6 +220,54 @@ def read_xyz_energies(folder, get_energy = True):
 
     return(molecule_list, compound_ls)
 
+
+def read_xyzfile(filename, get_energy = False):
+    '''
+    reads single file, returns Z
+
+    '''
+    X = []
+    atoms = []
+    zero_point_energy = 0
+
+    #open file and read lines
+    with open(filename, 'r') as f:
+        content = f.readlines()
+        N = int(content[0])
+
+        if get_energy:
+            '''in the QM9 database, the comment line contains information on the molecule.
+            See https://www.nature.com/articles/sdata201422/tables/4 for more info.
+            '''
+            try:
+                comment = content[1].split()
+                #extract internal energy at 0K in Hartree
+                zero_point_energy = comment[12]
+            except IndexError:
+                print("The xyz file does not support energy value passing analogous to the QM9 database \n no energy retrieved")
+                get_energy = False
+        
+        #read in atomic information from xyz file
+        for line in range(2, N+2):
+            atominfo = content[line].split()
+            atoms.append(atominfo[0])
+            try:
+                X.append(jnp.asarray([float(atominfo[1]), float(atominfo[2]), float(atominfo[3])]))
+            except ValueError:
+                '''in the QM9 dataset, some values are not in scientific notation
+                they cause errors when reading, this ValueError deals with them
+                '''
+                print("a Value Error occured while reading file %s. The following line caused Errors:" %xyzfile)
+                print(atominfo)
+                for i in range(1, 4):
+                    atominfo[i] = atominfo[i].replace("*^","e")
+                X.append(jnp.asarray([float(atominfo[1]), float(atominfo[2]), float(atominfo[3])]))
+
+            #transform to np arrays for further use
+            Z = jnp.asarray([jbas.atomic_signs[atom] for atom in atoms])
+            R = jnp.asarray(X)
+
+    return(Z, R, N, zero_point_energy)
 
 
 def make_compound_instances(molecule_list):

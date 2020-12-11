@@ -1,6 +1,7 @@
 #here we calculate the first and second derivajtives to the basis of chemical space depending on the chosen representation and placeholder. Matrix and vector reconstruction may be included, too.
 import numpy as np
 import jax.numpy as jnp
+import jax_derivative as jder
 import jax_representation as jrep
 from jax import grad, jacfwd, jacrev
 import time
@@ -171,7 +172,7 @@ def cal_print_1stder(repro, Z, R, N):
 
 def cal_print_2ndder(repro, Z, R, N):
     dim = len(Z)
-    which_return = [False, False, True]
+    which_return = [True, True, True]
     matrix = False
     try:
         if(repro  == 'CM' or repro == 'OM'):
@@ -213,6 +214,129 @@ def cal_print_2ndder(repro, Z, R, N):
                     print('dZ%id%s%i' %(i+1, x[1], j+1))
                     print(dZdR[i, x[0], j])
 
+
+def num_first_derivative(f, ZRN, ZRNplus, ZRNminus, method='central', h = 0.1):
+    '''Compute the difference formula for f'(a) with step size h.
+
+    Parameters
+    ----------
+    f : function
+        Vectorized function of one variable
+    a : number
+        Compute derivative at x = a
+    method : string
+        Difference formula: 'forward', 'backward' or 'central'
+    h : number
+        Step size in difference formula
+
+    Returns
+    -------
+    float
+        Difference formula:
+            central: f(a+h) - f(a-h))/2h
+            forward: f(a+h) - f(a))/h
+            backward: f(a) - f(a-h))/h            
+    '''
+    if method == 'central':
+        print("Z", ZRN[0], "Zplus", ZRNplus[0], "Zminus", ZRNminus[0])
+        plus = f(ZRNplus[0], ZRNplus[1], ZRNplus[2])[0]
+        minus = f(ZRNminus[0], ZRNminus[1], ZRNminus[2])[0]
+        print("plus:\n", plus)
+        print("minus: \n", minus)
+        
+        return( (plus - minus)/(2*h))
+    elif method == 'forward':
+        return (f(a + h) - f(a))/h
+    elif method == 'backward':
+        return (f(a) - f(a - h))/h
+    else:
+        raise ValueError("Method must be 'central', 'forward' or 'backward'.")
+
+def num_second_mixed_derivative(f, ZRNplusplus, ZRNplusminus, ZRNminusplus, ZRNminusminus, h1 = 0.1, h2 = 0.1):
+    '''Compute the difference formula for f'(a) with step size h.
+
+    Parameters
+    ----------
+    f : function
+        Vectorized function of one variable
+    ZRN : list
+        compute derivative at Z, R, N as in list ZRN
+    ZRNplus, ZRNminus: list
+        altered original ZRN list with small changes in the variable
+        with respect to which the derivative is taken
+        ZRNplus: h is added
+        ZRNminus: h is subtracted
+    method : string
+        Difference formula: 'forward', 'backward' or 'central'
+    h : number
+        Step size in difference formula
+
+    Returns
+    -------
+    result of f
+
+        
+        with a being the unaltered ZRN:
+        Difference formula for mixed second derivative:
+            central: f(a+h_1, b+h_2) - f(a+h_1, b-h_2) - f(a-h_1, b+h_2) + f(a-h_1, b-h_2))/(4h_1*h_2)
+
+    '''
+    plusplus = f(ZRNplusplus[0], ZRNplusplus[1], ZRNplusplus[2])[0]
+    plusminus = f(ZRNplusminus[0], ZRNplusminus[1], ZRNplusminus[2])[0]
+    minusplus = f(ZRNminusplus[0], ZRNminusplus[1], ZRNminusplus[2])[0]
+    minusminus = f(ZRNminusminus[0], ZRNminusminus[1], ZRNminusminus[2])[0]
+
+    return((plusplus - plusminus - minusplus + minusminus)/(4*h1*h2))
+
+def num_second_pure_derivative(f, ZRN, ZRNplusplus, ZRNplus, ZRNminus, ZRNminusminus, method='central', h = 0.1):
+    '''Compute the difference formula for f'(a) with step size h.
+
+    Parameters
+    ----------
+    f : function
+        Vectorized function of one variable
+    ZRN : list
+        compute derivative at Z, R, N as in list ZRN
+    ZRNplus, ZRNminus: list
+        altered original ZRN list with small changes in the variable
+        with respect to which the derivative is taken
+        ZRNplus: h is added
+        ZRNminus: h is subtracted
+    method : string
+        Difference formula: 'forward', 'backward' or 'central'
+    h : number
+        Step size in difference formula
+
+    Returns
+    -------
+    result of f
+
+    Difference formula for three point second derivative:
+            central: (f(a+h) - 2f(a) + f(a-h))/h²
+            forward: (f(a) - 2f(a+h) +f(a+2h))/h
+            backward: (f(a-2h) - 2f(a-h) + f(a))/h
+
+        five point centered difference:
+            central: (-f(a+2h) + 16f(a+h)-30f(a) +16f(a-h) - f(a-2h))/12h²
+    '''
+    normal = f(ZRN[0], ZRN[1], ZRN[2])[0]
+
+    if method == 'five_point':
+        plusplus = f(ZRNplusplus[0], ZRNplusplus[1], ZRNplusplus[2])[0]
+        minusminus = f(ZRNminusminus[0], ZRNminusminus[1], ZRNminusminus[2])[0]
+        plus = f(ZRNplus[0], ZRNplus[1], ZRNplus[2])[0]
+        minus = f(ZRNminus[0], ZRNminus[1], ZRNminus[2])[0]
+        return (-plusplus + 16*plus -30*normal + 16*minus - minusminus)/(12*h*h)
+    elif method == 'central':
+        plus = f(ZRNplus[0], ZRNplus[1], ZRNplus[2])[0]
+        minus = f(ZRNminus[0], ZRNminus[1], ZRNminus[2])[0]
+        return((plus - 2*normal *minus) /( h**2))
+    elif method == 'forward':
+        return (f(a + h) - f(a))/h
+    elif method == 'backward':
+        return (f(a) - f(a - h))/h
+    else:
+        raise ValueError("Method must be 'central', 'forward' or 'backward'.")
 
 
 '''Below follow function specific derivatives with corresponding sorting'''

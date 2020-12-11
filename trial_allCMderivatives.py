@@ -26,9 +26,9 @@ print("row-sorting: ", order)
 
 '''print results nicely'''
 jnp.set_printoptions(precision=3, suppress=True)
-print('Representation:\n------------------')
-print(M)
+#print('Representation:\n------------------')
+#print(M)
 
 
-#jder.cal_print_1stder('CM', Z, R, N)
-jder.cal_print_2ndder('CM', Z, R, N)
+jder.cal_print_1stder('CM_EV', Z, R, N)
+jder.cal_print_2ndder('CM_EV', Z, R, N)
