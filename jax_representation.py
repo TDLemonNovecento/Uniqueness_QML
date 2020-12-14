@@ -63,7 +63,7 @@ def CM_full_sorted(Z, R, N = 0, size=3, unsorted = False):
     D = jnp.asarray([[unsorted_M[i,j] for j in order] for i in order])
     return(D, order)
     
-def CM_ev(Z, R, N, maxsize = 23, unsorted = True):
+def CM_ev(Z, R, N=0, maxsize = 23, unsorted = False):
     '''
     Parameters
     ----------

@@ -20,14 +20,18 @@ M, order = jrep.CM_full_sorted(Z_orig, R_orig, N)
 
 Z = Z_orig[order]
 R = R_orig[order]
-
+print("Z: ", Z, "R: ", R)
 dim = len(Z)
 xyz = [[0,'x'],[1,'y'],[2,'z']]
-h1 = 0.001
-h2 = 0.001
+h1 = 0.1
+h2 = 0.1
 Z = jnp.asarray(Z, dtype = jnp.float32)
-#fun = jrep.CM_full_sorted
-fun = jrep.CM_ev
+fun = jrep.CM_full_sorted
+#fun = jrep.CM_ev
+
+results = jder.num_second_mixed_derivative(fun, [Z, R, N], [0,0], [1,0,0], h1, h2)
+print(results)
+sys.exit()
 
 #store all results in arrays to print them later
 Zder = []
@@ -36,19 +40,19 @@ Z2der = []
 R2der = []
 ZRder = []
 
-
 #do all Z derivatives
-for i in range(dim):
-    
+#for i in range(dim):
+for i in range(1):    
     name = ("dZ%i:" % (i+1))
     Zminus = jax.ops.index_add(Z, i, -h1)
     Zplus = jax.ops.index_add(Z,i, h1)
     
-    der = jder.num_first_derivative(fun, [Z, R, N], [Zplus, R, N], [Zminus, R, N], 'central', h1)
-    Zder.append([name,der])
+    #der = jder.num_first_derivative(fun, [Z, R, N], [Zplus, R, N], [Zminus, R, N], 'central', h1)
+    #Zder.append([name,der])
 
     #do all dZdZ derivatives:
-    for j in range(dim):
+    #for j in range(i, dim):
+    for j in range(1):
         name = ("dZ%i dZ%i:" %( i+1, j+1))
         Zminusminus = jax.ops.index_add(Zminus, j, -h2)
         Zplusplus = jax.ops.index_add(Zplus, j, h2)
@@ -61,7 +65,7 @@ for i in range(dim):
             der = jder.num_second_mixed_derivative(fun, [Zplusplus, R, N], [Zplusminus, R, N], [Zminusplus, R, N], [Zminusminus, R, N],  h1, h2) 
         
         Z2der.append([name, der])
-
+        
         #do all dZdR derivatives:
         for x in xyz:
             name = ("dZ%i d%s%i:" %(i+1, x[1], j+1))
@@ -70,18 +74,23 @@ for i in range(dim):
             der = jder.num_second_mixed_derivative(fun, [Zplus, Rplus, N], [Zplus, Rminus, N], [Zminus, Rplus, N], [Zminus, Rminus, N], h1, h2)
             ZRder.append([name,der])
 
+for i in range(1):
     #do all dR derivatives:
-    for y in xyz:
+    #for y in xyz:
+    for y in [[1,'y']]:
+        print(y)
         name = ("d%s%i :" %(y[1], i+1))
         Rplus = jax.ops.index_update(R, i, jax.ops.index_add(R[i], y[0], h1))
         Rminus = jax.ops.index_update(R, i, jax.ops.index_add(R[i], y[0], -h1))
 
-        der = jder.num_first_derivative(fun, [Z, R, N], [Z, Rplus, N], [Z, Rminus, N], 'central', h1)
-        Rder.append([name,der])
+        #der = jder.num_first_derivative(fun, [Z, R, N], [Z, Rplus, N], [Z, Rminus, N], 'central', h1)
+        #Rder.append([name,der])
 
         #do all dRdR derivatives:
-        for k in range(dim):
-            for z in xyz:
+        for k in range(1):
+        #for k in range(i, dim):
+            for z in [[0, 'x']]:
+            #for z in xyz:
                 name = ("d%s%i d%s%i :" %(y[1], i+1, z[1], k+1))
                 Rplusplus = jax.ops.index_update(Rplus, k, jax.ops.index_add(Rplus[k], z[0], h2))
                 Rminusminus = jax.ops.index_update(Rminus, k, jax.ops.index_add(Rminus[k], z[0], -h2))
@@ -92,10 +101,7 @@ for i in range(dim):
                     der = jder.num_second_pure_derivative(fun, [Z, R, N], [Z, Rplusplus, N], [Z, Rplus, N], [Z, Rminus, N], [Z, Rminusminus, N], 'central', h1, h2)
 
                 else:
-                    Rplusminus = jax.ops.index_update(Rminus, k, jax.ops.index_add(Rplus[k], z[0], -h2))
-                    Rminusplus = jax.ops.index_update(Rminus, k, jax.ops.index_add(Rplus[k], z[0], h2))
-                    der = jder.num_second_mixed_derivative(fun, [Z, Rplusplus, N], [Z, Rplusminus, N], [Z, Rminusplus, N], [Z, Rminusminus, N], h1, h2)
-
+                    der = jder.num_second_mixed_derivative(fun, [Z, R, N], [i, y[0]], [k, z[0]], h1, h2)
                 R2der.append([name,der])
     
 #now print results properly:

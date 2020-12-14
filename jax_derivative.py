@@ -3,7 +3,7 @@ import numpy as np
 import jax.numpy as jnp
 import jax_derivative as jder
 import jax_representation as jrep
-from jax import grad, jacfwd, jacrev
+from jax import grad, jacfwd, jacrev, ops
 import time
 import database_preparation as datprep
 
@@ -214,6 +214,16 @@ def cal_print_2ndder(repro, Z, R, N):
                     print('dZ%id%s%i' %(i+1, x[1], j+1))
                     print(dZdR[i, x[0], j])
 
+def update_index(ZRN, d, h):
+    if d[0] == 0:
+        new = ops.index_add(ZRN[d[0]], d[1], h)
+        new_ZRN = ZRN
+        new_ZRN[d[0]] = new
+    elif d[0] == 1:
+        new = ops.index_update(ZRN[d[0]], d[1], ops.index_add(ZRN[d[0]][d[1]], d[2], h))
+        new_ZRN = [ZRN[0], new, ZRN[2]]
+    return(new_ZRN)
+
 
 def num_first_derivative(f, ZRN, ZRNplus, ZRNminus, method='central', h = 0.1, dim =3):
     '''Compute the difference formula for f'(a) with step size h.
@@ -249,23 +259,26 @@ def num_first_derivative(f, ZRN, ZRNplus, ZRNminus, method='central', h = 0.1, d
     else:
         raise ValueError("Method must be 'central', 'forward' or 'backward'.")
 
-def num_second_mixed_derivative(f, ZRNplusplus, ZRNplusminus, ZRNminusplus, ZRNminusminus, h1 = 0.1, h2 = 0.1, dim = 3):
+def num_second_mixed_derivative(f, ZRN, d1 = [0, 0], d2 = [1, 2, 1], h1 = 0.1, h2 = 0.1, method = 'felix', dim = 3):
     '''Compute the difference formula for f'(a) with step size h.
 
     Parameters
     ----------
     f : function
         Vectorized function of one variable
-    ZRN : list
-        compute derivative at Z, R, N as in list ZRN
-    ZRNplus, ZRNminus: list
-        altered original ZRN list with small changes in the variable
-        with respect to which the derivative is taken
-        ZRNplus: h is added
-        ZRNminus: h is subtracted
+    ZRN : list containing Z, R, N
+    Z : np array nx1
+        nuclear charges
+    R : np array nx3
+        positions of nuclear charges
+    N : float
+        total no of electrons, irrelevant
+    d1,d2 : list
+        first place determines which variable is derived by (0 = dZ, 1 = dR, 2 = dN)
+        second place determines which dR (0 = dx, 1 = dy, 2 = dz)
     method : string
         Difference formula: 'forward', 'backward' or 'central'
-    h : number
+    h1, h2 : number
         Step size in difference formula
 
     Returns
@@ -275,15 +288,70 @@ def num_second_mixed_derivative(f, ZRNplusplus, ZRNplusminus, ZRNminusplus, ZRNm
         
         with a being the unaltered ZRN:
         Difference formula for mixed second derivative:
-            central: f(a+h_1, b+h_2) - f(a+h_1, b-h_2) - f(a-h_1, b+h_2) + f(a-h_1, b-h_2))/(4h_1*h_2)
+            simplecentral: f(a+h_1, b+h_2) - f(a+h_1, b-h_2) - f(a-h_1, b+h_2) + f(a-h_1, b-h_2))/(4h_1*h_2)
 
     '''
-    plusplus = f(ZRNplusplus[0], ZRNplusplus[1], ZRNplusplus[2], dim, True)[0]
-    plusminus = f(ZRNplusminus[0], ZRNplusminus[1], ZRNplusminus[2], dim, True)[0]
-    minusplus = f(ZRNminusplus[0], ZRNminusplus[1], ZRNminusplus[2], dim, True)[0]
-    minusminus = f(ZRNminusminus[0], ZRNminusminus[1], ZRNminusminus[2], dim, True)[0]
+    if d1[0] == d2[0] and d1[1] == d2[1]:
+        print("you are using the wrong method, use pure derivative")
+        exit()
 
-    return((plusplus - plusminus - minusplus + minusminus)/(4*h1*h2))
+    if method == 'simplecentral':
+        plusplus = update_index(update_index(ZRN, d1, h1), d2, h2)
+        plusminus = update_index(update_index(ZRN, d1, h1), d2, -h2)
+        minusplus = update_index(update_index(ZRN, d1, -h1), d2, h2)
+        minusminus = update_index(update_index(ZRN, d1, -h1), d2, -h2)
+
+        fplusplus = f(plusplus[0], plusplus[1], plusplus[2])[0]
+        fplusminus = f(plusminus[0], plusminus[1], plusminus[2])[0]
+        fminusplus = f(minusplus[0], minusplus[1], minusplus[2])[0]
+        fminusminus = f(minusminus[0], minusminus[1], minusminus[2])[0]
+        return((fplusplus - fplusminus - fminusplus + fminusminus)/(4*h1*h2))
+
+    if method == 'felix':
+        pp = update_index(update_index(ZRN, d1, h1), d2, h2)
+        pm = update_index(update_index(ZRN, d1, h1), d2, -h2)
+        mp = update_index(update_index(ZRN, d1, -h1), d2, h2)
+        mm = update_index(update_index(ZRN, d1, -h1), d2, -h2)
+
+        p2p = update_index(update_index(ZRN, d1, 2*h1), d2, h2)
+        p2m = update_index(update_index(ZRN, d1, 2*h1), d2, -h2)
+        m2p = update_index(update_index(ZRN, d1, -2*h1), d2, h2)
+        m2m = update_index(update_index(ZRN, d1, -2*h1), d2, -h2)
+
+        pp2 = update_index(update_index(ZRN, d1, h1), d2, 2*h2)
+        pm2 = update_index(update_index(ZRN, d1, h1), d2, -2*h2)
+        mp2 = update_index(update_index(ZRN, d1, -h1), d2, 2*h2)
+        mm2 = update_index(update_index(ZRN, d1, -h1), d2, -2*h2)
+ 
+        p2p2 = update_index(update_index(ZRN, d1, 2*h1), d2, 2*h2)
+        p2m2 = update_index(update_index(ZRN, d1, 2*h1), d2, -2*h2)
+        m2p2 = update_index(update_index(ZRN, d1, -2*h1), d2, 2*h2)
+        m2m2 = update_index(update_index(ZRN, d1, -2*h1), d2, -2*h2)
+
+
+        fp2p2 = f(p2p2[0], p2p2[1], p2p2[2])[0]
+        fp2m2 = f(p2m2[0], p2m2[1], p2m2[2])[0]
+        fm2p2 = f(m2p2[0], m2p2[1], m2p2[2])[0]
+        fm2m2 = f(m2m2[0], m2m2[1], m2m2[2])[0]
+
+        fpp2 = f(pp2[0], pp2[1], pp2[2])[0]
+        fpm2 = f(pm2[0], pm2[1], pm2[2])[0]
+        fmp2 = f(mp2[0], mp2[1], mp2[2])[0]
+        fmm2 = f(mm2[0], mm2[1], mm2[2])[0]
+        
+        fp2p = f(p2p[0], p2p[1], p2p[2])[0]
+        fp2m = f(p2m[0], p2m[1], p2m[2])[0]
+        fm2p = f(m2p[0], m2p[1], m2p[2])[0]
+        fm2m = f(m2m[0], m2m[1], m2m[2])[0]
+
+        fpp = f(pp[0], pp[1], pp[2])[0]
+        fpm = f(pm[0], pm[1], pm[2])[0]
+        fmp = f(mp[0], mp[1], mp[2])[0]
+        fmm = f(mm[0], mm[1], mm[2])[0]
+
+        return((1/(144*h1*h2))*(8*(fpm2 + fp2m + fm2p + fmp2) - 8*(fmm2+fm2m+fpp2+fp2p) - (fp2m2+fm2p2-fm2m2-fp2p2) + 64*(fmm+fpp-fpm-fmp)))
+
+
 
 def num_second_pure_derivative(f, ZRN, ZRNplusplus, ZRNplus, ZRNminus, ZRNminusminus, method='central', h1 = 0.1, h2 = 0.1, dim = 3):
     '''Compute the difference formula for f'(a) with step size h.
@@ -317,14 +385,16 @@ def num_second_pure_derivative(f, ZRN, ZRNplusplus, ZRNplus, ZRNminus, ZRNminusm
             central: (-f(a+2h) + 16f(a+h)-30f(a) +16f(a-h) - f(a-2h))/12h²
     '''
     normal = f(ZRN[0], ZRN[1], ZRN[2], dim, True)[0]
-
-    if method == 'five_point':
+    #print("ZRNplus", ZRNplus, "ZRNplusplus", ZRNplusplus)
+    if method == 'central':
         plusplus = f(ZRNplusplus[0], ZRNplusplus[1], ZRNplusplus[2], dim, True)[0]
         minusminus = f(ZRNminusminus[0], ZRNminusminus[1], ZRNminusminus[2], dim, True)[0]
         plus = f(ZRNplus[0], ZRNplus[1], ZRNplus[2],dim, True)[0]
         minus = f(ZRNminus[0], ZRNminus[1], ZRNminus[2], dim, True)[0]
+        #print("plusplus \n", plusplus, "\nplus\n", plus, "\nminus\n", minus, "\nminusminus\n", minusminus)
+
         return (-plusplus + 16*plus -30*normal + 16*minus - minusminus)/(12*h1*h2)
-    elif method == 'central':
+    elif method == 'central3':
         plus = f(ZRNplus[0], ZRNplus[1], ZRNplus[2], dim, True)[0]
         minus = f(ZRNminus[0], ZRNminus[1], ZRNminus[2],dim, True)[0]
         return((plus - 2*normal *minus) /( h1*h2))
@@ -407,7 +477,9 @@ def d_CM_ev(Z, R, N, dx_index):
     
     #direct derivative as jacobian
     dCM_ev = jacfwd(jrep.CM_ev, dx_index)
-    ref_dCM_ev = dCM_ev(Z.astype(float), R.astype(float), float(N))[0]
+    ref_dCM_ev = dCM_ev(Z, R, N)[0]
+
+    #ref_dCM_ev = dCM_ev(Z.astype(float), R.astype(float), float(N))[0]
     
     '''Not sure about reordering and values below. definitely need to recheck'''
     if(dx_index == 0):
