@@ -278,8 +278,9 @@ def num_first_derivative(f, ZRN, d = [0, 0], h = 0.1, method = 'central', dim =3
     else:
         raise ValueError("Method must be 'central', 'forward' or 'backward'.")
 
-def num_second_derivative(f, ZRN, d1 = [0, 0], d2 = [1, 2, 1], h1 = 0.1, h2 = 0.1, method = 'simplecentral', dim = 3):
+def num_second_derivative(f, ZRN, d1 = [0, 0], d2 = [1, 2, 1], h1 = 0.01, h2 = 0.01, method = 'simplecentral', dim = 3):
     '''Compute the difference formula for f'(a) with step size h.
+    works best for h = 0.01 on CM
 
     Parameters
     ----------

@@ -23,11 +23,11 @@ R = R_orig[order]
 print("Z: ", Z, "R: ", R)
 dim = len(Z)
 xyz = [[0,'x'],[1,'y'],[2,'z']]
-h1 = 0.1
-h2 = 0.1
+h1 = 0.01
+h2 = 0.01
 Z = jnp.asarray(Z, dtype = jnp.float32)
-fun = jrep.CM_full_sorted
-#fun = jrep.CM_ev
+#fun = jrep.CM_full_sorted
+fun = jrep.CM_ev
 
 
 #store all results in arrays to print them later

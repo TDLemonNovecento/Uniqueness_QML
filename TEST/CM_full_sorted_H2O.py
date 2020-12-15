@@ -1,7 +1,7 @@
 '''this document contains all Coulomb matrix elements and first and second
 derivatives for the H2O molecule described by
 
-r1 = [-02, 1.353, -0.908]
+r1 = [-0.2, 1.353, -0.908]
 r2 = [0.2, -1.353, -0.908]
 r3 = [0, 0, 0.227]
 
