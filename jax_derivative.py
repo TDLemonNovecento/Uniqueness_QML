@@ -217,23 +217,27 @@ def cal_print_2ndder(repro, Z, R, N):
 def update_index(ZRN, d, h):
     if d[0] == 0:
         new = ops.index_add(ZRN[d[0]], d[1], h)
-        new_ZRN = ZRN
-        new_ZRN[d[0]] = new
+        new_ZRN = [new, ZRN[1], ZRN[2]]
     elif d[0] == 1:
         new = ops.index_update(ZRN[d[0]], d[1], ops.index_add(ZRN[d[0]][d[1]], d[2], h))
         new_ZRN = [ZRN[0], new, ZRN[2]]
     return(new_ZRN)
 
 
-def num_first_derivative(f, ZRN, ZRNplus, ZRNminus, method='central', h = 0.1, dim =3):
+def num_first_derivative(f, ZRN, d = [0, 0], h = 0.1, method = 'central', dim =3):
     '''Compute the difference formula for f'(a) with step size h.
 
     Parameters
     ----------
     f : function
         Vectorized function of one variable
-    a : number
-        Compute derivative at x = a
+    ZRN : list
+        Contains Z, R and N information of where derivative should be taken
+    d : list
+        contains integers referring to variable w.r.t. which the derivative is taken
+        1st place: 0 = dZ, 1 = dR, 2 = dN;
+        2nd place: which dZ/dR, e.g. 2 == dZ3, 0 == dR1, ect.;
+        3rd place: which dR, 0 = dx, 1 = dy, 2 = dz
     method : string
         Difference formula: 'forward', 'backward' or 'central'
     h : number
@@ -248,18 +252,33 @@ def num_first_derivative(f, ZRN, ZRNplus, ZRNminus, method='central', h = 0.1, d
             backward: f(a) - f(a-h))/h            
     '''
     if method == 'central':
-        plus = f(ZRNplus[0], ZRNplus[1], ZRNplus[2], dim, True)[0]
-        minus = f(ZRNminus[0], ZRNminus[1], ZRNminus[2], dim, True)[0]
-        
-        return( (plus - minus)/(2*h))
+        p = update_index(ZRN, d, h)
+        m = update_index(ZRN, d, -h)
+
+        fp = f(p[0], p[1], p[2], dim, True)[0]
+        fm = f(m[0], m[1], m[2], dim, True)[0]
+
+        return( (fp - fm)/(2*h))
+    
     elif method == 'forward':
-        return (f(a + h) - f(a))/h
+        p = update_index(ZRN, d, h)
+
+        fp = f(p[0], p[1], p[2], dim, True)[0]
+        fnormal = f(ZRN[0], ZRN[1], ZRN[2], dim, True)[0]
+
+        return ((fp - fnormal)/h)
+    
     elif method == 'backward':
-        return (f(a) - f(a - h))/h
+        m = update_index(ZRN, d, -h)
+
+        fnormal = f(ZRN[0], ZRN[1], ZRN[2], dim, True)[0]
+        fm = f(m[0], m[1], m[2])[0]
+
+        return ((fnormal - fm)/h)
     else:
         raise ValueError("Method must be 'central', 'forward' or 'backward'.")
 
-def num_second_mixed_derivative(f, ZRN, d1 = [0, 0], d2 = [1, 2, 1], h1 = 0.1, h2 = 0.1, method = 'felix', dim = 3):
+def num_second_derivative(f, ZRN, d1 = [0, 0], d2 = [1, 2, 1], h1 = 0.1, h2 = 0.1, method = 'simplecentral', dim = 3):
     '''Compute the difference formula for f'(a) with step size h.
 
     Parameters
@@ -292,20 +311,27 @@ def num_second_mixed_derivative(f, ZRN, d1 = [0, 0], d2 = [1, 2, 1], h1 = 0.1, h
 
     '''
     if d1[0] == d2[0] and d1[1] == d2[1]:
-        print("you are using the wrong method, use pure derivative")
-        exit()
+        p = update_index(ZRN, d1, h1)
+        m = update_index(ZRN, d1, -h1)
+
+        fp = f(p[0], p[1], p[2], dim, True)[0]
+        fm = f(m[0], m[1], m[2], dim, True)[0]
+        fnormal = f(ZRN[0], ZRN[1], ZRN[2], dim, True)[0]
+
+        return((fp - 2*fnormal + fm)/(h1*h1))
+        
 
     if method == 'simplecentral':
-        plusplus = update_index(update_index(ZRN, d1, h1), d2, h2)
-        plusminus = update_index(update_index(ZRN, d1, h1), d2, -h2)
-        minusplus = update_index(update_index(ZRN, d1, -h1), d2, h2)
-        minusminus = update_index(update_index(ZRN, d1, -h1), d2, -h2)
+        pp = update_index(update_index(ZRN, d1, h1), d2, h2)
+        pm = update_index(update_index(ZRN, d1, h1), d2, -h2)
+        mp = update_index(update_index(ZRN, d1, -h1), d2, h2)
+        mm = update_index(update_index(ZRN, d1, -h1), d2, -h2)
 
-        fplusplus = f(plusplus[0], plusplus[1], plusplus[2])[0]
-        fplusminus = f(plusminus[0], plusminus[1], plusminus[2])[0]
-        fminusplus = f(minusplus[0], minusplus[1], minusplus[2])[0]
-        fminusminus = f(minusminus[0], minusminus[1], minusminus[2])[0]
-        return((fplusplus - fplusminus - fminusplus + fminusminus)/(4*h1*h2))
+        fpp = f(pp[0], pp[1], pp[2], dim, True)[0]
+        fpm = f(pm[0], pm[1], pm[2], dim, True)[0]
+        fmp = f(mp[0], mp[1], mp[2], dim, True)[0]
+        fmm = f(mm[0], mm[1], mm[2], dim, True)[0]
+        return((fpp - fpm - fmp + fmm)/(4*h1*h2))
 
     if method == 'felix':
         pp = update_index(update_index(ZRN, d1, h1), d2, h2)
@@ -329,25 +355,25 @@ def num_second_mixed_derivative(f, ZRN, d1 = [0, 0], d2 = [1, 2, 1], h1 = 0.1, h
         m2m2 = update_index(update_index(ZRN, d1, -2*h1), d2, -2*h2)
 
 
-        fp2p2 = f(p2p2[0], p2p2[1], p2p2[2])[0]
-        fp2m2 = f(p2m2[0], p2m2[1], p2m2[2])[0]
-        fm2p2 = f(m2p2[0], m2p2[1], m2p2[2])[0]
-        fm2m2 = f(m2m2[0], m2m2[1], m2m2[2])[0]
+        fp2p2 = f(p2p2[0], p2p2[1], p2p2[2], dim, True)[0]
+        fp2m2 = f(p2m2[0], p2m2[1], p2m2[2], dim, True)[0]
+        fm2p2 = f(m2p2[0], m2p2[1], m2p2[2], dim, True)[0]
+        fm2m2 = f(m2m2[0], m2m2[1], m2m2[2], dim, True)[0]
 
-        fpp2 = f(pp2[0], pp2[1], pp2[2])[0]
-        fpm2 = f(pm2[0], pm2[1], pm2[2])[0]
-        fmp2 = f(mp2[0], mp2[1], mp2[2])[0]
-        fmm2 = f(mm2[0], mm2[1], mm2[2])[0]
+        fpp2 = f(pp2[0], pp2[1], pp2[2], dim, True)[0]
+        fpm2 = f(pm2[0], pm2[1], pm2[2], dim, True)[0]
+        fmp2 = f(mp2[0], mp2[1], mp2[2], dim, True)[0]
+        fmm2 = f(mm2[0], mm2[1], mm2[2], dim, True)[0]
         
-        fp2p = f(p2p[0], p2p[1], p2p[2])[0]
-        fp2m = f(p2m[0], p2m[1], p2m[2])[0]
-        fm2p = f(m2p[0], m2p[1], m2p[2])[0]
-        fm2m = f(m2m[0], m2m[1], m2m[2])[0]
+        fp2p = f(p2p[0], p2p[1], p2p[2], dim, True)[0]
+        fp2m = f(p2m[0], p2m[1], p2m[2], dim, True)[0]
+        fm2p = f(m2p[0], m2p[1], m2p[2], dim, True)[0]
+        fm2m = f(m2m[0], m2m[1], m2m[2], dim, True)[0]
 
-        fpp = f(pp[0], pp[1], pp[2])[0]
-        fpm = f(pm[0], pm[1], pm[2])[0]
-        fmp = f(mp[0], mp[1], mp[2])[0]
-        fmm = f(mm[0], mm[1], mm[2])[0]
+        fpp = f(pp[0], pp[1], pp[2], dim, True)[0]
+        fpm = f(pm[0], pm[1], pm[2], dim, True)[0]
+        fmp = f(mp[0], mp[1], mp[2], dim, True)[0]
+        fmm = f(mm[0], mm[1], mm[2], dim, True)[0]
 
         return((1/(144*h1*h2))*(8*(fpm2 + fp2m + fm2p + fmp2) - 8*(fmm2+fm2m+fpp2+fp2p) - (fp2m2+fm2p2-fm2m2-fp2p2) + 64*(fmm+fpp-fpm-fmp)))
 
