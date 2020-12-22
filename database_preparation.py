@@ -1,6 +1,7 @@
 '''in this file some more or less efficient methods will be written to retrieve xyz data from files, store it in one file to make programs more efficient, and to open such a file with a lot of xyz data and reread it.
 '''
 import pickle
+import copy
 import os
 import jax.numpy as jnp
 import jax_basis as jbas
@@ -353,3 +354,17 @@ def read_xyz_qml(pathway):
         ZRN_data.append(Z, R, N)
 
     return(compoundlist, ZRN_data)
+
+def alter_coordinates(coordinates, d, h):
+    Z = coordinates[0].copy()
+    R = copy.deepcopy(coordinates[1])
+    N = coordinates[2]
+    if d[0] == 0:
+        Z[d[1]] += h
+        return([Z, R, N])
+
+    if d[0] == 1:
+        R[d[1]][d[2]] += h
+
+        return([Z, R, N])
+

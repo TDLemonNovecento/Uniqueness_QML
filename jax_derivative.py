@@ -6,6 +6,9 @@ import jax_representation as jrep
 from jax import grad, jacfwd, jacrev, ops
 import time
 import database_preparation as datprep
+from jax.config import config
+config.update("jax_enable_x64", True) #increase precision from float32 to float64
+
 
 def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R", M = None, order = None):
     '''Easy function to handle no, one dimensional or two dimensional derivatives with grad. Issue right now: no additional arguments can be passed to function, it therefore falls back to default for any further arguments beside Z, R and N.
@@ -49,7 +52,7 @@ def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R", 
 
 
     if grad == 0:
-        print("calculating the representation itself")
+        #print("calculating the representation itself")
         if M == None:
             return( fn(Z, R, N)[0])
         else:
@@ -64,7 +67,7 @@ def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R", 
         print("your dx value cannot be derived by. falling back to 'Z'")
 
     if grad == 1:#first derivative is calculated
-        print("calculating the first derivative of the representation")
+        #print("calculating the first derivative of the representation")
         try:
             d_fn = dfn_list[representation]
         except ValueError:
@@ -75,7 +78,7 @@ def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R", 
     
 
     #grad is 2 or bigger, second derivative is calculated
-    print("calculating the second derivative of the representation")
+    #print("calculating the second derivative of the representation")
     try: #  get derivation function
         dd_fn = ddfn_list[representation]
     except ValueError:
@@ -451,7 +454,7 @@ def d_CM(Z, R, N, dx_index):
         dxidyj by dCM[i,x,j,y]
         
     '''
-    print("calculating sorted second derivative of Coulomb Matrix")
+    #print("calculating sorted second derivative of Coulomb Matrix")
 
     fM_sorted, order = jrep.CM_full_sorted(Z, R, N) #get order of sorted representation
     

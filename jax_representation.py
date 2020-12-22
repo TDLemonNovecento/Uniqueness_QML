@@ -1,5 +1,9 @@
 '''In this package representation functions are stored and their derivatives returned'''
 import jax.numpy as jnp
+import numpy as np
+from jax.config import config
+config.update("jax_enable_x64", True) #increase precision from float32 to float64
+
 from jax import grad, ops
 #import qml
 import jax_basis
@@ -10,7 +14,7 @@ import jax_math as jmath
 
 
 
-def CM_full_unsorted_matrix(Z, R, size = 23):
+def CM_full_unsorted_matrix(Z, R, N, size = 23):
     ''' Calculates unsorted coulomb matrix
     Parameters
     ----------
@@ -24,9 +28,34 @@ def CM_full_unsorted_matrix(Z, R, size = 23):
     D : 2D array (matrix)
     Full Coulomb Matrix, dim(Z)xdim(Z)
     '''
+    nick_version = True
+    
     n = Z.shape[0]
     D = jnp.zeros((size, size))
     
+    if nick_version:
+        
+        # calculate distances between atoms
+        dr = R[:, None] - R
+        
+        distances = jnp.linalg.norm(dr, axis = 2)
+        
+        # compute Zi*Zj matrix
+        charge_matrix = jnp.outer(Z, Z)
+
+        # returns i,i indexes (of diagonal elements)
+        diagonal_idx = jnp.diag_indices(size, ndim=2)
+        
+        charge_matrix = ops.index_update(charge_matrix, diagonal_idx,  0.5 * Z ** 2.4)
+
+        # fix diagonal elements to 1 in distance matrix
+        distances = ops.index_update(distances, diagonal_idx, 1.0)
+
+        #compute cm by dividing charge matrix by distance matrix
+        cm_matrix = charge_matrix / distances
+        
+        return(cm_matrix)
+
     #indexes need to be adapted to whatever form comes from xyz files
     for i in range(n):
         Zi = Z[i]
@@ -55,7 +84,7 @@ def CM_full_sorted(Z, R, N = 0, size=3, unsorted = False):
     D : 2D array (matrix)
     Full Coulomb Matrix, dim(Z)xdim(Z)
     '''
-    unsorted_M = CM_full_unsorted_matrix(Z,R, size)
+    unsorted_M = CM_full_unsorted_matrix(Z,R,N, size)
     if unsorted:
         return(unsorted_M, 0)
     val_row = jnp.asarray([jnp.linalg.norm(row) for row in unsorted_M])
@@ -83,8 +112,8 @@ def CM_ev(Z, R, N=0, maxsize = 23, unsorted = False):
         contains Eigenvectors of matrix (n dim.)
         If i out of bounds, return none and print error)
     '''
-    dim = len(Z)
-    #print("len = ", dim)
+    dim = Z.shape[0]
+    print("len = ", dim)
     if unsorted:
         M = CM_full_unsorted_matrix(Z,R,N)
         order = jnp.asarray(range(dim))

@@ -26,8 +26,8 @@ xyz = [[0,'x'],[1,'y'],[2,'z']]
 h1 = 0.01
 h2 = 0.01
 Z = jnp.asarray(Z, dtype = jnp.float32)
-#fun = jrep.CM_full_sorted
-fun = jrep.CM_ev
+fun = jrep.CM_full_sorted
+#fun = jrep.CM_ev
 
 
 #store all results in arrays to print them later
@@ -37,6 +37,13 @@ Z2der = []
 R2der = []
 ZRder = []
 
+for h in [1, 0.1, 0.01, 0.001, 0.0001]:
+    print("h = ", h)
+    der = jder.num_first_derivative(fun, [Z,R,N], [0,0], h)
+    print("derivative:")
+    print(der)
+
+sys.exit()
 #do all Z derivatives
 for i in range(dim):
     name = ("dZ%i:" % (i+1))
