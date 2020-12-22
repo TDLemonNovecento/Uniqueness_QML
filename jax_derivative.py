@@ -37,8 +37,8 @@ def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R", 
     ''' idea: the whole code might be more efficient if representation and order were passed on
     instead of calculated freshly at every derivative
     '''
-    fn_list = {'CM': jrep.CM_full_sorted, 'CM_EV': jrep.CM_ev, 'OM' : jrep.OM_full_sorted}
-    dfn_list = {'CM': d_CM, 'CM_EV' : d_CM_ev, 'OM' : d_OM, 'OM_EV' : d_OM_ev}
+    fn_list = {'CM': jrep.CM_full_sorted, 'CM_unsrt' : jrep.CM_full_unsorted_matrix, 'CM_EV': jrep.CM_ev, 'OM' : jrep.OM_full_sorted}
+    dfn_list = {'CM': d_CM, 'CM_unsrt': d_CM_unsrt, 'CM_EV' : d_CM_ev, 'OM' : d_OM, 'OM_EV' : d_OM_ev}
     ddfn_list = {'CM': dd_CM, 'CM_EV' : dd_CM_ev, 'OM' : dd_OM, 'OM_EV' : dd_OM_ev}
     
 
@@ -480,6 +480,49 @@ def d_CM(Z, R, N, dx_index):
     '''
     return(reference_dCM)
     '''
+
+def d_CM_unsrt(Z, R, N, dx_index):
+    '''this function calculates the derivatives of the sorted Coulomb matrix
+    variables:
+    ----------
+    Z: jnp array, nuclear charges, unsorted
+    R: jnp array of 3dim arrays, xyz coordinates, unsorted
+    N: total electronic charges (irrelevant, for derivative necessary)
+    dx_index: int, either 0, 1, or 2, if Z, R or by N should be derived
+
+    returns:
+    --------
+    final_dCM: jnp array, contains sorted derivatives.
+        i.e. dZidZj can be retrieved by dCM[i,j]
+        dxidyj by dCM[i,x,j,y]
+        
+    '''
+    #print("calculating unsorted second derivative of Coulomb Matrix")
+
+    #direct derivative as jacobian
+    dCM_unsrt = jacfwd(jrep.CM_full_unsorted_matrix, dx_index)
+   
+    reference_dCM = dCM_unsrt(Z, R, N)
+
+    dim = len(Z)
+    
+    '''reordering is correct, but signs unclear, check if values of EV are important
+    '''
+    if(dx_index == 0): #derivative by dZ
+        #something does not work in this part
+        #if the matrix was padded the derivative is weird
+        #assign derivative to correct field in sorted matrix by reordering derZ_ij to derZ_kl
+        dCMkl_dZkl = jnp.asarray([[[reference_dCM[l][k][m] for l in range(dim)] for k in range(dim)]for m in range(dim)])
+        return(dCMkl_dZkl)
+    elif(dx_index == 1):
+        #unordered derivative taken from sorted matrix
+        dCMkl_dRkl = jnp.asarray([[[[reference_dCM[l][k][m][x] for l in range(dim)] for k in range(dim)] for x in range(3)] for m in range(dim)])
+        return(dCMkl_dRkl)
+    else:
+        return(reference_dCM)
+
+    return(final_dCM)
+
 
 def d_CM_ev(Z, R, N, dx_index):
     '''Calculates first derivative of CM_ev w.r.t. dx_index

@@ -76,7 +76,7 @@ def num_der1(representation, ZRN, d1, h = 0.1, dim = 3):
     ---------
 
     '''
-
+    
     #change variable by which to derive (d1) slightly by h
     plus_ZRN = datprep.alter_coordinates(ZRN, d1, h)
     minus_ZRN = datprep.alter_coordinates(ZRN, d1, -h)
@@ -85,15 +85,10 @@ def num_der1(representation, ZRN, d1, h = 0.1, dim = 3):
     repro_plus = representation(plus_ZRN[0], plus_ZRN[1], plus_ZRN[2], dim)
     repro_minus = representation(minus_ZRN[0], minus_ZRN[1], minus_ZRN[2], dim)
     
-    print("cm_plus for h =", h, "charges:", plus_ZRN[0])
-    print(repro_plus)
-    print("cm_minus for h =", h, "charges:", minus_ZRN[0])
-    print(repro_minus)
-
     repro_pls = repro_plus.flatten()
     repro_mns = repro_minus.flatten()
     
-    difference = (repro_pls - repro_mns)/ 2*h
+    difference = (repro_pls - repro_mns)/ (2*h) #brackets around h are vital!
 
     return(difference)
 
