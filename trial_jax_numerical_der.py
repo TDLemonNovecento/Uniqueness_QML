@@ -5,7 +5,7 @@ import jax.numpy as jnp
 import jax.ops
 import jax_representation as jrep
 import database_preparation as datprep
-import jax_derivative as jder
+import jax_additional_derivative as jader
 
 #give xyz coordinates of H2O
 path = "./TEST/H2O.xyz"
@@ -39,7 +39,7 @@ ZRder = []
 
 for h in [1, 0.1, 0.01, 0.001, 0.0001]:
     print("h = ", h)
-    der = jder.num_first_derivative(fun, [Z,R,N], [0,0], h)
+    der = jader.num_first_derivative(fun, [Z,R,N], [0,0], h)
     print("derivative:")
     print(der)
 
@@ -48,14 +48,14 @@ sys.exit()
 for i in range(dim):
     name = ("dZ%i:" % (i+1))
     
-    der = jder.num_first_derivative(fun, [Z, R, N], [0, i], h1, 'central')
+    der = jader.num_first_derivative(fun, [Z, R, N], [0, i], h1, 'central')
     Zder.append([name,der])
 
     #do all dZdZ derivatives:
     for j in range(dim):
         name = ("dZ%i dZ%i:" %( i+1, j+1))
         
-        der = jder.num_second_derivative(fun, [Z, R, N], [0,i],[0,j], h1, h2) 
+        der = jader.num_second_derivative(fun, [Z, R, N], [0,i],[0,j], h1, h2) 
         
         Z2der.append([name, der])
         
@@ -63,14 +63,14 @@ for i in range(dim):
         for x in xyz:
             name = ("dZ%i d%s%i:" %(i+1, x[1], j+1))
 
-            der = jder.num_second_derivative(fun, [Z, R, N], [0, i], [1,j, x[0]], h1, h2)
+            der = jader.num_second_derivative(fun, [Z, R, N], [0, i], [1,j, x[0]], h1, h2)
             ZRder.append([name,der])
     
     #do all dR derivatives:
     for y in xyz:
         name = ("d%s%i :" %(y[1], i+1))
 
-        der = jder.num_first_derivative(fun, [Z, R, N], [1, i, y[0]], h1, 'central')
+        der = jader.num_first_derivative(fun, [Z, R, N], [1, i, y[0]], h1, 'central')
         Rder.append([name,der])
 
         #do all dRdR derivatives:
@@ -78,7 +78,7 @@ for i in range(dim):
             for z in xyz:
                 name = ("d%s%i d%s%i :" %(y[1], i+1, z[1], k+1))
 
-                der = jder.num_second_derivative(fun, [Z, R, N], [1, i, y[0]], [1, k, z[0]], h1, h2)
+                der = jader.num_second_derivative(fun, [Z, R, N], [1, i, y[0]], [1, k, z[0]], h1, h2)
                 R2der.append([name,der])
     
 #now print results properly:

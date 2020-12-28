@@ -74,7 +74,7 @@ def num_der1(representation, ZRN, d1, h = 0.1, dim = 3):
 
     Returns:
     ---------
-
+    difference : central difference derivative
     '''
     
     #change variable by which to derive (d1) slightly by h
@@ -92,3 +92,61 @@ def num_der1(representation, ZRN, d1, h = 0.1, dim = 3):
 
     return(difference)
 
+
+def num_der2(representation, ZRN, d1, d2, h = 0.1, dim = 3):
+    '''computes central difference derivative
+    of representatin w.r.t. d1 and d2 (2nd order)
+    Formula for 2nd order derivative:
+        derivative = f(a+h_1, b+h_2) - f(a+h_1, b-h_2) - f(a-h_1, b+h_2) + f(a-h_1, b-h_2))/(4h_1*h_2)
+    for d1 = d2:
+        derivative = (f(a+h) - 2f(a) + f(a-h))/h²
+
+
+    Variables:
+    ----------
+    same definition as in 'derivative' function
+
+    Returns:
+    ---------
+
+    '''
+    
+    #change variable by which to derive (d1) slightly by h
+    plus_ZRN = datprep.alter_coordinates(ZRN, d1, h)
+    minus_ZRN = datprep.alter_coordinates(ZRN, d1, -h)
+
+    if (d1 == d2):
+        #calculate representation with slight changes
+        repro_plus = representation(plus_ZRN[0], plus_ZRN[1], plus_ZRN[2], dim)
+        repro_minus = representation(minus_ZRN[0], minus_ZRN[1], minus_ZRN[2], dim)
+        repro_normal = representation(ZRN[0], ZRN[1], ZRN[2], dim)
+
+        #flatten representations
+        repro_pls = repro_plus.flatten()
+        repro_mns = repro_minus.flatten()
+        repro_nml = repro_normal.flatten()
+
+        difference = (repro_pls + repro_mns - 2*repro_nml) / (h**2)
+
+    else:
+        #change initial variable (d2) slightly by h
+        plusplus_ZRN = datprep.alter_coordinates(plus_ZRN, d2, h)
+        plusminus_ZRN = datprep.alter_coordinates(plus_ZRN, d2, -h)
+        minusplus_ZRN = datprep.alter_coordinates(minus_ZRN, d2, h)
+        minusminus_ZRN = datprep.alter_coordinates(minus_ZRN, d2, -h)
+
+        #calculate representation
+        repro_plusplus = representation(plusplus_ZRN[0], plusplus_ZRN[1], plusplus_ZRN[2], dim)
+        repro_plusminus = representation(plusminus_ZRN[0], plusminus_ZRN[1], plusminus_ZRN[2], dim)
+        repro_minusplus = representation(minusplus_ZRN[0], minusplus_ZRN[1], minusplus_ZRN[2], dim)
+        repro_minusminus = representation(minusminus_ZRN[0], minusminus_ZRN[1], minusminus_ZRN[2], dim)
+
+        #flatten results
+        repro_pp = repro_plusplus.flatten()
+        repro_pm = repro_plusminus.flatten()
+        repro_mp = repro_minusplus.flatten()
+        repro_mm = repro_minusminus.flatten()
+
+        difference = (repro_pp + repro_mm - repro_mp - repro_pm) / (4*h**2)
+
+    return(difference)
