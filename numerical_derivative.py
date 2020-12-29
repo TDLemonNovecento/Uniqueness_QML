@@ -5,6 +5,9 @@ initiated: 18.12.2020
 This file contains a numerical derivative function and a short workflow for getting derivatives
 w.r.t. xi,yi,zi or Zi
 '''
+from jax.config import config
+config.update("jax_enable_x64", True) #increase precision from float32 to float64
+
 import numpy as np
 import database_preparation as datprep
 

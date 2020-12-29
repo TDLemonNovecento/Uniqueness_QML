@@ -1,5 +1,8 @@
 '''in this file some more or less efficient methods will be written to retrieve xyz data from files, store it in one file to make programs more efficient, and to open such a file with a lot of xyz data and reread it.
 '''
+from jax.config import config
+config.update("jax_enable_x64", True) #increase precision from float32 to float64
+
 import pickle
 import copy
 import os

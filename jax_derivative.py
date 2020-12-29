@@ -361,13 +361,13 @@ def dd_CM_unsrt(Z, R, N, dx_index = 0, ddx_index = 0, M = None, order = None):
         print("you want to calculate dZdR or dRdZ, line 372")
 
         HdZdRraw = hessian(jrep.CM_full_unsorted_matrix, 0, 1)(Z, R, N)
-
+        print("raw dRdZ derivative analytical \n", HdZdRraw)
         '''sorting function, performs the following reordering but in fast
         [[[[[HdZdRraw[n, m, i, j, x] for n in range(dim)] for m in range(dim)] for x in range(3)] for j in range(dim)] for i in range(dim)]
         '''
         #could be that I messed this up on 1.12.2020, check with push before
-        dZdR_sorted = np.transpose(HdZdRraw,(1, 2, 3, 4, 0))
-
+        dZdR_sorted = np.transpose(HdZdRraw,(2, 3, 4, 0, 1))
+        
         return(dZdR_sorted)
 
 
