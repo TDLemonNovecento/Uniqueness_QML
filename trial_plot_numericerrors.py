@@ -28,7 +28,7 @@ R = R_orig[order]
 
 R = np.asarray(R, dtype = np.float64)
 Z = np.asarray(Z, dtype = np.float64)
-functionnames = ['CM_unsrt', 'CM_EV', 'OM', 'OM_EV']
+functionnames = ['CM_unsrt', 'CM_EV_unsrt', 'OM', 'OM_EV']
 functions = [ZRNrep.Coulomb_Matrix, ZRNrep.Eigenvalue_Coulomb_Matrix, ZRNrep.Overlap_Matrix, ZRNrep.Eigenvalue_Overlap_Matrix]
 
 def get_first_order_errors(fun, fname, hlist, d1):
@@ -114,13 +114,19 @@ def get_second_order_errors(fun, fname, hlist, d1, d2):
         derf = numder.derivative(fun, [Z,R,N], 'numerical', 2, d1, d2, h)
         exf = exact.flatten()
         error = linalg.norm(derf - exf)
+        print("derf")
+        print(derf)
+        print("exf")
+        print(exf)
+
+        
         #print("h", h, "error", error)
         #print(derf.reshape(3,3))
         ylist.append(error)
 
     return(ylist, name)
 
-def plot_numeric_errors(fun, fname, do_first_order = True, do_second_order = True, show_legend = False):
+def plot_numeric_errors(fun, fname, do_first_order = True, do_second_order = True, show_legend = True):
     '''
     fun : function from representation_ZRN.py file
     fname : function name: 'CM', 'CM_unsrt', 'CM_EV', 'OM' or 'OM_EV'
@@ -199,13 +205,13 @@ def plot_numeric_errors(fun, fname, do_first_order = True, do_second_order = Tru
                 if d1[0] == 0:
                     if d2[0] == 0:
                         ax3.loglog(hlist, ylist, 'o-', label = name)
-                else:
-                    ax5.loglog(hlist, ylist, 'o-', label = name)
+                    else:
+                        ax5.loglog(hlist, ylist, 'o-', label = name)
                 if d1[0] == 1:
                     if d2[0] == 1:
                         ax4.loglog(hlist, ylist, 'o-', label = name)
-                else:
-                    ax5.loglog(hlist, ylist,'o-', label = name)
+                    else:
+                        ax5.loglog(hlist, ylist,'o-', label = name)
         
         if show_legend:
             ax3.legend()
@@ -219,18 +225,22 @@ def plot_numeric_errors(fun, fname, do_first_order = True, do_second_order = Tru
         ax5.set_xlabel("dh")
     
     
-    fig.suptitle('Finite Central Difference Derivative on Coulomb Matrix of H2O Molecule', fontsize = 15)
+    fig.suptitle('Finite Central Difference Derivative on %s of H2O Molecule' %fname, fontsize = 15)
     #ad title to overall y axis
 
     fig.text(0.5, 0.0004, '(dh is the small change introduced in numerical differentiation)', ha='center', fontsize = 13)
     fig.text(0.0004, 0.5, 'Absolute Error w.r.t. Analytical Derivative [a.u.]', rotation = 'vertical', va='center', fontsize =13)    
     
-
-    plt.savefig('./Images/numerical_errors_CM.png', bbox_inches = 'tight')
+    filename = "./Images/numerical_errors_%s.png" % fname
+    plt.savefig(filename, bbox_inches = 'tight')
 
     return()
 
-for fun, fname in zip(functions, functionnames):
-    print("function:", fun)
-    print("function name:", fname)
-    plot_numeric_errors(fun, fname)
+
+
+fun = functions[2]
+fname = functionnames[2]
+
+print("function:", fun)
+print("function name:", fname)
+plot_numeric_errors(fun, fname)

@@ -12,7 +12,7 @@ Variables:
 import jax_representation as jrep
 import qml
 
-dim = 4
+dim = 3
 
 print("Your representation from representation_ZRN.py was started with dim = ", dim)
 print("Please notice that not all, but some of the representations require")
@@ -49,7 +49,7 @@ def Eigenvalue_Coulomb_Matrix(Z, R, N = 0):
     will be mapped onto different representations)
     '''
     #return(qml.representations.generate_eigenvalue_coulomb_matrix(Z, R, size = dim))
-    return(jrep.CM_ev(Z, R, maxsize = dim, unsorted = True)[0])
+    return(jrep.CM_ev_unsrt(Z, R, N))
 
 '''
 def SLATM(Z, R, N = 0):

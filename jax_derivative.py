@@ -47,9 +47,9 @@ def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R", 
     ''' idea: the whole code might be more efficient if representation and order were passed on
     instead of calculated freshly at every derivative
     '''
-    fn_list = {'CM': jrep.CM_full_sorted, 'CM_unsrt' : jrep.CM_full_unsorted_matrix, 'CM_EV': jrep.CM_ev, 'OM' : jrep.OM_full_sorted}
-    dfn_list = {'CM': d_CM, 'CM_unsrt': d_CM_unsrt, 'CM_EV' : d_CM_ev, 'OM' : d_OM, 'OM_EV' : d_OM_ev}
-    ddfn_list = {'CM': dd_CM, 'CM_unsrt': dd_CM_unsrt, 'CM_EV' : dd_CM_ev, 'OM' : dd_OM, 'OM_EV' : dd_OM_ev}
+    fn_list = {'CM': jrep.CM_full_sorted, 'CM_unsrt' : jrep.CM_full_unsorted_matrix, 'CM_EV': jrep.CM_ev, 'CM_EV_unsrt' : jrep.CM_ev_unsrt, 'OM' : jrep.OM_full_sorted}
+    dfn_list = {'CM': d_CM, 'CM_unsrt': d_CM_unsrt, 'CM_EV' : d_CM_ev, 'CM_EV_unsrt': d_CM_ev_unsrt, 'OM' : d_OM, 'OM_EV' : d_OM_ev}
+    ddfn_list = {'CM': dd_CM, 'CM_unsrt': dd_CM_unsrt, 'CM_EV' : dd_CM_ev, 'CM_EV_unsrt' : dd_CM_ev_unsrt, 'OM' : dd_OM, 'OM_EV' : dd_OM_ev}
     
 
     try:
@@ -219,7 +219,7 @@ def d_CM_ev(Z, R, N, dx_index):
     
     #direct derivative as jacobian
     dCM_ev = jacfwd(jrep.CM_ev, dx_index)
-    ref_dCM_ev = dCM_ev(Z, R, N)[0]
+    ref_dCM_ev = dCM_ev(Z, R, N)
 
     #ref_dCM_ev = dCM_ev(Z.astype(float), R.astype(float), float(N))[0]
     
@@ -235,13 +235,53 @@ def d_CM_ev(Z, R, N, dx_index):
     else:
         return(ref_dCM_ev)
 
+def d_CM_ev_unsrt(Z, R, N, dx_index):
+    '''
+    Calculates first derivative of unsorted Coulomb Matrix eigenvalues w.r.t. dx_index
+    '''
+    dim = len(Z)
+    print("len of Z:", dim)
+    print("calculating Jacobian of Coulomb Matrix eigenvalues")
+    fM = jrep.CM_ev_unsrt(Z, R, N) #get order of sorted representation
+
+    #direct derivative as jacobian
+    dCM_ev = jacfwd(jrep.CM_ev_unsrt, dx_index)
+    ref_dCM_ev = dCM_ev(Z, R, N)
+
+    '''Not sure about reordering and values below. definitely need to recheck'''
+    if(dx_index == 0):
+        J_dZkl = jnp.asarray([[ref_dCM_ev[l][m] for l in range(dim)] for m in range(dim)])
+        return(J_dZkl)
+    elif(dx_index == 1):
+        #unordered derivative taken from sorted matrix
+        J_dRkl = jnp.asarray([[[ref_dCM_ev[l][m][x] for l in range(dim)] for x in range(3)] for m in range(dim)])
+        return(J_dRkl)
+    else:
+        return(ref_dCM_ev)
 
 
 def d_OM(Z, R, N, dx_index = 0):
     dim = jrep.OM_dimension(Z)
-    Jraw = jacfwd(jrep.OM_full_sorted, dx_index)
+    print("dimension of OM is: ", dim)
+    Jraw = jacfwd(jrep.OM_full_unsorted_matrix, dx_index)
     J = Jraw(Z, R, N)
+    
+
+    print("derivative: ")
+    print(J)
+    if(dx_index == 0): #derivative by dZ
+        final_dOM = jnp.asarray([[[J[l][k][m] for l in range(dim)] for k in range(dim)]for m in range(dim)])
+        return(final_dOM)
+
+    elif(dx_index == 1):
+        #unordered derivative taken from sorted matrix
+        final_dOM = jnp.asarray([[[[J[l][k][m][x] for l in range(dim)] for k in range(dim)] for x in range(3)] for m in range(dim)])
+        return(final_dOM)
+    else:
+        return(J)
+
     return(J)
+
 
 def dd_OM(Z, R, N, dx_index = 0, ddx_index = 0):
     dim = jrep.OM_dimension(Z)
@@ -369,14 +409,12 @@ def dd_CM_unsrt(Z, R, N, dx_index = 0, ddx_index = 0, M = None, order = None):
         
         return(dZdR_sorted)
 
-
-
 def dd_CM_ev(Z, R, N, dx_index = 0, ddx_index = 0):
-   
+
     Z = Z.astype(float)
     R = R.astype(float)
     N = float(N)
-    
+
     fM, order = jrep.CM_ev(Z, R, N)
     dim = len(Z)
     Hraw = hessian(jrep.CM_ev, dx_index, ddx_index)(Z, R, N)[0]
@@ -402,7 +440,7 @@ def dd_CM_ev(Z, R, N, dx_index = 0, ddx_index = 0):
                     dZdZ_sorted[i, j] = dZdZ_ordered[order[i], order[j]]
 
             return(dZdZ_sorted)
-    
+
     #calculates dRdR
     if (dx_index == 1):
         if (ddx_index == 1):
@@ -413,7 +451,7 @@ def dd_CM_ev(Z, R, N, dx_index = 0, ddx_index = 0):
             [[[[[[HdRraw[n, i, x, j, y] for n in range(dim)] for y in range(3)] for j in order] for x in range(3)] for i in order])
             '''
             dRdR_ordered = np.transpose(Hraw,(1, 2, 3, 4, 0))
-
+        
             dRdR_sorted = np.copy(dRdR_ordered)
             for i in range(dRdR_ordered.shape[0]):
                 for x in range(3):
@@ -438,6 +476,55 @@ def dd_CM_ev(Z, R, N, dx_index = 0, ddx_index = 0):
                     dZdR_sorted[i,j,x] = dZdR_ordered[order[i], order[j], x]
 
         return(dZdR_sorted)
+
+    if (dx_index == 2 or ddx_index == 2):
+        return(Hraw)
+
+
+def dd_CM_ev_unsrt(Z, R, N, dx_index = 0, ddx_index = 0):
+   
+    Z = Z.astype(float)
+    R = R.astype(float)
+    N = float(N)
+    
+    fM = jrep.CM_ev_unsrt(Z, R, N)
+    dim = len(Z)
+    Hraw = hessian(jrep.CM_ev_unsrt, dx_index, ddx_index)(Z, R, N)
+
+
+    #calculates dZdZ
+    if (dx_index ==0):
+        if (ddx_index == 0):
+            '''
+            sorting function, performs the following rearrangement:
+            [[[[HdZraw[k, m, n] for k in range(dim)] for m in order] for n in order])
+            '''
+            dZdZ_ordered = np.transpose(Hraw,(1, 2, 0))
+
+            return(dZdZ_ordered)
+    
+    #calculates dRdR
+    if (dx_index == 1):
+        if (ddx_index == 1):
+
+            print("do dRdR sorting for unsorted ddCM_ev function")
+            '''
+            sorting function, performs the following rearrangement:
+            [[[[[[HdRraw[n, i, x, j, y] for n in range(dim)] for y in range(3)] for j in range(dim)] for x in range(3)] for i in range(dim)])
+            '''
+            dRdR_ordered = np.transpose(Hraw,(1, 2, 3, 4, 0))
+
+            return(dRdR_ordered)
+
+    if (dx_index == 0 and ddx_index == 1 ) or (dx_index == 1 and ddx_index == 0):
+        print("you want to calculate dZdR or dRdZ, line 443")
+
+        '''sorting function, performs the following reordering but in fast
+        [[[[[HdZdRraw[m, i, j, x] for m in range(dim)] for x in range(3)] for j in range(dim)] for i in range(dim)]
+        '''
+        dZdR_ordered = np.transpose(Hraw,(1, 2, 3, 0))
+
+        return(dZdR_ordered)
     
     if (dx_index == 2 or ddx_index == 2):
         return(Hraw)

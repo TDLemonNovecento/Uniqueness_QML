@@ -91,7 +91,7 @@ def CM_full_sorted(Z, R, N = 0, size=3, unsorted = False):
     D = jnp.asarray([[unsorted_M[i,j] for j in order] for i in order])
     return(D, order)
     
-def CM_ev(Z, R, N=0, maxsize = 23, unsorted = False):
+def CM_ev(Z, R, N=0, maxsize = 3, unsorted = False):
     '''
     Parameters
     ----------
@@ -112,7 +112,6 @@ def CM_ev(Z, R, N=0, maxsize = 23, unsorted = False):
         If i out of bounds, return none and print error)
     '''
     dim = Z.shape[0]
-    print("len = ", dim)
     if unsorted:
         M = CM_full_unsorted_matrix(Z,R,N)
         order = jnp.asarray(range(dim))
@@ -124,6 +123,35 @@ def CM_ev(Z, R, N=0, maxsize = 23, unsorted = False):
     ev = jnp.pad(ev, (0,maxsize-dim))
 
     return(ev, order)
+
+def CM_ev_unsrt(Z, R, N=0):
+    '''
+    Parameters
+    ----------
+    Z : 1 x n dimensional array
+        contains nuclear charges
+    R : 3 x n dimensional array
+        contains nuclear positions
+    N : float
+        number of electrons in system
+        here: meaningless, can remain empty
+    
+    Return
+    ------
+    ev : vector (1 x n dim.)
+        contains eigenvalues of sorted CM
+    (vectors: tuple
+        contains Eigenvectors of matrix (n dim.)
+        If i out of bounds, return none and print error)
+    '''
+    dim = Z.shape[0]
+    
+    M = CM_full_unsorted_matrix(Z,R,N)
+    order = jnp.asarray(range(dim))
+    ev, vectors = jnp.linalg.eigh(M)
+
+    return(ev)
+
 
 def CM_single_ev(Z, R, N =  0., i = 0):
     '''
@@ -263,7 +291,7 @@ def OM_full_unsorted_matrix(Z, R, N= 0):
                     normA = jmath.OM_compute_norm(alphaA, lA, mA, nA) #compute norm for A
                     normB = jmath.OM_compute_norm(alphaB, lB, mB, nB)
                     S_xyz = jmath.OM_compute_Sxyz(rA, rB, alphaA, alphaB, lA, lB, mA, mB, nA, nB)
-                    exponent = np.exp(-alphaA*alphaB *jmath.IJsq(rA, rB)/(alphaA + alphaB))
+                    exponent = jnp.exp(-alphaA*alphaB *jmath.IJsq(rA, rB)/(alphaA + alphaB))
 
                     S = S.at[a,b].add(dA * dB * normA * normB *exponent* S_xyz)
 

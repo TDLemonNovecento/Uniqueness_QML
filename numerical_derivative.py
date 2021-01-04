@@ -89,9 +89,6 @@ def num_der1(representation, ZRN, d1, h = 0.1, dimension = dim):
     repro_plus = representation(plus_ZRN[0], plus_ZRN[1], plus_ZRN[2])
     repro_minus = representation(minus_ZRN[0], minus_ZRN[1], minus_ZRN[2])
     
-    print("repro_plus:")
-    print(repro_plus)
-
     repro_pls = repro_plus.flatten()
     repro_mns = repro_minus.flatten()
     
