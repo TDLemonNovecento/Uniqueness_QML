@@ -1,6 +1,7 @@
 '''
 This program prints numerical derivative convergance
 '''
+import representation_ZRN as ZRNrep
 from jax.config import config
 config.update("jax_enable_x64", True) #increase precision from float32 to float64
 import jax_representation as jrep
@@ -27,35 +28,42 @@ R = R_orig[order]
 
 R = np.asarray(R, dtype = np.float64)
 Z = np.asarray(Z, dtype = np.float64)
-fun = jrep.CM_full_unsorted_matrix
-function = 'CM'
-#fun = jrep.CM_ev
+functionnames = ['CM_unsrt', 'CM_EV', 'OM', 'OM_EV']
+functions = [ZRNrep.Coulomb_Matrix, ZRNrep.Eigenvalue_Coulomb_Matrix, ZRNrep.Overlap_Matrix, ZRNrep.Eigenvalue_Overlap_Matrix]
 
-def get_first_order_errors(hlist, d1):
+def get_first_order_errors(fun, fname, hlist, d1):
 
     if d1[0] == 0:
         name = "dZ%i" % (d1[1] + 1)
         dx = "Z"
-        exact = jder.sort_derivative('CM_unsrt', Z, R, N, 1, dx)[d1[1]]
+        exact = jder.sort_derivative(fname, Z, R, N, 1, dx)[d1[1]]
     if d1[0] == 1:
         xyz = ['x', 'y', 'z']
         name = "d%s%i" %(xyz[d1[1]], d1[2]+1)
         dx = 'R'
-        exact = jder.sort_derivative('CM_unsrt', Z, R, N, 1, dx)[d1[1]][d1[2]]
+        exact = jder.sort_derivative(fname, Z, R, N, 1, dx)[d1[1]][d1[2]]
     print("\n ------------------- \n Derivative %s \n ------------------ \nAnalytical derivative" %name)
     print(exact)
 
     ylist = []
     #calculate numerical derivatives for increasingly small h
     for h in hlist:
-        derf = numder.derivative(fun, [Z,R,N], 'numerical', 1, d1, [0,0], 3, h)
+        derf = numder.derivative(fun, [Z,R,N], 'numerical', 1, d1, [0,0], h)
         exf = exact.flatten()
+        print("derf")
+        print(derf)
+        print("exf")
+        print(exf)
         error = linalg.norm(derf - exf)
         ylist.append(error)
 
     return(ylist, name)
 
-def get_second_order_errors(hlist, d1, d2):
+def get_second_order_errors(fun, fname, hlist, d1, d2):
+    '''
+    fun: function from representation_ZRN.py
+    fname: string, 'CM', 'CM_EV', 'CM_unsrt', 'OM', 'OM_EV'
+    '''
     #calculate exact result
     if d1[0] == 0:
         name1 = "dZ%i" % (d1[1] + 1)
@@ -63,7 +71,7 @@ def get_second_order_errors(hlist, d1, d2):
         if d2[0] == 0:
             name = name1 + "dZ%i" % (d2[1] + 1)
             dx2 = "Z"
-            exact = jder.sort_derivative('CM_unsrt', Z, R, N, 2, dx1, dx2)[d1[1]][d2[1]]
+            exact = jder.sort_derivative(fname, Z, R, N, 2, dx1, dx2)[d1[1]][d2[1]]
 
     if d1[0] == 1:
         xyz = ['x', 'y', 'z']
@@ -72,7 +80,7 @@ def get_second_order_errors(hlist, d1, d2):
         if d2[0] == 1:
             name = name1 + "d%s%i" %(xyz[d2[1]], (d2[2] + 1))
             dx2 = 'R'
-            exact = jder.sort_derivative('CM_unsrt', Z, R, N, 2, dx1, dx2)[d1[1]][d1[2]][d2[1]][d2[2]]
+            exact = jder.sort_derivative(fname, Z, R, N, 2, dx1, dx2)[d1[1]][d1[2]][d2[1]][d2[2]]
 
     if (d1[0] == 0 and d2[0] == 1) or (d1[0] == 1 and d2[0] == 0): 
         xyz = ['x', 'y', 'z']
@@ -92,9 +100,9 @@ def get_second_order_errors(hlist, d1, d2):
         name = name1 + name2
 
         if ZR_order:
-            exact = jder.sort_derivative('CM_unsrt', Z, R, N, 2, dx1, dx2)[d1[1]][d2[1]][d2[2]]
+            exact = jder.sort_derivative(fname, Z, R, N, 2, dx1, dx2)[d1[1]][d2[1]][d2[2]]
         else:
-            exact = jder.sort_derivative('CM_unsrt', Z, R, N, 2, dx1, dx2)[d2[1]][d1[1]][d1[2]]
+            exact = jder.sort_derivative(fname, Z, R, N, 2, dx1, dx2)[d2[1]][d1[1]][d1[2]]
 
 
     print("\n ------------------- \n Derivative %s \n ------------------ \nAnalytical derivative" %name)
@@ -103,7 +111,7 @@ def get_second_order_errors(hlist, d1, d2):
     ylist = []
     #calculate numerical derivatives for increasingly small h
     for h in hlist:
-        derf = numder.derivative(fun, [Z,R,N], 'numerical', 2, d1, d2, 3, h)
+        derf = numder.derivative(fun, [Z,R,N], 'numerical', 2, d1, d2, h)
         exf = exact.flatten()
         error = linalg.norm(derf - exf)
         #print("h", h, "error", error)
@@ -112,9 +120,11 @@ def get_second_order_errors(hlist, d1, d2):
 
     return(ylist, name)
 
-def plot_numeric_errors(do_first_order = True, do_second_order = True, show_legend = False):
+def plot_numeric_errors(fun, fname, do_first_order = True, do_second_order = True, show_legend = False):
     '''
-    If you require your plots to be absolutely reproducible, get the Axes positions after running Constrained Layout and use ax.set_position() in your code with constrained_layout=False
+    fun : function from representation_ZRN.py file
+    fname : function name: 'CM', 'CM_unsrt', 'CM_EV', 'OM' or 'OM_EV'
+
     '''
     #prepare panels for plots
     fig = plt.figure(tight_layout = True, figsize=(8, 6))
@@ -147,7 +157,7 @@ def plot_numeric_errors(do_first_order = True, do_second_order = True, show_lege
     for dR, [...,...,0] is dx, [...,...,1] dy and [...,...,2] dz
     '''
 
-    derivative_1 =  [[0,0], [0,1], [0,2],[1,0,0], [1,0,1],[1,0,2],[1,1,0], [1,1,1],[1,1,2],[1,2,0], [1,2,1], [1,2,2]]
+    derivative_1 =  [[0,0], [1,1, 0]]#, [0,2],[1,0,0], [1,0,1],[1,0,2],[1,1,0], [1,1,1],[1,1,2],[1,2,0], [1,2,1], [1,2,2]]
 
     derivative_2 = [[0,0], [0,1], [0,2], [1, 1, 2]]# [0, 1], [1,0,0], [1,2,2], [1,1,2]]
     
@@ -160,7 +170,7 @@ def plot_numeric_errors(do_first_order = True, do_second_order = True, show_lege
     #plot 1st order if needed
     if do_first_order:
         for d1 in derivative_1:
-            ylist, name = get_first_order_errors(hlist, d1)
+            ylist, name = get_first_order_errors(fun, fname, hlist, d1)
             
             #plot errors in correct subplot
             if d1[0] == 0:
@@ -183,7 +193,7 @@ def plot_numeric_errors(do_first_order = True, do_second_order = True, show_lege
         for d1 in derivative_1:
             for d2 in derivative_2:
                 
-                ylist, name = get_second_order_errors(hlist, d1, d2)
+                ylist, name = get_second_order_errors(fun, fname, hlist, d1, d2)
 
                 #plot errors in correct subplot
                 if d1[0] == 0:
@@ -220,4 +230,7 @@ def plot_numeric_errors(do_first_order = True, do_second_order = True, show_lege
 
     return()
 
-plot_numeric_errors()
+for fun, fname in zip(functions, functionnames):
+    print("function:", fun)
+    print("function name:", fname)
+    plot_numeric_errors(fun, fname)

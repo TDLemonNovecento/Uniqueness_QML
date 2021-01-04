@@ -3,6 +3,7 @@
 import time
 import database_preparation as datprep
 import jax_derivative as jder
+import jax_additional_derivative as jader
 import jax_representation as jrep
 import jax.numpy as jnp
 import plot_derivative as pltder
@@ -24,10 +25,10 @@ if single:
         print("name of compound:", c.filename)
         #print("eigenvalue repro:\n", ev)
     
-        derivative = jder.sort_derivative('CM_EV', c.Z, c.R, c.N, 2, "R", "R")
+        derivative = jader.sort_derivative('CM_EV', c.Z, c.R, c.N, 2, "R", "R")
         print(derivative)
 
-results, fractions = jder.calculate_eigenvalues('CM_EV', compounds)
+results, fractions = jader.calculate_eigenvalues('CM_EV', compounds)
 datprep.store_compounds(results, CM_ev_result_file)
 
 print(type(results[0]))

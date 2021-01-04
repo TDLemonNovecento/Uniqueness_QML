@@ -359,7 +359,7 @@ def read_xyz_qml(pathway):
     return(compoundlist, ZRN_data)
 
 def alter_coordinates(coordinates, d, h):
-    Z = coordinates[0].copy()
+    Z = copy.deepcopy(coordinates[0])
     R = copy.deepcopy(coordinates[1])
     N = coordinates[2]
     if d[0] == 0:

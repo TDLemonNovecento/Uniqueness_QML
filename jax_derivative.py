@@ -241,7 +241,6 @@ def d_OM(Z, R, N, dx_index = 0):
     dim = jrep.OM_dimension(Z)
     Jraw = jacfwd(jrep.OM_full_sorted, dx_index)
     J = Jraw(Z, R, N)
-    print('jraw', Jraw, 'J', J)
     return(J)
 
 def dd_OM(Z, R, N, dx_index = 0, ddx_index = 0):

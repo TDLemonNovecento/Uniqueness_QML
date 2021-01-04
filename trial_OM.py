@@ -1,10 +1,18 @@
+'''
+Test out derivatives easily with this little function
+
+'''
 import qml
+import representation_ZRN as ZRNrep
 import jax_representation as jrep
-import jax_derivadive as jder
-import basis
+import jax_derivative as jder
+import jax_additional_derivative as jader
+import jax_basis as basis
 import numpy as np
 
-path = "/home/stuke/Databases/XYZ_random/H2O.xyz"
+
+#define path to xyz file in question
+path = "./TEST/H2O.xyz"
 compound = qml.Compound(path)
 
 '''get information from xyz file'''
@@ -16,10 +24,9 @@ N = float(len(Z))
 myOM, order  = jrep.OM_full_sorted(Z, R, N)
 derOM = jder.sort_derivative('OM', Z, R, N)
 
-'''using basis and S from literature'''
-#thisbasis, k = basis.build_sto3Gbasis(Z,R)
-#M = np.zeros((k,k))
-#myOM = oei.buildS(thisbasis, M)
+'''numerical derivative'''
+fun = repZRN.Overlap_Matrix
+
 
 '''print results nicely'''
 np.set_printoptions(precision=3, suppress=True)

@@ -11,7 +11,10 @@ config.update("jax_enable_x64", True) #increase precision from float32 to float6
 import numpy as np
 import database_preparation as datprep
 
-def derivative(representation, ZRN, kind = 'numerical', order = 1, d1 = [0,0,0], d2 = [0,0,0], dim = 3, h = 0.001):
+
+dim = 3
+
+def derivative(representation, ZRN, kind = 'numerical', order = 1, d1 = [0,0,0], d2 = [0,0,0], h = 0.001):
     '''the numerical derivative can only deal with unsorted representations,
     while the analytical derivative can use both sorted and unsorted.
     
@@ -39,8 +42,6 @@ def derivative(representation, ZRN, kind = 'numerical', order = 1, d1 = [0,0,0],
                         n = 1 : dyi
                         n = 2 : dzi
 
-    dim : int
-            maximal dimenstion of representation
     h : float
         for numerical derivative, little change induced to variables
     '''
@@ -67,7 +68,7 @@ def derivative(representation, ZRN, kind = 'numerical', order = 1, d1 = [0,0,0],
 
 
 
-def num_der1(representation, ZRN, d1, h = 0.1, dim = 3):
+def num_der1(representation, ZRN, d1, h = 0.1, dimension = dim):
     '''computes central difference derivative
     of representatin w.r.t. d1
     some elements taken from @author nick
@@ -85,9 +86,12 @@ def num_der1(representation, ZRN, d1, h = 0.1, dim = 3):
     minus_ZRN = datprep.alter_coordinates(ZRN, d1, -h)
     
     #get representation with slightly changed input
-    repro_plus = representation(plus_ZRN[0], plus_ZRN[1], plus_ZRN[2], dim)
-    repro_minus = representation(minus_ZRN[0], minus_ZRN[1], minus_ZRN[2], dim)
+    repro_plus = representation(plus_ZRN[0], plus_ZRN[1], plus_ZRN[2])
+    repro_minus = representation(minus_ZRN[0], minus_ZRN[1], minus_ZRN[2])
     
+    print("repro_plus:")
+    print(repro_plus)
+
     repro_pls = repro_plus.flatten()
     repro_mns = repro_minus.flatten()
     
@@ -120,9 +124,9 @@ def num_der2(representation, ZRN, d1, d2, h = 0.1, dim = 3):
 
     if (d1 == d2):
         #calculate representation with slight changes
-        repro_plus = representation(plus_ZRN[0], plus_ZRN[1], plus_ZRN[2], dim)
-        repro_minus = representation(minus_ZRN[0], minus_ZRN[1], minus_ZRN[2], dim)
-        repro_normal = representation(ZRN[0], ZRN[1], ZRN[2], dim)
+        repro_plus = representation(plus_ZRN[0], plus_ZRN[1], plus_ZRN[2])
+        repro_minus = representation(minus_ZRN[0], minus_ZRN[1], minus_ZRN[2])
+        repro_normal = representation(ZRN[0], ZRN[1], ZRN[2])
 
         #flatten representations
         repro_pls = repro_plus.flatten()
@@ -139,10 +143,10 @@ def num_der2(representation, ZRN, d1, d2, h = 0.1, dim = 3):
         minusminus_ZRN = datprep.alter_coordinates(minus_ZRN, d2, -h)
 
         #calculate representation
-        repro_plusplus = representation(plusplus_ZRN[0], plusplus_ZRN[1], plusplus_ZRN[2], dim)
-        repro_plusminus = representation(plusminus_ZRN[0], plusminus_ZRN[1], plusminus_ZRN[2], dim)
-        repro_minusplus = representation(minusplus_ZRN[0], minusplus_ZRN[1], minusplus_ZRN[2], dim)
-        repro_minusminus = representation(minusminus_ZRN[0], minusminus_ZRN[1], minusminus_ZRN[2], dim)
+        repro_plusplus = representation(plusplus_ZRN[0], plusplus_ZRN[1], plusplus_ZRN[2])
+        repro_plusminus = representation(plusminus_ZRN[0], plusminus_ZRN[1], plusminus_ZRN[2])
+        repro_minusplus = representation(minusplus_ZRN[0], minusplus_ZRN[1], minusplus_ZRN[2])
+        repro_minusminus = representation(minusminus_ZRN[0], minusminus_ZRN[1], minusminus_ZRN[2])
 
         #flatten results
         repro_pp = repro_plusplus.flatten()

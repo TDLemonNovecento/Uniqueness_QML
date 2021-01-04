@@ -6,7 +6,7 @@ config.update("jax_enable_x64", True) #increase precision from float32 to float6
 
 from jax import grad, ops
 #import qml
-import jax_basis
+import jax_basis as basis
 from jax_basis import empty_BoB_dictionary, BoB_emptyZ
 from scipy import misc, special, linalg
 import jax_math as jmath
@@ -44,15 +44,14 @@ def CM_full_unsorted_matrix(Z, R, N, size = 3):
         charge_matrix = jnp.outer(Z, Z)
 
         # returns i,i indexes (of diagonal elements)
-        diagonal_idx = jnp.diag_indices(size, ndim=2)
-        
+        diagonal_idx = jnp.diag_indices(n, ndim=2)        
         charge_matrix = ops.index_update(charge_matrix, diagonal_idx,  0.5 * Z ** 2.4)
 
         # fix diagonal elements to 1 in distance matrix
         distances = ops.index_update(distances, diagonal_idx, 1.0)
 
         #compute cm by dividing charge matrix by distance matrix
-        cm_matrix = charge_matrix / distances
+        cm_matrix = jnp.asarray(charge_matrix / distances)
         
         return(cm_matrix)
 
@@ -225,7 +224,7 @@ def CM_eigenvectors_EVsorted(Z, R, N, cutoff = 10):
 
 
 
-def OM_full_unsorted_matrix(Z, R, N):
+def OM_full_unsorted_matrix(Z, R, N= 0):
     '''
     The overlap matrix is constructed as described in the
     'student-friendly guide to molecular integrals' by Murphy et al, 2018
@@ -268,7 +267,7 @@ def OM_full_unsorted_matrix(Z, R, N):
 
                     S = S.at[a,b].add(dA * dB * normA * normB *exponent* S_xyz)
 
-    return(S, K)
+    return(S)
 
 def OM_full_sorted(Z, R, N = 0):
     ''' Calculates sorted coulomb matrix
@@ -285,7 +284,7 @@ def OM_full_sorted(Z, R, N = 0):
     Full Coulomb Matrix, dim(Z)xdim(Z)
     '''
 
-    M_unsorted, dim = OM_full_unsorted_matrix(Z, R, N)
+    M_unsorted = OM_full_unsorted_matrix(Z, R, N)
     val_row = np.asarray([jnp.linalg.norm(row) for row in M_unsorted])
     order = val_row.argsort()[::-1]
 
@@ -337,6 +336,29 @@ def OM_ev(Z, R, N):
     ev, vectors = jnp.linalg.eigh(M)
     return(ev, order)
 
+def OM_ev_unsrt(Z, R, N):
+    '''
+    Parameters
+    ----------
+    Z : 1 x n dimensional array
+        contains nuclear charges
+    R : 3 x n dimensional array
+        contains nuclear positions
+    N : float
+        number of electrons in system
+        here: meaningless, can remain empty
+
+    Return
+    ------
+    ev : vector (1 x n dim.)
+        contains eigenvalues of sorted CM
+    (vectors: tuple
+        contains Eigenvectors of matrix (n dim.)
+        If i out of bounds, return none and print error)
+    '''
+    M, K = OM_full_unsorted_matrix(Z,R)
+    ev, vectors = jnp.linalg.eigh(M)
+    return(ev)
 
 def BoB_full_sorted(Z, R, N = 0, k_dictionary = empty_BoB_dictionary ):
     ''' Calculates sorted BoB

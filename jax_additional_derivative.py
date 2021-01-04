@@ -10,6 +10,7 @@ as shown in the trial_jax_numerical_der.py file. The new location of the functio
 has not been updated everywhere and neither been checked yet (Dez. 2020) so this may cause errors.
 '''
 import numpy as np
+from jax import ops
 import jax.numpy as jnp
 import database_preparation as datprep
 import jax_derivative as jder
@@ -179,24 +180,24 @@ def num_first_derivative(f, ZRN, d = [0, 0], h = 0.1, method = 'central', dim =3
         p = update_index(ZRN, d, h)
         m = update_index(ZRN, d, -h)
 
-        fp = f(p[0], p[1], p[2], dim, True)[0]
-        fm = f(m[0], m[1], m[2], dim, True)[0]
+        fp = f(p[0], p[1], p[2])
+        fm = f(m[0], m[1], m[2])
 
         return( (fp - fm)/(2*h))
 
     elif method == 'forward':
         p = update_index(ZRN, d, h)
 
-        fp = f(p[0], p[1], p[2], dim, True)[0]
-        fnormal = f(ZRN[0], ZRN[1], ZRN[2], dim, True)[0]
+        fp = f(p[0], p[1], p[2])
+        fnormal = f(ZRN[0], ZRN[1], ZRN[2])
 
         return ((fp - fnormal)/h)
 
     elif method == 'backward':
         m = update_index(ZRN, d, -h)
 
-        fnormal = f(ZRN[0], ZRN[1], ZRN[2], dim, True)[0]
-        fm = f(m[0], m[1], m[2])[0]
+        fnormal = f(ZRN[0], ZRN[1], ZRN[2])
+        fm = f(m[0], m[1], m[2])
 
         return ((fnormal - fm)/h)
     else:
