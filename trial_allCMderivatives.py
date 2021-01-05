@@ -1,6 +1,7 @@
 import qml
 import jax_representation as jrep
 import jax_derivative as jder
+import jax_additional_derivative as jader
 import jax_basis
 from jax_math import BoB_fill
 import jax.numpy as jnp
@@ -29,6 +30,5 @@ jnp.set_printoptions(precision=3, suppress=True)
 #print('Representation:\n------------------')
 #print(M)
 
-
-jder.cal_print_1stder('CM_EV', Z, R, N)
-jder.cal_print_2ndder('CM_EV', Z, R, N)
+jader.cal_print_1stder('CM_EV', Z, R, N)
+jader.cal_print_2ndder('CM_EV', Z, R, N)

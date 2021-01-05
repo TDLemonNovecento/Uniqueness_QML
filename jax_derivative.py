@@ -219,10 +219,8 @@ def d_CM_ev(Z, R, N, dx_index):
     
     #direct derivative as jacobian
     dCM_ev = jacfwd(jrep.CM_ev, dx_index)
-    ref_dCM_ev = dCM_ev(Z, R, N)
+    ref_dCM_ev = dCM_ev(Z, R, N)[0]
 
-    #ref_dCM_ev = dCM_ev(Z.astype(float), R.astype(float), float(N))[0]
-    
     '''Not sure about reordering and values below. definitely need to recheck'''
     if(dx_index == 0):
         #assign derivative to correct field in sorted matrix by reordering derZ_ij to derZ_kl

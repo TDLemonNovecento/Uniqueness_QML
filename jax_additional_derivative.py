@@ -11,6 +11,7 @@ has not been updated everywhere and neither been checked yet (Dez. 2020) so this
 '''
 import numpy as np
 from jax import ops
+import jax_representation as jrep
 import jax.numpy as jnp
 import database_preparation as datprep
 import jax_derivative as jder
@@ -63,7 +64,7 @@ def calculate_eigenvalues(repro, compoundlist):
         print("all derivatives were calculated successfully for compound ", c.filename)
         #create derivative results instance
         der_result = datprep.derivative_results(c.filename, Z, M)
-
+        
         #get all derivative eigenvalues for the derivatives and add to results instance
         der_result.add_all_RZev(dZ, dR, ddZ, ddR, dZdR)
 

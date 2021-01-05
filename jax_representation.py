@@ -91,7 +91,7 @@ def CM_full_sorted(Z, R, N = 0, size=3, unsorted = False):
     D = jnp.asarray([[unsorted_M[i,j] for j in order] for i in order])
     return(D, order)
     
-def CM_ev(Z, R, N=0, maxsize = 3, unsorted = False):
+def CM_ev(Z, R, N=0, maxsize = 23, unsorted = False):
     '''
     Parameters
     ----------
@@ -113,7 +113,7 @@ def CM_ev(Z, R, N=0, maxsize = 3, unsorted = False):
     '''
     dim = Z.shape[0]
     if unsorted:
-        M = CM_full_unsorted_matrix(Z,R,N)
+        M = CM_full_unsorted_matrix(Z,R,N, 23)
         order = jnp.asarray(range(dim))
     else:
         M, order = CM_full_sorted(Z,R, N, dim)

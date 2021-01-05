@@ -24,3 +24,12 @@ plot_CMderivatives.py: plots CM derivatives
 trial_*: group of code examples dealing with whatever comes after _
 trial_OM: file that calls a OM representation and prints it
 trial_CMderivatives_plot.py: file that contains full walkthrough from extracting data from xyz file up to ploting the derivatives of a sorted CM representation
+
+
+
+Hints
+______
+
+
+submit multiple jobs (e.g. when running trial_full_analytical_derivatives.py) via the following commands:
+$ nohup python3 -u trial_full_analytical_derivatives.py 100 200 > job1.out &
