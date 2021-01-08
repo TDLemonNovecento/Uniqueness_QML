@@ -18,7 +18,12 @@ plt.rc('figure',titlesize=fontsize*1.2) # fontsize of the figure title
 
 
 
-def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis, title = "Nonzero Eigenvalues of Derivatives of CM", savetofile = "perc_nonzeroEV_CM_test", oneplot = True):
+def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis, title = "Nonzero Eigenvalues of Derivatives of CM", savetofile = "perc_nonzeroEV_CM_test", oneplot = True, representations = 1):
+    '''
+
+
+    '''
+    
     #general figure settings
     if oneplot:
         fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize=(12,8))
@@ -38,17 +43,20 @@ def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis, title = "Nonzero Eigen
         for y in percentages_yaxis:
             ax.scatter(norm_xaxis, y[0], label = y[1])
     else:
-        y = percentages_yaxis #for simplicity
-        ax_d1.scatter(norm_xaxis, y[0][0])
-        ax_d1.title.set_text(y[0][1])
-        ax_d2.scatter(norm_xaxis, y[1][0])
-        ax_d2.title.set_text(y[1][1])
-        ax_dd1.scatter(norm_xaxis, y[2][0])
-        ax_dd1.title.set_text(y[2][1])
-        ax_dd2.scatter(norm_xaxis, y[3][0])
-        ax_dd2.title.set_text(y[3][1])
-        ax_dd3.scatter(norm_xaxis, y[4][0])
-        ax_dd3.title.set_text(y[4][1])
+        repros  = ["CM", "EVCM"]
+        for i in range(representations):
+            name = repros[i]
+            y = percentages_yaxis #for simplicity
+            ax_d1.scatter(norm_xaxis, y[i*5+0][0], label = name)
+            ax_d1.title.set_text("dZ")#y[i*5+0][1])
+            ax_d2.scatter(norm_xaxis, y[i*5+1][0])
+            ax_d2.title.set_text("dR")#y[i*5+1][1])
+            ax_dd1.scatter(norm_xaxis, y[i*5+2][0])
+            ax_dd1.title.set_text("dRdR")#y[i*5+2][1])
+            ax_dd2.scatter(norm_xaxis, y[i*5+3][0])
+            ax_dd2.title.set_text("dZdR")#y[i*5+3][1])
+            ax_dd3.scatter(norm_xaxis, y[i*5+4][0])
+            ax_dd3.title.set_text("dZdZ")#y[i*5+4][1])
         
         #turn off ticks and so on for outer subfigure
         ax.xaxis.set_ticks([])
@@ -68,7 +76,7 @@ def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis, title = "Nonzero Eigen
 
     if oneplot:
         handles, labels = ax.get_legend_handles_labels()
-        ax.legend(handles, labels, title = 'Derivatives')
+        ax.legend(handles, labels, bbox_to_anchor = (1,1), loc = "upper left", title = 'Derivatives')
     
         plt.xlabel('Norm of Coulomb Matrix')
         plt.ylabel('Fraction of Nonzero Eigenvalues')
@@ -78,11 +86,12 @@ def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis, title = "Nonzero Eigen
         #hspace, wspace increases space between subplots
     else:
         fig.subplots_adjust(top=0.87, left = 0.10, right = 0.97,  wspace = 0.2, hspace = 0.5) #right = 0.82
-    
+        ax_d1.legend(loc = "upper left")#, title = "Representation") 
+        #alternative : bbox_to_anchor = (0., 1.02, 1., 0.102)
     
     #save and display plot
     name = savetofile
-    plt.savefig(name, transparent = True)
+    plt.savefig(name, transparent = True, bbox_inches = 'tight')
     
 
     return(print("plots have been saved to %s" % name))

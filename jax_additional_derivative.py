@@ -15,9 +15,98 @@ import jax_representation as jrep
 import jax.numpy as jnp
 import database_preparation as datprep
 import jax_derivative as jder
+import numerical_derivative as numder
 from jax.config import config
 config.update("jax_enable_x64", True) #increase precision from float32 to float64
+import representation_ZRN as ZRNrep
 
+def presort(Z_orig, R_orig, order):
+    
+    Z = Z_orig[order.tolist()]
+    R = R_orig[order]
+
+    R = np.asarray(R, dtype = np.float64)
+    Z = np.asarray(Z, dtype = np.float64)
+    return(Z, R)
+
+def calculate_num_der(repro, compoundlist, matrix = True):
+    '''calculates eigenvalues of derived matrices from compounds
+    only functions as translator between the compound object, the derivative_result object
+    and the sorted_derivative function.
+
+    Arguments:
+    ----------
+    repro: representation, such as 'CM' for coulomb matrix ect, as is used in sorted_derivative function
+    compoundlist: list of database_preparation.compound objects
+
+    Returns:
+    --------
+    resultlist: list of derivative_result instances, a class
+                which contains both norm as well as derivatives,
+                eigenvalues and fractual eigenvalue information
+    results: list of fractions of nonzero eigenvalues,
+            structure: [[compound 1: dZ_ev, dR_ev, ...], [compound 2: ...],...]
+    '''
+    resultlist = []
+    results = []
+    
+    print("Your representation is ", repro, "this is a matrix is set to: ", matrix)
+    print("if this is wrong, change in function 'calculate_num_der' in file jax_additional_derivative.py")
+     
+    #extract atomic data from compound
+    for c in compoundlist:
+        Z_orig = np.asarray([float(i)for i in c.Z])
+        R_orig = np.asarray(c.R)
+        N = float(c.N)
+        
+
+        #calculate derivatives and representation
+        #M needed to calculate norm for molecule, here always using CM matrix nuclear norm
+        #order needed to preorder molecules (numerical derivative)
+        
+        dim = len(Z_orig)
+        M, order = jrep.CM_full_sorted(Z_orig, R_orig, N, size = dim)
+        
+        #preorder Z and R as numerical derivation may be disturbed by sorted representations
+        Z, R = presort(Z_orig, R_orig, np.asarray(order))
+        
+
+        dZ = [[0] for i in range(dim)]
+        dR = [[[0] for j in range(3)] for i in range(dim)]
+        dZdZ = [[[0] for j in range(dim)] for i in range(dim)]
+        dRdR = [[[[[0] for l in range(3)] for k in range(dim)] for j in range(3)] for i in range(dim)]
+        dZdR = [[[[0] for k in range(3)] for j in range(dim)] for i in range(dim)]
+
+        for i in range(dim):
+            dZ[i] = numder.derivative(repro, [Z, R, N], order = 1, d1 = [0, i])
+            
+            for j in range(3):
+                dR[i][j] = numder.derivative(repro, [Z, R, N], order = 1, d1 = [1, i, j])
+
+                for k in range(dim):
+                    dZdR[i][k][j] = numder.derivative(repro, [Z, R, N], order = 2, d1 = [0, i], d2 = [1, k, j])
+
+                    for l in range(3):
+                        dRdR[i][j][k][l] = numder.derivative(repro, [Z, R, N], order = 2, d1 = [1, i, j], d2 = [1, k,l])
+            
+            for m in range(dim):
+                dZdZ[i][m] = numder.derivative(repro, [Z,R,N], order = 2, d1 = [0,i], d2 = [0, m])
+            
+        print("all derivatives were calculated successfully for compound ", c.filename)
+        #create derivative results instance
+        der_result = datprep.derivative_results(c.filename, Z, M)
+
+        #get all derivative eigenvalues for the derivatives and add to results instance
+        der_result.add_all_RZev(np.asarray(dZ), np.asarray(dR), np.asarray(dZdZ),\
+                np.asarray(dRdR), np.asarray(dZdR))
+
+        #calculate percentile results and add to results
+        res, addition = der_result.calculate_smallerthan()
+
+        results.append(res)
+        resultlist.append(der_result)
+
+    return(resultlist, results)
 
 
 '''

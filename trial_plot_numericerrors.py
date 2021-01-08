@@ -126,7 +126,7 @@ def get_second_order_errors(fun, fname, hlist, d1, d2):
 
     return(ylist, name)
 
-def plot_numeric_errors(fun, fname, do_first_order = True, do_second_order = True, show_legend = True):
+def plot_numeric_errors(fun, fname, do_first_order = True, do_second_order = True, show_legend = False):
     '''
     fun : function from representation_ZRN.py file
     fname : function name: 'CM', 'CM_unsrt', 'CM_EV', 'OM' or 'OM_EV'
@@ -163,9 +163,9 @@ def plot_numeric_errors(fun, fname, do_first_order = True, do_second_order = Tru
     for dR, [...,...,0] is dx, [...,...,1] dy and [...,...,2] dz
     '''
 
-    derivative_1 =  [[0,0], [1,1, 0]]#, [0,2],[1,0,0], [1,0,1],[1,0,2],[1,1,0], [1,1,1],[1,1,2],[1,2,0], [1,2,1], [1,2,2]]
+    derivative_1 =  [[0,0], [0,1], [0,2],[1,0,0], [1,0,1],[1,0,2],[1,1,0], [1,1,1],[1,1,2],[1,2,0], [1,2,1], [1,2,2]]
 
-    derivative_2 = [[0,0], [0,1], [0,2], [1, 1, 2]]# [0, 1], [1,0,0], [1,2,2], [1,1,2]]
+    derivative_2 = [[0,0], [0,1], [0,2], [1, 1, 2], [1,0, 1], [1,0,0], [1,2,2], [1,1,2]]
     
     #hlist: small steps that are taken for numerical derivation
     hlist = np.logspace(-1, -5, 10)
@@ -238,8 +238,8 @@ def plot_numeric_errors(fun, fname, do_first_order = True, do_second_order = Tru
 
 
 
-fun = functions[2]
-fname = functionnames[2]
+fun = functions[1]
+fname = functionnames[1]
 
 print("function:", fun)
 print("function name:", fname)

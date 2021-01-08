@@ -3,6 +3,7 @@
 from jax.config import config
 config.update("jax_enable_x64", True) #increase precision from float32 to float64
 
+import numpy as np
 import pickle
 import copy
 import os
@@ -62,9 +63,14 @@ class derivative_results():
         self.dRdR_perc = None
         self.dZdR_perc = None
 
+        self.representation_form  = 0
+
     
     def add_all_RZev(self, dZ, dR, dZdZ, dRdR, dZdR):
-        
+           
+        self.representation_form = dZ[0].size
+        print(self.representation_form)
+
         dZ_ev = []
         dR_ev = []
 
@@ -74,7 +80,8 @@ class derivative_results():
         
         dim = len(self.Z)
         #for matrix like representations, calculate eigenvalues. for the rest, leave as it is
-        
+
+
         matrix = False
         try:
             if(dZ[0].shape[0] == dZ[0].shape[1]):
@@ -117,11 +124,19 @@ class derivative_results():
                 for j in range(dim):
                     dZdZ_ev.append(dZdZ[i,j])
         
-        self.dZ_ev = dZ_ev
-        self.dR_ev = dR_ev
-        self.dZdZ_ev = dZdZ_ev
-        self.dRdR_ev = dRdR_ev
-        self.dZdR_ev = dZdR_ev
+        self.dZ_ev = np.asarray(dZ_ev)
+        self.dR_ev = np.asarray(dR_ev)
+        self.dZdZ_ev = np.asarray(dZdZ_ev)
+        self.dRdR_ev = np.asarray(dRdR_ev)
+        self.dZdR_ev = np.asarray(dZdR_ev)
+    
+    def convert_ev_to_np(self):
+        self.dZ_ev = np.asarray(self.dZ_ev)
+        self.dR_ev = np.asarray(self.dR_ev)
+        self.dZdZ_ev = np.asarray(self.dZdZ_ev)
+        self.dRdR_ev = np.asarray(self.dRdR_ev)
+        self.dZdR_ev = np.asarray(self.dZdR_ev)
+
     
     def add_Z_norm(self, Z, M):
         self.Z = Z
@@ -143,7 +158,50 @@ class derivative_results():
         fractions = [self.dZ_perc, self.dR_perc, self.dZdZ_perc, self.dRdR_perc, self.dZdR_perc]
 
         return(fractions)
+    
+    def transfer_to_numpy(self, listofself):
+        for i in listofself:
+            i = np.asarray(i)
+
+        return(listofself)
+
+
+    def calculate_smallerthan(self, lower_bound = 0.00001):
+        dim = len(self.Z)
+        self.representation_form = dim
+
+        listofself = self.transfer_to_numpy([self.dZ_ev, self.dR_ev, self.dZdZ_ev, self.dRdR_ev, self.dZdR_ev])
         
+        self.dZ_ev = listofself[0]
+        self.dR_ev = listofself[1]
+        self.dZdZ_ev = listofself[2]
+        self.dRdR_ev = listofself[3]
+        self.dZdR_ev = listofself[4]
+
+
+        try:
+            self.dZ_bigger = self.dZ_ev[(-lower_bound > self.dZ_ev) | (self.dZ_ev > lower_bound)]
+            self.dR_bigger = self.dR_ev[(-lower_bound > self.dR_ev) | (self.dR_ev > lower_bound)]
+            self.dZdZ_bigger = self.dZdZ_ev[(-lower_bound > self.dZdZ_ev) | (self.dZdZ_ev > lower_bound)]
+            self.dRdR_bigger = self.dRdR_ev[(-lower_bound > self.dRdR_ev) | (self.dRdR_ev > lower_bound)]
+            self.dZdR_bigger = self.dZdR_ev[(-lower_bound > self.dZdR_ev) | (self.dZdR_ev > lower_bound)]
+
+        except ValueError:
+            print("an error occuerd while calculating ev values smaller than ", lower_bound)
+
+        print("self.representation_form", self.representation_form)
+
+        self.dZ_perc = (self.dZ_bigger.size)/(self.representation_form*dim) #is 2*dim Z the max number of EV?
+        self.dR_perc = (self.dR_bigger.size)/(3*dim*self.representation_form)
+        self.dZdZ_perc = (self.dZdZ_bigger.size)/(self.representation_form*dim**2)
+        self.dRdR_perc = (self.dRdR_bigger.size)/(self.representation_form*9*dim**2)
+        self.dZdR_perc = (self.dZdR_bigger.size)/(self.representation_form*3*dim**2)
+
+        fractions = [self.dZ_perc, self.dR_perc, self.dZdZ_perc, self.dRdR_perc, self.dZdR_perc]
+        numbers = [self.dZ_bigger, self.dR_bigger, self.dZdZ_bigger, self.dRdR_bigger, self.dZdR_bigger]
+
+
+        return(fractions, numbers)
 
             
 def read_xyz_energies(folder, get_energy = True):

@@ -3,18 +3,18 @@
 initiated: 18.12.2020
 
 This file contains a numerical derivative function and a short workflow for getting derivatives
-w.r.t. xi,yi,zi or Zi
+w.r.t.xi,yi,zi or Zi
 '''
-from jax.config import config
-config.update("jax_enable_x64", True) #increase precision from float32 to float64
+#from jax.config import config
+#config.update("jax_enable_x64", True) #increase precision from float32 to float64
 
 import numpy as np
 import database_preparation as datprep
 
 
-dim = 3
+dim = 23
 
-def derivative(representation, ZRN, kind = 'numerical', order = 1, d1 = [0,0,0], d2 = [0,0,0], h = 0.001):
+def derivative(representation, ZRN, kind = 'numerical', order = 1, d1 = [0,0,0], d2 = [0,0,0], h = 0.00001):
     '''the numerical derivative can only deal with unsorted representations,
     while the analytical derivative can use both sorted and unsorted.
     
@@ -94,7 +94,7 @@ def num_der1(representation, ZRN, d1, h = 0.1, dimension = dim):
     
     difference = (repro_pls - repro_mns)/ (2*h) #brackets around h are vital!
 
-    return(difference)
+    return(np.asarray(difference))
 
 
 def num_der2(representation, ZRN, d1, d2, h = 0.1, dim = 3):
@@ -144,13 +144,13 @@ def num_der2(representation, ZRN, d1, d2, h = 0.1, dim = 3):
         repro_plusminus = representation(plusminus_ZRN[0], plusminus_ZRN[1], plusminus_ZRN[2])
         repro_minusplus = representation(minusplus_ZRN[0], minusplus_ZRN[1], minusplus_ZRN[2])
         repro_minusminus = representation(minusminus_ZRN[0], minusminus_ZRN[1], minusminus_ZRN[2])
-
+        
         #flatten results
         repro_pp = repro_plusplus.flatten()
         repro_pm = repro_plusminus.flatten()
         repro_mp = repro_minusplus.flatten()
         repro_mm = repro_minusminus.flatten()
-
+        
         difference = (repro_pp + repro_mm - repro_mp - repro_pm) / (4*h**2)
-
-    return(difference)
+    
+    return(np.asarray(difference))
