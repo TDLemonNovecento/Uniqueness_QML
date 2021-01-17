@@ -167,29 +167,34 @@ class derivative_results():
 
 
     def calculate_smallerthan(self, lower_bound = 0.00001):
-        dim = len(self.Z)
+        dim = 23 #len(self.Z)
         self.representation_form = dim
 
-        listofself = self.transfer_to_numpy([self.dZ_ev, self.dR_ev, self.dZdZ_ev, self.dRdR_ev, self.dZdR_ev])
-        
-        self.dZ_ev = listofself[0]
-        self.dR_ev = listofself[1]
-        self.dZdZ_ev = listofself[2]
-        self.dRdR_ev = listofself[3]
-        self.dZdR_ev = listofself[4]
+        #print("self dZdZ ev:", len(self.dZdZ_ev), "firstele:", self.dZdZ_ev[0])
 
+
+
+        dZ_ev = np.asarray(self.dZ_ev)
+        dR_ev = np.asarray(self.dR_ev)
+        dRdR_ev = np.asarray(self.dZdZ_ev)
+        dZdZ_ev = np.asarray(self.dRdR_ev)
+        dZdR_ev = np.asarray(self.dZdR_ev)
+        
+        #print("asarray: ", len(dZdZ_ev), "firstelement:", dZdZ_ev[0])
 
         try:
-            self.dZ_bigger = self.dZ_ev[(-lower_bound > self.dZ_ev) | (self.dZ_ev > lower_bound)]
-            self.dR_bigger = self.dR_ev[(-lower_bound > self.dR_ev) | (self.dR_ev > lower_bound)]
-            self.dZdZ_bigger = self.dZdZ_ev[(-lower_bound > self.dZdZ_ev) | (self.dZdZ_ev > lower_bound)]
-            self.dRdR_bigger = self.dRdR_ev[(-lower_bound > self.dRdR_ev) | (self.dRdR_ev > lower_bound)]
-            self.dZdR_bigger = self.dZdR_ev[(-lower_bound > self.dZdR_ev) | (self.dZdR_ev > lower_bound)]
+            self.dZ_bigger = dZ_ev[(-lower_bound > dZ_ev) | (dZ_ev > lower_bound)]
+            self.dR_bigger = dR_ev[(-lower_bound > dR_ev) | (dR_ev > lower_bound)]
+            self.dZdZ_bigger = dZdZ_ev[(-lower_bound > dZdZ_ev) | (dZdZ_ev > lower_bound)]
+            self.dRdR_bigger = dRdR_ev[(-lower_bound > dRdR_ev) | (dRdR_ev > lower_bound)]
+            self.dZdR_bigger = dZdR_ev[(-lower_bound > dZdR_ev) | (dZdR_ev > lower_bound)]
 
         except ValueError:
             print("an error occuerd while calculating ev values smaller than ", lower_bound)
 
-        print("self.representation_form", self.representation_form)
+        print("self.representation_form", self.representation_form, "dim:", dim)
+        print("size:", self.dZdZ_bigger.size, "dimension foreseen:", self.representation_form*dim**2)
+
 
         self.dZ_perc = (self.dZ_bigger.size)/(self.representation_form*dim) #is 2*dim Z the max number of EV?
         self.dR_perc = (self.dR_bigger.size)/(3*dim*self.representation_form)

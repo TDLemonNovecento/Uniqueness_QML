@@ -29,7 +29,7 @@ def presort(Z_orig, R_orig, order):
     Z = np.asarray(Z, dtype = np.float64)
     return(Z, R)
 
-def calculate_num_der(repro, compoundlist, matrix = True):
+def calculate_num_der(repro, compoundlist, matrix = False, do_dZ = True, do_dR = False):
     '''calculates eigenvalues of derived matrices from compounds
     only functions as translator between the compound object, the derivative_result object
     and the sorted_derivative function.
@@ -38,6 +38,8 @@ def calculate_num_der(repro, compoundlist, matrix = True):
     ----------
     repro: representation, such as 'CM' for coulomb matrix ect, as is used in sorted_derivative function
     compoundlist: list of database_preparation.compound objects
+    matrix: If repro returns matrix like shape, unravel
+    do_dZ : boolean, if true, omit dZ derivatives as Z is not a continuous variable e.g. in OM
 
     Returns:
     --------
@@ -76,21 +78,27 @@ def calculate_num_der(repro, compoundlist, matrix = True):
         dZdZ = [[[0] for j in range(dim)] for i in range(dim)]
         dRdR = [[[[[0] for l in range(3)] for k in range(dim)] for j in range(3)] for i in range(dim)]
         dZdR = [[[[0] for k in range(3)] for j in range(dim)] for i in range(dim)]
-
+        
+        print("checkpoint2: now starting numerical differentiation, jax_additional line 82")
         for i in range(dim):
-            dZ[i] = numder.derivative(repro, [Z, R, N], order = 1, d1 = [0, i])
-            
+            if do_dZ:
+                dZ[i] = numder.derivative(repro, [Z, R, N], order = 1, d1 = [0, i])
+                print("subcheck2: dZ derivative calculated")
             for j in range(3):
-                dR[i][j] = numder.derivative(repro, [Z, R, N], order = 1, d1 = [1, i, j])
+                if do_dR:
+                    dR[i][j] = numder.derivative(repro, [Z, R, N], order = 1, d1 = [1, i, j])
 
                 for k in range(dim):
-                    dZdR[i][k][j] = numder.derivative(repro, [Z, R, N], order = 2, d1 = [0, i], d2 = [1, k, j])
-
-                    for l in range(3):
-                        dRdR[i][j][k][l] = numder.derivative(repro, [Z, R, N], order = 2, d1 = [1, i, j], d2 = [1, k,l])
+                    if do_dZ:
+                        dZdR[i][k][j] = numder.derivative(repro, [Z, R, N], order = 2, d1 = [0, i], d2 = [1, k, j])
+                    
+                    if do_dR:
+                        for l in range(3):
+                            dRdR[i][j][k][l] = numder.derivative(repro, [Z, R, N], order = 2, d1 = [1, i, j], d2 = [1, k,l])
             
             for m in range(dim):
-                dZdZ[i][m] = numder.derivative(repro, [Z,R,N], order = 2, d1 = [0,i], d2 = [0, m])
+                if do_dZ:
+                    dZdZ[i][m] = numder.derivative(repro, [Z,R,N], order = 2, d1 = [0,i], d2 = [0, m])
             
         print("all derivatives were calculated successfully for compound ", c.filename)
         #create derivative results instance

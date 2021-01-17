@@ -7,7 +7,7 @@ w.r.t.xi,yi,zi or Zi
 '''
 #from jax.config import config
 #config.update("jax_enable_x64", True) #increase precision from float32 to float64
-
+import time
 import numpy as np
 import database_preparation as datprep
 
@@ -81,14 +81,23 @@ def num_der1(representation, ZRN, d1, h = 0.1, dimension = dim):
     difference : central difference derivative
     '''
     
+    print("checkpoint 3: numerical differentiation 1st grade started, numerical_differentiation line 84")
     #change variable by which to derive (d1) slightly by h
+    #print("ZRN: ", ZRN)
+
     plus_ZRN = datprep.alter_coordinates(ZRN, d1, h)
     minus_ZRN = datprep.alter_coordinates(ZRN, d1, -h)
     
     #get representation with slightly changed input
+    tic = time.perf_counter()
     repro_plus = representation(plus_ZRN[0], plus_ZRN[1], plus_ZRN[2])
     repro_minus = representation(minus_ZRN[0], minus_ZRN[1], minus_ZRN[2])
-    
+    toc = time.perf_counter()
+    print(f"2Repros in {toc - tic:0.4f} seconds")
+
+    #print(repro_plus)
+    #print("repro minus: \n", repro_minus)
+
     repro_pls = repro_plus.flatten()
     repro_mns = repro_minus.flatten()
     

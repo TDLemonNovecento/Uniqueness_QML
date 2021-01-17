@@ -3,7 +3,7 @@ import jax.numpy as jnp
 import numpy as np
 from jax.config import config
 config.update("jax_enable_x64", True) #increase precision from float32 to float64
-
+from time import perf_counter as tic
 from jax import grad, ops
 #import qml
 import jax_basis as basis
@@ -215,7 +215,7 @@ def CM_index(Z, R, N, i = 0, j = 0):
         distance = jnp.linalg.norm(Ri-Rj)
         return( Zi*Zj/(distance))
 
-def CM_eigenvectors_EVsorted(Z, R, N, cutoff = 10):
+def CM_eigenvectors_EVsorted(Z, R, N= 0, cutoff = 10):
     ''' Matrix containing eigenvalues of unsorted Coulomb matrix,
     sorted by their eigenvalues. Cutoff possible at dedicated len.
     or for certain sizes of eigenvalues
@@ -271,13 +271,16 @@ def OM_full_unsorted_matrix(Z, R, N= 0):
         Full Coulomb Matrix, dim(Z)xdim(Z)
     '''
 
-
     thisbasis, K = basis.build_sto3Gbasis(Z, R)
-    S = jnp.zeros((K,K))
+    S = np.zeros((K,K))
     
     for a, bA in enumerate(thisbasis):      #access row a of S matrix; unpack list from tuple
+        ta = tic()
+        Salist = []
         for b, bB in enumerate(thisbasis):  #same for B
-            
+            Sblist = []
+            tb = tic()
+
             rA, rB = bA['r'], bB['r'] #get atom centered coordinates of A and B
             lA,mA,nA = bA['l'],bA['m'],bA['n'] #get angular momentumnumbers of A
             lB,mB,nB = bB['l'],bB['m'],bB['n']
@@ -287,13 +290,20 @@ def OM_full_unsorted_matrix(Z, R, N= 0):
             for alphaA, dA in zip(bA['a'], bA['d']): #alpha is exp. coeff. and dA contraction coeff.
                 for alphaB, dB in zip(bB['a'], bB['d']):
                     #Implement overlap element
-                      
                     normA = jmath.OM_compute_norm(alphaA, lA, mA, nA) #compute norm for A
                     normB = jmath.OM_compute_norm(alphaB, lB, mB, nB)
+                    
                     S_xyz = jmath.OM_compute_Sxyz(rA, rB, alphaA, alphaB, lA, lB, mA, mB, nA, nB)
                     exponent = jnp.exp(-alphaA*alphaB *jmath.IJsq(rA, rB)/(alphaA + alphaB))
+                    
+                    t1 = tic()
+                    factor = dA * dB * normA * normB*exponent* S_xyz
+                    #S[a,b] += (total)
+                    Sblist.append(factor)
+                    t2 = tic()
 
-                    S = S.at[a,b].add(dA * dB * normA * normB *exponent* S_xyz)
+                    print("adding factor to blist:", t2-t1)
+            Salist.append(Sblist)
 
     return(S)
 
@@ -339,7 +349,7 @@ def OM_dimension(Z):
         d += len(basis.orbital_configuration[nuc])
     return d
 
-def OM_ev(Z, R, N):
+def OM_ev(Z, R, N=0):
     '''
     Parameters
     ----------
@@ -364,7 +374,7 @@ def OM_ev(Z, R, N):
     ev, vectors = jnp.linalg.eigh(M)
     return(ev, order)
 
-def OM_ev_unsrt(Z, R, N):
+def OM_ev_unsrt(Z, R, N=0):
     '''
     Parameters
     ----------
@@ -384,7 +394,7 @@ def OM_ev_unsrt(Z, R, N):
         contains Eigenvectors of matrix (n dim.)
         If i out of bounds, return none and print error)
     '''
-    M, K = OM_full_unsorted_matrix(Z,R)
+    M = OM_full_unsorted_matrix(Z,R)
     ev, vectors = jnp.linalg.eigh(M)
     return(ev)
 

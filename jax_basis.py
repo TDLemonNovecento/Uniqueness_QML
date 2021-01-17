@@ -264,19 +264,26 @@ def build_sto3Gbasis(Z, R):
         #phi = N *(x**l)*(y**m)*(z**n)*exp(-apha*r)
         #where alpha is the exponential factor
         #print("Atom:", i, "R:", R[i])
-        nuc_charge = int(nuc)
-        orbitalarray = orbital_configuration[nuc_charge]
+        nuc_charge = int(round(nuc))
+        #print("nuclear charges:", nuc_charge, "received from", nuc)
+
+        try:
+            orbitalarray = orbital_configuration[nuc_charge]
+        except KeyError:
+            approx_nuc_charge = int(round(nuc_charge))
+            print("your orbital configuration was approximated to be %i from %f" %(approx_nuc_charge, nuc_charge))
+
         for orbital in orbitalarray:
             if orbital == '1s':
                 sto3Gbasis.append(
                     {
-                        'Z': nuc_charge,    #atomic number
+                        'Z': nuc,    #atomic number
                         'o': orbital,       #string('1s')
                         'r': R[i],          #position
                         'l': 0,             #angular x momentum number
                         'm': 0,             #angular y momentum number
                         'n': 0,             #angular z momentum number
-                        'a': a[ int(nuc_charge) - 1][0],  # get atom specific 1s orbital exp factors
+                        'a': a[ nuc_charge - 1][0],  # get atom specific 1s orbital exp factors
                         'd': d[0]           # get 1s orbital contraction coeff.
                     }
                     )
@@ -284,7 +291,7 @@ def build_sto3Gbasis(Z, R):
             elif orbital == '2s':
                 sto3Gbasis.append(
                     {
-                        'Z': nuc_charge,    
+                        'Z': nuc,    
                         'o': orbital,       
                         'r': R[i],          
                         'l': 0,             #angular x momentum number
@@ -298,7 +305,7 @@ def build_sto3Gbasis(Z, R):
             elif orbital == '2px':
                 sto3Gbasis.append(
                     {
-                        'Z': nuc_charge,
+                        'Z': nuc,
                         'o': orbital,   
                         'r': R[i],      
                         'l': 1,             #angular x momentum number
@@ -312,7 +319,7 @@ def build_sto3Gbasis(Z, R):
             elif orbital == '2py':
                 sto3Gbasis.append(
                     {
-                        'Z': nuc_charge,
+                        'Z': nuc,
                         'o': orbital,   
                         'r': R[i],      
                         'l': 0,             #angular x momentum number
@@ -326,7 +333,7 @@ def build_sto3Gbasis(Z, R):
             elif orbital == '2pz':
                 sto3Gbasis.append(
                     {
-                        'Z': nuc_charge,    
+                        'Z': nuc,    
                         'o': orbital,       
                         'r': R[i],          
                         'l': 0,             #angular x momentum number
@@ -340,7 +347,7 @@ def build_sto3Gbasis(Z, R):
             elif orbital == '3s':
                 sto3Gbasis.append(
                     {
-                        'Z': nuc_charge,
+                        'Z': nuc,
                         'o': orbital,   
                         'r': R[i],      
                         'l': 0,             #angular x momentum number
@@ -354,7 +361,7 @@ def build_sto3Gbasis(Z, R):
             elif orbital == '3px':
                 sto3Gbasis.append(
                     {
-                        'Z': nuc_charge,
+                        'Z': nuc,
                         'o': orbital,
                         'r': R[i],
                         'l': 1,             #angular x momentum number
@@ -368,7 +375,7 @@ def build_sto3Gbasis(Z, R):
             elif orbital == '3py':
                 sto3Gbasis.append(
                     {
-                        'Z': nuc_charge,
+                        'Z': nuc,
                         'o': orbital,
                         'r': R[i],
                         'l': 0,             #angular x momentum number
@@ -382,7 +389,7 @@ def build_sto3Gbasis(Z, R):
             elif orbital == '3pz':
                 sto3Gbasis.append(
                     {
-                        'Z': nuc_charge,
+                        'Z': nuc,
                         'o': orbital,
                         'r': R[i],
                         'l': 0,             #angular x momentum number
@@ -396,7 +403,7 @@ def build_sto3Gbasis(Z, R):
             elif orbital == '4s':
                 sto3Gbasis.append(
                     {
-                        'Z': nuc_charge,
+                        'Z': nuc,
                         'o': orbital,
                         'r': R[i],
                         'l': 0,             #angular x momentum number
@@ -410,7 +417,7 @@ def build_sto3Gbasis(Z, R):
             elif orbital == '4px':
                 sto3Gbasis.append(
                     {
-                        'Z': nuc_charge,
+                        'Z': nuc,
                         'o': orbital,
                         'r': R[i],
                         'l': 1,             #angular x momentum number
@@ -424,7 +431,7 @@ def build_sto3Gbasis(Z, R):
             elif orbital == '4py':
                 sto3Gbasis.append(
                     {
-                        'Z': nuc_charge,
+                        'Z': nuc,
                         'o': orbital,
                         'r': R[i],
                         'l': 0,             #angular x momentum number
@@ -438,7 +445,7 @@ def build_sto3Gbasis(Z, R):
             elif orbital == '4pz':
                 sto3Gbasis.append(
                     {
-                        'Z': nuc_charge,
+                        'Z': nuc,
                         'o': orbital,
                         'r': R[i],
                         'l': 0,             #angular x momentum number

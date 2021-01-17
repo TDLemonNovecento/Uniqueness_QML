@@ -18,7 +18,13 @@ plt.rc('figure',titlesize=fontsize*1.2) # fontsize of the figure title
 
 
 
-def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis, title = "Nonzero Eigenvalues of Derivatives of CM", savetofile = "perc_nonzeroEV_CM_test", oneplot = True, representations = 1):
+def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis,\
+        title = "Nonzero Eigenvalues of Derivatives of CM",\
+        savetofile = "perc_nonzeroEV_CM_test",\
+        oneplot = True,\
+        representations = 1,\
+        xaxis_title = 'Norm of Coulomb Matrix',\
+        yaxis_title= 'Fraction of Nonzero Eigenvalues'):
     '''
 
 
@@ -66,8 +72,8 @@ def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis, title = "Nonzero Eigen
         ax.spines['left'].set_color('none')
         ax.spines['right'].set_color('none')
 
-        ax.set_xlabel('Norm of Coulomb Matrix', labelpad = 30)
-        ax.set_ylabel('Fraction of Nonzero Eigenvalues', labelpad = 50)
+        ax.set_xlabel(xaxis_title, labelpad = 30)
+        ax.set_ylabel(yaxis_title, labelpad = 50)
 
 
 

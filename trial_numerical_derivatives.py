@@ -47,6 +47,7 @@ result_folder = "./Pickled/"
 
 results_file_EV = CM_EV_results_file
 result_file_CM = CM_results_file
+results_file_OM = OM_results_file
 
 data_file = four_compounds
 
@@ -74,21 +75,21 @@ data_file = four_compounds
 
 ###B)
 ###read list of compounds from data file
-#full_compound_ls = datprep.read_compounds(data_file)
-#print(len(full_compound_ls), " compounds in full data file")
+full_compound_ls = datprep.read_compounds(data_file)
+print(len(full_compound_ls), " compounds in full data file")
 
 ###B)
 
 #If you want to plot only part of all compounds, use this code:
-#try:
-#	compound_ls = full_compound_ls[init : end]
-#except IndexError:
-#	print("Your indices were out of bound, restart. min: 0, max: ", len(full_compound_ls))
-#	exit()
+try:
+	compound_ls = full_compound_ls[init : end]
+except IndexError:
+	print("Your indices were out of bound, restart. min: 0, max: ", len(full_compound_ls))
+	exit()
 
 
 
-#print(len(compound_ls), " of which are being processed")
+print(len(compound_ls), " of which are being processed")
 
 ###B)
 ###create new list of results from list of compounds
@@ -97,7 +98,7 @@ data_file = four_compounds
 #results = jader.calculate_eigenvalues('CM_EV', compound_ls)
 
 ###numerical derivative:
-#results, resultaddition = jader.calculate_num_der(numerical_representations[1], compound_ls)
+results, resultaddition = jader.calculate_num_der(numerical_representations[2], compound_ls)
 
 
 ###B)
@@ -106,9 +107,9 @@ data_file = four_compounds
 #If you want to plot from multiple pickle results file, use this code:
 #result_file = result_folder + "results_%i-%i.pickle" %(init, end)
 '''
-#print("results:", results)
-#print("len of results:", len(results))
-#datprep.store_compounds(results, results_file)
+print("results:", results)
+print("len of results:", len(results))
+datprep.store_compounds(results, results_file_OM)
 
 
 #C) 
@@ -160,8 +161,9 @@ full_compound_ls = datprep.read_compounds(results_file)
 #If you want to plot from multiple pickle results file, use this code:
 #result_file = resultfile
 
-results_EV = datprep.read_compounds(results_file_EV)
-results_CM = datprep.read_compounds(result_file_CM)
+results_OM = datprep.read_compounds(results_file_OM)
+#results_EV = datprep.read_compounds(results_file_EV)
+#results_CM = datprep.read_compounds(results_file_CM)
 '''
 try:
        results_EV = results_EV[init : end]
@@ -187,13 +189,13 @@ dZdZ_percentages_EV = []
 dRdR_percentages_EV = []
 dZdR_percentages_EV = []
 
-
+'''
 dZ_percentages_CM = []
 dR_percentages_CM = []
 dZdZ_percentages_CM = []
 dRdR_percentages_CM = []
 dZdR_percentages_CM = []
-
+'''
 
 #x-axis information
 #CM_norms = []
@@ -201,41 +203,52 @@ norms = []
 
 #C)
 #get all the data from our results list
-for i in range(len(results_EV)):
+for i in range(len(results_OM)):
 
     #print(results_EV)
     #CM_norms.append(results_CM[i].norm)
-    norms.append(results_EV[i].norm)
+    norms.append(results_OM[i].norm)
 
 
-    results_perc_CM = results_CM[i].calculate_percentage()
-    results_perc_EV, somethingelse = results_EV[i].calculate_smallerthan()
-    
-    for res in results_perc_EV:
+    results_perc_OM = results_OM[i].calculate_percentage()
+    #results_perc_EV, somethingelse = results_EV[i].calculate_smallerthan()
+    '''
+    for res in results_perc_OM:
         if res < 0.5:
             print("this file has EV derivatives smaller than 1:")
-            print( results_EV[i].filename)
+            print( results_OM[i].filename)
+    '''
     
+    '''
     dZ_percentages_CM.append(results_CM[i].dZ_perc)
     dR_percentages_CM.append(results_CM[i].dR_perc)
     dZdZ_percentages_CM.append(results_CM[i].dZdZ_perc)
     dRdR_percentages_CM.append(results_CM[i].dRdR_perc)
     dZdR_percentages_CM.append(results_CM[i].dZdR_perc)
-    
-    dZ_percentages_EV.append(results_EV[i].dZ_perc)
-    dR_percentages_EV.append(results_EV[i].dR_perc)
-    dZdZ_percentages_EV.append(results_EV[i].dZdZ_perc)
-    dRdR_percentages_EV.append(results_EV[i].dRdR_perc)
-    dZdR_percentages_EV.append(results_EV[i].dZdR_perc)
+    '''
+
+    dZ_percentages_EV.append(results_OM[i].dZ_perc)
+    dR_percentages_EV.append(results_OM[i].dR_perc)
+    dZdZ_percentages_EV.append(results_OM[i].dZdZ_perc)
+    dRdR_percentages_EV.append(results_OM[i].dRdR_perc)
+    dZdR_percentages_EV.append(results_OM[i].dZdR_perc)
     
 
 #C)
 # create list of data that suits our plot_derivatives.plot_percentage_zeroEV function
+'''
 CM_ylist_toplot = [[jnp.asarray(dZ_percentages_CM), "CM dZ"],[jnp.asarray(dR_percentages_CM), "CM dR"],[jnp.asarray(dRdR_percentages_CM), "CM dRdR"] ,[jnp.asarray(dZdR_percentages_CM), "CM dZdR"], [jnp.asarray(dZdZ_percentages_CM), "CM dZdZ"]]
 
 CM_EV_ylist_toplot = [[jnp.asarray(dZ_percentages_EV), "EVCM dZ"],[jnp.asarray(dR_percentages_EV), "EVCM dR"],[jnp.asarray(dRdR_percentages_EV), "EVCM dRdR"] ,[jnp.asarray(dZdR_percentages_EV), "EVCM dZdR"], [jnp.asarray(dZdZ_percentages_EV), "EVCM dZdZ"]]
 
 CM_ylist_toplot.extend(CM_EV_ylist_toplot)
+'''
+
+OM_ylist_toplot = [[jnp.asarray(dZ_percentages_OM), "OM dZ"],\
+        [jnp.asarray(dR_percentages_OM), "OM dR"],\
+        [jnp.asarray(dRdR_percentages_OM), "OM dRdR"] ,\
+        [jnp.asarray(dZdR_percentages_OM), "OM dZdR"],\
+        [jnp.asarray(dZdZ_percentages_OM), "OM dZdZ"]]
 
 
 #C)

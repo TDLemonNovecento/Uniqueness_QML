@@ -43,7 +43,11 @@ database = "/home/miriam/Databases/QM9_XYZ/"
 database_file = "./Pickled/qm9.pickle"
 dat_CM_EV = "/home/linux-miriam/Databases/Pickled/qm7_CM_EV_results.pickle"
 dat_CM = "/home/linux-miriam/Databases/Pickled/qm7_CM_results.pickle"
+fourcompounds = "./Pickled/fourcompounds.pickle"
+fourcompounds_results_EV = "./Pickled/fourcompounds_EV_results.pickle"
 
+compounds_file = fourcompounds
+results_file = fourcompounds_results_EV
 result_folder = "./Pickled/"
 result_file_EV = dat_CM_EV 
 result_file_CM = dat_CM
@@ -72,7 +76,7 @@ result_file = "/home/linux-miriam/Uniqueness_QML/Pickled/results"
 
 ###B)
 ###read list of compounds from data file
-#full_compound_ls = datprep.read_compounds(dat_ha_file)
+#compound_ls = datprep.read_compounds(compounds_file)
 #print(len(full_compound_ls), " compounds in full data file")
 
 ###B)
@@ -98,7 +102,7 @@ except IndexError:
 #If you want to plot from multiple pickle results file, use this code:
 result_file = result_folder + "results_%i-%i.pickle" %(init, end)
 '''
-#datprep.store_compounds(results, result_file)
+#datprep.store_compounds(results, results_file)
 
 
 #C) 
@@ -109,7 +113,7 @@ result_file = result_folder + "results_%i-%i.pickle" %(init, end)
 
 
 #read list of compounds from data file
-tfull_compound_ls = datprep.read_compounds(dat_CM_EV)
+#full_compound_ls = datprep.read_compounds(compounds)
 #print(len(full_compound_ls), " compounds in full data file")
 
 '''
@@ -150,9 +154,11 @@ print(len(compound_ls), " of which are being processed")
 #If you want to plot from multiple pickle results file, use this code:
 #result_file = resultfile
 
+results_EV = datprep.read_compounds(results_file)
+'''
 results_EV = datprep.read_compounds(result_file_EV)
 results_CM = datprep.read_compounds(result_file_CM)
-
+'''
 
 #C)
 #prepare plotting
@@ -163,37 +169,42 @@ dZdZ_percentages_EV = []
 dRdR_percentages_EV = []
 dZdR_percentages_EV = []
 
+'''
 dZ_percentages_CM = []
 dR_percentages_CM = []
 dZdZ_percentages_CM = []
 dRdR_percentages_CM = []
 dZdR_percentages_CM = []
-
+'''
 
 #x-axis information
-CM_norms = []
-EV_norms = []
+norms = []
+
+#print("len CM results:", len(results_CM))
 
 #C)
 #get all the data from our results list
 for i in range(len(results_EV)):
-    CM_norms.append(results_CM[i].norm)
-    EV_norms.append(results_EV[i].norm)
+    print(results_EV[i])
 
+    #CM_norms.append(results_CM[i].norm)
+    norms.append(results_EV[i].norm)
+    print(results_EV[i])
 
-    results_perc_CM = results_CM[i].calculate_percentage()
-    results_perc_EV = results_EV[i].calculate_percentage()
-    
+    #results_perc_CM = results_CM[i].calculate_smallerthan()
+    results_perc_EV = results_EV[i].calculate_smallerthan()
+    '''
     for res in results_perc_EV:
         if res < 1:
             print("this file has EV derivatives smaller than 1:")
             print( results_EV[i].filename)
+    
     dZ_percentages_CM.append(results_CM[i].dZ_perc)
     dR_percentages_CM.append(results_CM[i].dR_perc)
     dZdZ_percentages_CM.append(results_CM[i].dZdZ_perc)
     dRdR_percentages_CM.append(results_CM[i].dRdR_perc)
     dZdR_percentages_CM.append(results_CM[i].dZdR_perc)
-
+    '''
     dZ_percentages_EV.append(results_EV[i].dZ_perc)
     dR_percentages_EV.append(results_EV[i].dR_perc)
     dZdZ_percentages_EV.append(results_EV[i].dZdZ_perc)
@@ -203,15 +214,32 @@ for i in range(len(results_EV)):
 
 #C)
 # create list of data that suits our plot_derivatives.plot_percentage_zeroEV function
+'''
 CM_ylist_toplot = [[jnp.asarray(dZ_percentages_CM), "CM dZ"],[jnp.asarray(dR_percentages_CM), "CM dR"],[jnp.asarray(dRdR_percentages_CM), "CM dRdR"] ,[jnp.asarray(dZdR_percentages_CM), "CM dZdR"], [jnp.asarray(dZdZ_percentages_CM), "CM dZdZ"]]
-
+'''
 CM_EV_ylist_toplot = [[jnp.asarray(dZ_percentages_EV), "EVCM dZ"],[jnp.asarray(dR_percentages_EV), "EVCM dR"],[jnp.asarray(dRdR_percentages_EV), "EVCM dRdR"] ,[jnp.asarray(dZdR_percentages_EV), "EVCM dZdR"], [jnp.asarray(dZdZ_percentages_EV), "EVCM dZdZ"]]
 
-ylist_toplot = CM_ylist_toplot.extend(CM_EV_ylist_toplot)
+#ylist_toplot = CM_ylist_toplot.extend(CM_EV_ylist_toplot)
 #C)
+
+name_bynorm = "./Images/norm_nonzeroEV_CM_CMEV"
+name_bydim = "./Images/dimofmol_nonzeroEV_CM_CMEV"
 #plot and save all datapoints in one and in multiple panels
-pltder.plot_percentage_zeroEV(jnp.asarray(CM_norms), CM_ylist_toplot, "Nonzero Values of CM and EVCM Derivatives", "./Images/perc_nonzeroEV_CM_CMEV_one", True, representations = 2)
-pltder.plot_percentage_zeroEV(jnp.asarray(CM_norms), CM_ylist_toplot, "Nonzero Values of CM and EVCM Derivatives", "./Images/perc_nonzero_CM_CMEV_panel", False, representations = 2)
+pltder.plot_percentage_zeroEV(jnp.asarray(norms), CM_EV_ylist_toplot,\
+        title = "Nonzero Values of CM and EVCM Derivatives",\
+        savetofile = name_bynorm + "one",\
+        oneplot = True,\
+        representations = 1)
+       # xaxis_title = "Number of Atoms in Molecule")
+
+
+
+pltder.plot_percentage_zeroEV(jnp.asarray(norms), CM_EV_ylist_toplot,\
+        title = "Nonzero Values of CM and EVCM Derivatives", \
+        savetofile = name_bynorm + "panel",\
+        oneplot = False,\
+        representations = 1)
+       # xaxis_title = "Number of Atoms in Molecule")
 
             
 

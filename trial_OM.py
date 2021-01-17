@@ -2,6 +2,7 @@
 Test out derivatives easily with this little function
 
 '''
+import numerical_derivative as numder
 import qml
 import representation_ZRN as ZRNrep
 import jax_representation as jrep
@@ -22,11 +23,14 @@ N = float(len(Z))
 
 '''using my own basis'''
 myOM, order  = jrep.OM_full_sorted(Z, R, N)
-derOM = jder.sort_derivative('OM', Z, R, N)
+
+derOM = jder.sort_derivative('OM', Z, R, N, grad = 1, dx = "R")
 
 '''numerical derivative'''
-fun = repZRN.Overlap_Matrix
-
+fun = ZRNrep.Overlap_Matrix
+numericalder = numder.derivative(fun, [Z, R, N], d1 = [1,0, 0])
+print("numerical derivative")
+print(numericalder)
 
 '''print results nicely'''
 np.set_printoptions(precision=3, suppress=True)

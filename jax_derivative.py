@@ -259,14 +259,14 @@ def d_CM_ev_unsrt(Z, R, N, dx_index):
 
 
 def d_OM(Z, R, N, dx_index = 0):
+    '''this function id not working'''
+    return(print("this dOM derivative function is not working"))
+   
     dim = jrep.OM_dimension(Z)
     print("dimension of OM is: ", dim)
     Jraw = jacfwd(jrep.OM_full_unsorted_matrix, dx_index)
     J = Jraw(Z, R, N)
-    
 
-    print("derivative: ")
-    print(J)
     if(dx_index == 0): #derivative by dZ
         final_dOM = jnp.asarray([[[J[l][k][m] for l in range(dim)] for k in range(dim)]for m in range(dim)])
         return(final_dOM)
