@@ -166,41 +166,41 @@ class derivative_results():
         return(listofself)
 
 
-    def calculate_smallerthan(self, lower_bound = 0.00001):
-        dim = 23 #len(self.Z)
+    def calculate_smallerthan(self, lower_bound = 0.00000001):
+        dim = len(self.Z)
         self.representation_form = dim
-
-        #print("self dZdZ ev:", len(self.dZdZ_ev), "firstele:", self.dZdZ_ev[0])
-
-
-
-        dZ_ev = np.asarray(self.dZ_ev)
-        dR_ev = np.asarray(self.dR_ev)
-        dRdR_ev = np.asarray(self.dZdZ_ev)
-        dZdZ_ev = np.asarray(self.dRdR_ev)
-        dZdR_ev = np.asarray(self.dZdR_ev)
         
-        #print("asarray: ", len(dZdZ_ev), "firstelement:", dZdZ_ev[0])
+        while True: #this is a fix for damaged results files
+            try:
+                self.dZ_bigger = self.dZ_ev[(-lower_bound > self.dZ_ev) | (self.dZ_ev > lower_bound)]
+                self.dR_bigger = self.dR_ev[(-lower_bound > self.dR_ev) | (self.dR_ev > lower_bound)]
+                self.dZdZ_bigger = self.dZdZ_ev[(-lower_bound > self.dZdZ_ev) | (self.dZdZ_ev > lower_bound)]
+                self.dRdR_bigger = self.dRdR_ev[(-lower_bound > self.dRdR_ev) | (self.dRdR_ev > lower_bound)]
+                self.dZdR_bigger = self.dZdR_ev[(-lower_bound > self.dZdR_ev) | (self.dZdR_ev > lower_bound)]
+                
+                break
 
-        try:
-            self.dZ_bigger = dZ_ev[(-lower_bound > dZ_ev) | (dZ_ev > lower_bound)]
-            self.dR_bigger = dR_ev[(-lower_bound > dR_ev) | (dR_ev > lower_bound)]
-            self.dZdZ_bigger = dZdZ_ev[(-lower_bound > dZdZ_ev) | (dZdZ_ev > lower_bound)]
-            self.dRdR_bigger = dRdR_ev[(-lower_bound > dRdR_ev) | (dRdR_ev > lower_bound)]
-            self.dZdR_bigger = dZdR_ev[(-lower_bound > dZdR_ev) | (dZdR_ev > lower_bound)]
+            except ValueError:
+                print("an error occuerd while calculating ev values smaller than ", lower_bound)
+                break
+            except TypeError:
+                self.dZ_ev = np.asarray(self.dZ_ev)
+                self.dR_ev = np.asarray(self.dR_ev)
+                self.dZdZ_ev = np.asarray(self.dZdZ_ev)
+                self.dRdR_ev = np.asarray(self.dRdR_ev)
+                self.dZdR_ev = np.asarray(self.dZdR_ev)
 
-        except ValueError:
-            print("an error occuerd while calculating ev values smaller than ", lower_bound)
+                continue
 
         print("self.representation_form", self.representation_form, "dim:", dim)
         print("size:", self.dZdZ_bigger.size, "dimension foreseen:", self.representation_form*dim**2)
 
 
-        self.dZ_perc = (self.dZ_bigger.size)/(self.representation_form*dim) #is 2*dim Z the max number of EV?
-        self.dR_perc = (self.dR_bigger.size)/(3*dim*self.representation_form)
-        self.dZdZ_perc = (self.dZdZ_bigger.size)/(self.representation_form*dim**2)
-        self.dRdR_perc = (self.dRdR_bigger.size)/(self.representation_form*9*dim**2)
-        self.dZdR_perc = (self.dZdR_bigger.size)/(self.representation_form*3*dim**2)
+        self.dZ_perc = (len(self.dZ_bigger))/(self.representation_form*dim) #is 2*dim Z the max number of EV?
+        self.dR_perc = (len(self.dR_bigger))/(3*dim*self.representation_form)
+        self.dZdZ_perc = (len(self.dZdZ_bigger))/(self.representation_form*dim**2)
+        self.dRdR_perc = (len(self.dRdR_bigger))/(self.representation_form*9*dim**2)
+        self.dZdR_perc = (len(self.dZdR_bigger))/(self.representation_form*3*dim**2)
 
         fractions = [self.dZ_perc, self.dR_perc, self.dZdZ_perc, self.dRdR_perc, self.dZdR_perc]
         numbers = [self.dZ_bigger, self.dR_bigger, self.dZdZ_bigger, self.dRdR_bigger, self.dZdR_bigger]

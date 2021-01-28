@@ -93,5 +93,6 @@ axt1.set_xticks(np.arange(0, 12,2))
 axt2.set_yticks(np.arange(0, 4000, 2000))
 
 
+
 #fig.tight_layout()
 plt.show()

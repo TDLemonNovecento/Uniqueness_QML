@@ -1,5 +1,5 @@
 '''contains all sorts of functions used to plot derivatives'''
-#import pandas as pd
+import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import sys
@@ -148,7 +148,7 @@ def plot_dR(listof_series, listof_names, dimZ):
     
     #general figure settings
     fig, ax = plt.subplots(nrows = dimZ, ncols = 3, figsize=(12,8), sharey = True)
-    figurename = "Ethin_CM_dR.svg"
+    figurename = "Ethin_CM_dR.png"
     
     fig.tight_layout()
     st = fig.suptitle("Eigenvalues of First Derivative of Ethin with Rotating H")
@@ -212,3 +212,35 @@ def merge_plot_with_svg(figname, imagepath):
     # save generated SVG files
     fig.save("fig_final.svg")
 
+
+def prepresults(results, rep = "CM"):
+    dZ_percentages = []
+    dR_percentages = []
+    dZdZ_percentages = []
+    dRdR_percentages = []
+    dZdR_percentages = []
+
+    norms = []
+
+    for i in range(len(results)):
+        print("this result:", results[i])
+
+        norms.append(results[i].norm)
+
+        #results_perc = results[i].calculate_smallerthan()
+
+        dZ_percentages.append(results[i].dZ_perc)
+        dR_percentages.append(results[i].dR_perc)
+        dZdZ_percentages.append(results[i].dZdZ_perc)
+        dRdR_percentages.append(results[i].dRdR_perc)
+        dZdR_percentages.append(results[i].dZdR_perc)
+
+    ylist_toplot = [[np.asarray(dZ_percentages), rep + " dZ"],\
+            [np.asarray(dR_percentages), rep + " dR"],\
+            [np.asarray(dRdR_percentages), rep + " dRdR"],\
+            [np.asarray(dZdR_percentages), rep + " dZdR"],\
+            [np.asarray(dZdZ_percentages), rep + " dZdZ"]]
+
+    
+    
+    return(np.asarray(norms), ylist_toplot, results)

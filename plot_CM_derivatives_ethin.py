@@ -2,12 +2,12 @@ import os, time
 import jax_derivative as jder
 import qml
 import numpy as np
-import derivative_plot as derp
+import plot_derivative as derp
 
 #path to xyz files
-database = "/home/stuke/Databases/XYZ_ethin/"
+database = "/home/linux-miriam/Databases/XYZ_ethin/"
 ethin_image = "./ethin.svg"
-
+#database = "/home/linux-miriam/Databases/Ethyne_invariant/"
 #the ethin files are sorted by index. the numbering shows how big angle theta is:
 '''we start with a straight molecule stretching out on the x axis:
 
@@ -53,4 +53,5 @@ for xyzfile in os.listdir(database):
 
 figname = derp.plot_dR(listof_series_dR, name_list, max(dimZ_list))
 time.sleep(5)
+print(figname)
 #derp.merge_plot_with_svg(figname, ethin_image)
