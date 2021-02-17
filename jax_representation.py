@@ -249,7 +249,59 @@ def CM_eigenvectors_EVsorted(Z, R, N= 0, cutoff = 10):
 
 
 
-
+def OM_full_unsorted_nick(Z, R, N= 0):
+    '''
+    The overlap matrix is constructed as described in the
+    'student-friendly guide to molecular integrals' by Murphy et al, 2018
+    STO-3G basis set (3 gaussian curves used to approximate the STO solution)
+ 
+    Parameters
+    ----------
+    Z : 1 x n dimensional array
+        contains nuclear charges
+    R : 3 x n dimensional array
+        contains nuclear positions
+ 
+    Return
+    ------
+    D : 2D array (matrix)
+        Full Coulomb Matrix, dim(Z)xdim(Z)
+    '''
+ 
+    thisbasis, K = basis.build_sto3Gbasis(Z, R)
+    S = np.zeros((K,K))
+ 
+    print (thisbasis, K)
+ 
+    for a, bA in enumerate(thisbasis):      #access row a of S matrix; unpack list from tuple
+ 
+        Salist = []
+        for b, bB in enumerate(thisbasis):  #same for B
+            Sblist = []
+ 
+            rA, rB = bA['r'], bB['r'] #get atom centered coordinates of A and B
+            lA,mA,nA = bA['l'],bA['m'],bA['n'] #get angular momentumnumbers of A
+            lB,mB,nB = bB['l'],bB['m'],bB['n']
+ 
+            aA, aB = np.asarray(bA['a']), np.asarray(bB['a']) #alpha vectors
+ 
+            #for alphaA, dA in zip(bA['a'], bA['d']): #alpha is exp. coeff. and dA contraction coeff.
+            for alphaB, dB in zip(bB['a'], bB['d']):
+                    #Implement overlap element
+              normA = jmath.OM_compute_norm(aA, lA, mA, nA) #compute norm for A
+              normB = jmath.OM_compute_norm(alphaB, lB, mB, nB)
+ 
+              S_xyz = jmath.OM_compute_Sxyz(rA, rB, aA, alphaB, lA, lB, mA, mB, nA, nB)
+              exponent = jnp.exp(-aA*alphaB *jmath.IJsq(rA, rB)/(aA + alphaB))
+ 
+              factor = np.array(bA['d']) * dB * normA * normB*exponent* S_xyz
+              #S[a,b] += (total)
+              Sblist.append(factor)
+ 
+              Salist.append(Sblist)
+ 
+    return(S)
+ 
 
 
 def OM_full_unsorted_matrix(Z, R, N= 0):
