@@ -3,11 +3,12 @@ import jax_derivative as jder
 import qml
 import numpy as np
 import plot_derivative as derp
+import pandas as pd
 
 #path to xyz files
-database = "/home/linux-miriam/Databases/XYZ_ethin/"
+database_opt = "/home/linux-miriam/Databases/Ethyne_invariant/Optimized/"
 ethin_image = "./ethin.svg"
-#database = "/home/linux-miriam/Databases/Ethyne_invariant/"
+database_raw = "/home/linux-miriam/Databases/Ethyne_invariant/Raw"
 #the ethin files are sorted by index. the numbering shows how big angle theta is:
 '''we start with a straight molecule stretching out on the x axis:
 
@@ -28,6 +29,9 @@ dimZ_list = [] #dimension of files may vary. store all dimensions here
 
 
 listof_series_dR = []
+listof_pandaseries = []
+
+database = database_opt
 
 for xyzfile in os.listdir(database):
     if xyzfile.endswith(".xyz"):
@@ -47,11 +51,20 @@ for xyzfile in os.listdir(database):
         dZ_eigenvalues.append(eigenvalues)
         
         #prepare for plotting
-        series = derp.pandaseries_dR(eigenvalues, dimZ)
-        listof_series_dR.append(series)
+        #series = derp.pandaseries_dR(eigenvalues, dimZ)
+        
+
+        #do pandas series for faster plotting
+        iterables = [['d1', 'd2', 'd3', 'd4'], ['dx', 'dy', 'dz'], [1, 2, 3, 4]]
+        index = pd.MultiIndex.from_product(iterables, names=['dAtom', 'dxyz', 'atoms'])
+
+        pd_series = pd.DataFrame(eigenvalues.flatten(), index = index, columns = ['values'])
+        
+        listof_pandaseries.append(pd_series)
+        #listof_series_dR.append(series)
        
 
-figname = derp.plot_dR(listof_series_dR, name_list, max(dimZ_list))
-time.sleep(5)
+figname = derp.plot_pandas_ethin(listof_pandaseries, name_list, max(dimZ_list))
+#time.sleep(5)
 print(figname)
 #derp.merge_plot_with_svg(figname, ethin_image)

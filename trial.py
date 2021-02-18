@@ -1,49 +1,29 @@
-'''try calculating derivatives of rep'''
-import database_preparation as datprep
-import jax_derivative as jder
-import jax_additional_derivative as jader
-import jax_representation as jrep
-import plot_derivative as pltder
-import jax.numpy as jnp
-import sys
-import representation_ZRN as ZRNrep
-
-path_CM_results = "/home/linux-miriam/Databases/Pickled/qm7_CM_results.pickle"
-four_compounds = "./Pickled/fourcompounds.pickle"
-water = "./TEST/H2O.xyz"
-results_file = "./Pickled/trial_numder.pickle"
-
-data_file = four_compounds
-
-#for numerical calculations:
-numerical_representations = [ZRNrep.Coulomb_Matrix, ZRNrep.Eigenvalue_Coulomb_Matrix, ZRNrep.Overlap_Matrix, \
-        ZRNrep.Eigenvalue_Overlap_Matrix, ZRNrep.Bag_of_Bonds]
+import pandas as pd
+import numpy as np
 
 
+eigenvalues = np.asarray([[[ 2.54630008e+01, -2.54630008e+01, -0.00000000e+00, -0.00000000e+00],
+  [ 1.16532981e+00, -1.16532981e+00, -0.00000000e+00, -0.00000000e+00],
+  [-0.00000000e+00, -0.00000000e+00, -0.00000000e+00, -0.00000000e+00]],
 
-try:
-        init, end = int(sys.argv[1]), int(sys.argv[2])
-except IndexError:
-        init = int(input("starting point"))
-        end = int(input("end point"))
+ [[-2.54213764e+01,  2.54213764e+01,  2.37978998e-17, -0.00000000e+00],
+  [-1.15154334e+00,  1.15154334e+00,  3.56662450e-17, -0.00000000e+00],
+  [-0.00000000e+00, -0.00000000e+00, -0.00000000e+00, -0.00000000e+00]],
 
+ [[-5.53561358e+00,  5.53561358e+00, -8.89150069e-18, -0.00000000e+00],
+  [-6.44783083e-01,  6.44783083e-01, -6.52104749e-20, -0.00000000e+00],
+  [-0.00000000e+00, -0.00000000e+00, -0.00000000e+00, -0.00000000e+00]],
 
-###read list of compounds from data file
-full_compound_ls = datprep.read_compounds(data_file)
-print(len(full_compound_ls), " compounds in full data file")
-
-###B)
-
-#If you want to plot only part of all compounds, use this code:
-try:
-        compound_ls = full_compound_ls[init : end]
-except IndexError:
-        print("Your indices were out of bound, restart. min: 0, max: ", len(full_compound_ls))
-        exit()
+ [[-5.33160006e+00,  7.77156117e-16,  5.33160006e+00,  0.00000000e+00],
+  [-6.19137819e-01, -2.77555756e-17,  6.19137819e-01,  0.00000000e+00],
+  [-0.00000000e+00, -0.00000000e+00, -0.00000000e+00, -0.00000000e+00]]])
 
 
-print("checkpoint1: database was successfully read, trial.py line 44")
+iterables = [['d1', 'd2', 'd3', 'd4'], ['dx', 'dy', 'dz'], [1, 2, 3, 4]]
+index = pd.MultiIndex.from_product(iterables, names=['dAtom', 'dxyz', 'atoms'])
 
-results, resultaddition = jader.calculate_num_der(numerical_representations[2], compound_ls)
-datprep.store_compounds(results, results_file)
+myseries = pd.DataFrame(eigenvalues.flatten(), index = index)
+
+print("myseries")
+print(myseries)
 
