@@ -21,14 +21,21 @@ Z = compound.nuclear_charges.astype(float)
 R = compound.coordinates
 N = float(len(Z))
 
+
+'''numerical derivative'''
+fun = ZRNrep.Overlap_Matrix
+numericalder = numder.derivative(fun, [Z, R, N], d1 = [1,0, 0])
+
+
 '''using my own basis'''
-myOM, order  = jrep.OM_full_sorted(Z, R, N)
+myOM  = jrep.OM_full_unsorted_matrix(Z, R, N)
 
 derOM = jder.sort_derivative('OM', Z, R, N, grad = 1, dx = "R")
 
 '''numerical derivative'''
 fun = ZRNrep.Overlap_Matrix
 numericalder = numder.derivative(fun, [Z, R, N], d1 = [1,0, 0])
+
 print("numerical derivative")
 print(numericalder)
 
@@ -36,4 +43,6 @@ print(numericalder)
 np.set_printoptions(precision=3, suppress=True)
 print('my OM is:')
 print(myOM)
+
+
 

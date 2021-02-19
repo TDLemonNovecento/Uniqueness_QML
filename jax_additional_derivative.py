@@ -29,7 +29,7 @@ def presort(Z_orig, R_orig, order):
     Z = np.asarray(Z, dtype = np.float64)
     return(Z, R)
 
-def calculate_num_der(repro, compoundlist, matrix = False, do_dZ = True, do_dR = False):
+def calculate_num_der(repro, compoundlist, matrix = False, do_dZ = False, do_dR = True):
     '''calculates eigenvalues of derived matrices from compounds
     only functions as translator between the compound object, the derivative_result object
     and the sorted_derivative function.
@@ -39,7 +39,10 @@ def calculate_num_der(repro, compoundlist, matrix = False, do_dZ = True, do_dR =
     repro: representation, such as 'CM' for coulomb matrix ect, as is used in sorted_derivative function
     compoundlist: list of database_preparation.compound objects
     matrix: If repro returns matrix like shape, unravel
-    do_dZ : boolean, if true, omit dZ derivatives as Z is not a continuous variable e.g. in OM
+    do_dZ : boolean,
+            if true, do dZ derivative
+    do_dR : boolean,
+            if true, do dR derivative
 
     Returns:
     --------

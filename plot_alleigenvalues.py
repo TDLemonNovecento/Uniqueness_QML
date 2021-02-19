@@ -9,10 +9,11 @@ from plot_derivative import prepresults
 
 results_file =["/home/linux-miriam/Databases/Pickled/qm7_CM_results.pickle",\
         "/home/linux-miriam/Databases/Pickled/qm7_CM_EV_results.pickle",\
-        "./Pickled/fourcompounds_EV_results.pickle"]
+        "./Pickled/fourcompounds_EV_results.pickle",\
+        "./Pickled/trial_numder.pickle"]
 
-results = datprep.read_compounds(results_file[1])
-repro = "EVCM"
+results = datprep.read_compounds(results_file[3])
+repro = "OM"
 
 xdata, ydata, newresults = prepresults(results, rep = repro)
 

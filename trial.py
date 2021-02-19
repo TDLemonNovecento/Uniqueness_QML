@@ -1,29 +1,9 @@
-import pandas as pd
-import numpy as np
+import database_preparation as datprep
 
+results_file = "./Pickled/trial_numder.pickle"
 
-eigenvalues = np.asarray([[[ 2.54630008e+01, -2.54630008e+01, -0.00000000e+00, -0.00000000e+00],
-  [ 1.16532981e+00, -1.16532981e+00, -0.00000000e+00, -0.00000000e+00],
-  [-0.00000000e+00, -0.00000000e+00, -0.00000000e+00, -0.00000000e+00]],
-
- [[-2.54213764e+01,  2.54213764e+01,  2.37978998e-17, -0.00000000e+00],
-  [-1.15154334e+00,  1.15154334e+00,  3.56662450e-17, -0.00000000e+00],
-  [-0.00000000e+00, -0.00000000e+00, -0.00000000e+00, -0.00000000e+00]],
-
- [[-5.53561358e+00,  5.53561358e+00, -8.89150069e-18, -0.00000000e+00],
-  [-6.44783083e-01,  6.44783083e-01, -6.52104749e-20, -0.00000000e+00],
-  [-0.00000000e+00, -0.00000000e+00, -0.00000000e+00, -0.00000000e+00]],
-
- [[-5.33160006e+00,  7.77156117e-16,  5.33160006e+00,  0.00000000e+00],
-  [-6.19137819e-01, -2.77555756e-17,  6.19137819e-01,  0.00000000e+00],
-  [-0.00000000e+00, -0.00000000e+00, -0.00000000e+00, -0.00000000e+00]]])
-
-
-iterables = [['d1', 'd2', 'd3', 'd4'], ['dx', 'dy', 'dz'], [1, 2, 3, 4]]
-index = pd.MultiIndex.from_product(iterables, names=['dAtom', 'dxyz', 'atoms'])
-
-myseries = pd.DataFrame(eigenvalues.flatten(), index = index)
-
-print("myseries")
-print(myseries)
-
+res = datprep.read_compounds(results_file)
+print("results:")
+for r in res:
+    print(r.filename)
+    print(r.dRdR_ev)
