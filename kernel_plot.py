@@ -13,7 +13,7 @@ class CurveObj:
         self.yerror = None
         self.name = name
 
-def cleanup_results(resultsfile, multiple_runs = True):
+def cleanup_results(resultsfile, multiple_runs = False):
     ''' gets data from resultfile and returns plottable Curve objects
     Variables
     ---------
@@ -78,8 +78,8 @@ def cleanup_results(resultsfile, multiple_runs = True):
 
     return(plottable_curves)
 
-def curve_name(sigma, lamda):
-    name = 'sigma = %s, lambda = %s'% (str(sigma), str(lamda))
+def curve_name( sigma, lamda):
+    name = ', sigma = %s, lambda = %s'% (str(sigma), str(lamda))
     return(name)
 
 def plot_learning(set_sizes = [10, 20, 40, 80, 160, 300], maes = [2.035934924620435, 1.8125458722942258, 1.7146791116661697, 1.6779313630086368, 1.8454600048725978, 1.8763117260488518], perc_maes = [232.7964404444149, 205.87841291639506, 190.275572697472, 162.50375206243325, 254.048604095239, 64.66622415061042], title = "sigma = 20\nlambda = 1e-3"):
@@ -88,7 +88,7 @@ def plot_learning(set_sizes = [10, 20, 40, 80, 160, 300], maes = [2.035934924620
     ax[1].loglog(set_sizes, perc_maes, label = title, linewidth = fontsize/8)
     return()
 
-def plot_curves(curve_list, plottitle = 'Learning Curves of CM Eigenvector Representation on QM9 Dataset\n 1000 molecules, 2 Runs Averaged', xtitle = 'MAE [hartree]', ytitle = 'Training Set Size'):
+def plot_curves(curve_list, file_title = "TrialLearning", plottitle = 'Learning Curves of CM Eigenvector Representation on QM9 Dataset\n 1000 molecules, 2 Runs Averaged', xtitle = 'Training Set Size', ytitle = 'MAE [hartree]'):
     #standard settings for plotting:
     fontsize = 30
     
@@ -110,21 +110,24 @@ def plot_curves(curve_list, plottitle = 'Learning Curves of CM Eigenvector Repre
 
     ax.set_xlabel(xtitle)
     ax.set_ylabel(ytitle)
-
+    
+    ax.set_xscale('log')
+    ax.set_yscale('log')
     
     #all the plotting has to be done below
     for curve in curve_list:
         print('a curve with the following x and y arrays was plotted')
         print('x:' ,curve.xnparray,'\ny:', curve.ynparray)
-        ax.loglog(curve.xnparray, curve.ynparray, label = curve.name)
-        ax.errorbar(curve.xnparray, curve.ynparray, yerr = curve.yerror, fmt = '-o')
+        ax.plot(curve.xnparray, curve.ynparray,  label = curve.name)
+        ax.plot(curve.xnparray, curve.ynparray, 'o')
+        #ax.errorbar(curve.xnparray, curve.ynparray, yerr = curve.yerror, fmt = '-o')
 
     #all the plotting has to be done above
-
+    
+    #f.legend = ax.legend(loc = 'center right')
     handles, labels = ax.get_legend_handles_labels()
 
-    f.legend(handles, labels, title = 'Variables:', loc = 'center right')
-    f.show()
-    f.savefig('learning.png', bbox_inches = 'tight')
-    f.savefig('learning.pdf', bbox_inches = 'tight')
+    #f.legend(handles, labels, title = 'Variables:', loc = 'center right')
+    
+    f.savefig("./Images/" + file_title + ".png", bbox_inches = 'tight')
     return()

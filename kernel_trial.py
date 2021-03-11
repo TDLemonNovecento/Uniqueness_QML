@@ -1,11 +1,32 @@
 import kernel_learning as kler
 import kernel_plot as kplot
-datapath = "/home/stuke/Databases/QM9_XYZ/" #always has to end with /
-final_file = datapath+'/trial_learningresults.obj'
+import database_preparation as datprep
+import kernel_representations as krep
+from time import time as tic
+import kernel_process as kproc
 
-#results, metadata = kler.full_kernel_ridge(datapath, final_file, [10, 50, 100, 250, 500, 750, 950], [4], [1e-13], rep_no = 1)
+#define datapath to a pickled list of compound instances
+datapath = "./Pickled/qm7.pickle"
+final_file_list = ['./Results/CM_learningresults.obj', \
+        './Results/EVCM_learningresults.obj', \
+        './Results/BOB_learningresults.obj',\
+        './Results/OM_learningresults.obj',\
+        './Results/EVOM_learningresults.obj']
+
+repnames = ["CM","EVCM", "BOB", "OM", "EVOM"]
+
+#for i in [4]:
+#    kproc.kernel_learning(datapath, final_file_list[i], representation_no = i, maxnumber = 12)
 
 
-curves = kplot.cleanup_results(final_file)
-print(curves)
-kplot.plot_curves(curves)
+curve_list = []
+for i in range(5):
+    final_file = final_file_list[i]
+    curves = kplot.cleanup_results(final_file, multiple_runs = True)
+    for curve in curves:
+        curve.name = repnames[i] + curve.name
+        curve_list.append(curve)
+    kplot.plot_curves(curves, file_title = final_file[11:], plottitle = final_file + "Learning on 200 QM7 datapoints")
+
+
+kplot.plot_curves(curve_list, file_title = "Trialplot", plottitle = "Multiple Learning Curves on 200 QM7 datapoints")

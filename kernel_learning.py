@@ -5,12 +5,11 @@ import numpy as np
 import qml
 import os
 import random
-from xtb.interface import Calculator
-from xtb.utils import get_method
+#from xtb.interface import Calculator
+#from xtb.utils import get_method
 from basis import atomic_energy_dictionary, atomic_signs
 import pickle
-
-final_file = "/home/stuke/Databases/Learning_Results/QM9_CM_eigenvec.obj"
+from time import time as tic
 
 class LearningResults:
     def __init__(self, lamda, sigma, set_sizes, maes):
@@ -22,6 +21,7 @@ class LearningResults:
 
 
 def gaussian_kernel(x, y, sigma):
+    #print("type x:", type(x))
     distance = jnp.subtract(x,y)
     absolute = jnp.linalg.norm(distance)
     k = jnp.exp(-(absolute**2)/(2*sigma**2))
@@ -73,9 +73,9 @@ def get_alphas(K, properties, dim, lamda = 1.0e-3):
     alphas : list of alpha coefficients
     '''
     lamdaI = lamda*np.identity(dim)
-    invertable = jnp.add(K, lamdaI)
-    inverted = jnp.linalg.inv(invertable)
-    alphas = jnp.dot(inverted, properties)
+    invertable = np.add(K, lamdaI)
+    inverted = np.linalg.inv(invertable)
+    alphas = np.dot(inverted, properties)
     return(alphas)
 
 
@@ -217,15 +217,13 @@ def read_xyz(folder, representation = jrep.CM_eigenvectors_EVsorted, get_energy 
 
     return(represented_list, compound_list)
 
-def make_training_test(represented_list, compound_list, training_size, print_indices = False, upperlim = 1000):
+def make_training_test(dim, training_size, upperlim = 1000):
     ''' splits data randomly into test and training set
     Variables
     ---------
-    represented_list: list of training data in representation
-    compund_list : list of other data ([filename, Z, R, N, atomnames, energy])
+    dim: number of learning instances totally available
     training_size: int
                     desired size of training set
-    print_indices: if True, print indices lists
     upperlim : int
                 gives total of training+test set
     Return
@@ -236,7 +234,6 @@ def make_training_test(represented_list, compound_list, training_size, print_ind
     test_info : compound test info
     training_size: int, in case len of training_list is not equal to training_size
     '''
-    dim = len(represented_list)
     #we are going to shuffle indices and then get the corresponding data from the
     #represented list and the compound list for our training and test set
     indices = [i for i in range(dim)]
@@ -245,7 +242,7 @@ def make_training_test(represented_list, compound_list, training_size, print_ind
     random.shuffle(indices)
     
     if training_size >= dim:
-        print("your training size exceeds or is equal to the number of files you provided\n Picking 1 file as test set")
+        print("your training size exceeds or is equal to the number of data points you provided\n Picking 1 file as test set")
         training_size = dim-1
     if upperlim > 0:
         if training_size >= upperlim:
@@ -259,33 +256,27 @@ def make_training_test(represented_list, compound_list, training_size, print_ind
     else: 
         test_indices = indices[training_size:]
     
-    if print_indices:
-        print('training set:' , training_indices)
-        print('test set:', test_indices)
 
-    training_list = [represented_list[i] for i in training_indices]
-    training_info = [compound_list[i] for i in training_indices]
-
-    test_list = [represented_list[i] for i in test_indices]
-    test_info = [compound_list[i] for i in test_indices]
-
-    return([training_list, training_info, training_indices],[test_list, test_info, test_indices], training_size)
+    return(training_indices, test_indices)
 
 '''----------------------------------------------------
 -							-
 -	Kernel ridge regression function		-
 -							-
 ----------------------------------------------------'''
-def full_kernel_ridge(folder, result_file, set_sizes , sigmas = [], lambdas = [], rep_no = 1, representation = jrep.CM_eigenvectors_EVsorted, total_compounds = 1000):
+def full_kernel_ridge(fingerprint_list, property_list, result_file, set_sizes , sigmas = [], lambdas = [], rep_no = 1, upperlimit = 12):
+    print("result_file:", result_file) 
     ''' Kernel ridge regression model
     y(X') = sum_i alpha_i K(X', X_i)
     
     Input
     -----
-    folder :  path to folder containing .xyz files
+    fingerprint_list :  list of fingerprints
+    property_list : list of learning data, e.g. energy values corresponding to the fingerprints
     result_file : file where data is stored with pickle. 
     training_size : desired size of training set
     sigma : fitting coefficient
+    upperlimit : int, total of training + test set. Can be used if more data is available than is being used or to bootstrap
 
     Return
     ------
@@ -297,13 +288,14 @@ def full_kernel_ridge(folder, result_file, set_sizes , sigmas = [], lambdas = []
     ------
     raw data is stored to raw_data_file entries, learning_list is sotred to result_file
     '''
+    
+    start = tic()
 
     learning_list = []
     raw_data_files = []
-    #get representations and other data once and for all
-    represented, compound = read_xyz(folder, representation)
 
-    
+
+    #loop over learning defined by number of repetition, sigmas, and lamdas
     for i in range(rep_no):
         for s in sigmas:
             for l in lambdas:
@@ -311,35 +303,47 @@ def full_kernel_ridge(folder, result_file, set_sizes , sigmas = [], lambdas = []
                 maes = []
 
                 for sets in set_sizes:
+                    t1 = tic()
+
                     #make training and test list:
-                    training, test, tr_size = make_training_test(represented, compound, sets, upperlim = total_compounds)
-                    
-                    tr_list = training[0]
-                    tr_info = training[1]
-                    tr_fileindex = training[2]
+                    training_indices, test_indices = make_training_test(len(fingerprint_list),sets, upperlim = upperlimit)
+                    print("training:", training_indices)
+                    print("test:", test_indices)
 
-                    tst_list = test[0]
-                    tst_info = test[1]
-                    tst_fileindex = test[2]
-                    
-                    #get energies if necessary:
-                    tr_energies = calculate_energies(tr_info)
-                    tst_energies = calculate_energies(tst_info)
+                    tr_fingerprints = [fingerprint_list[i] for i in training_indices] 
+                    tr_properties = [property_list[i] for i in training_indices]
+                    tr_size = len(training_indices)
 
-                    K = build_kernel_matrix(tr_list, tr_size, s)
+                    tst_fingerprints = [fingerprint_list[i] for i in test_indices] 
+                    tst_properties = [property_list[i] for i in test_indices]
                     
+                    t2 = tic()
+
+                    
+                    K = build_kernel_matrix(tr_fingerprints, tr_size, s)
+                    t3 = tic()
+
+                    print("\n \n \nkernel matrix:\n ", K)
+
                     #get alpha coefficients
-                    alphas = get_alphas(K, tr_energies, tr_size, l)
+                    alphas = get_alphas(K, tr_properties, tr_size, l)
+                    t4 = tic()
+
+                    print("\n \n \n alphas:\n ", alphas)
+
+                    print("trainin/test split:", t2 - t1)
+                    print("kernel matrix:", t3-t2)
+                    print("alphas calculation:", t4 - t3)
 
                     #predict properties of test set
-                    results, errors = predict_new(s, alphas, tr_list, tst_list, tst_energies)
+                    results, errors = predict_new(s, alphas, tr_fingerprints, tst_fingerprints, tst_properties)
                     mae = sum(abs(errors))/(len(errors))
                     maes.append(mae)
 
                     #save raw data
-                    filename = folder + '/rawdata_rep%i_sigma%s_lamda%f_set%i.dat' %(i, str(s), l, sets)
+                    filename = './tmp/rawdata_rep%i_sigma%s_lamda%f_set%i.dat' %(i, str(s), l, sets)
                     raw_data_files.append(filename)
-                    save_raw_data(filename, tr_energies, tr_fileindex, tst_energies, results, tst_fileindex)
+                    save_raw_data(filename, tr_properties, training_indices, tst_properties, results, test_indices)
                     
                 #add learning result to list
                 learning_list.append(LearningResults(l, s, np.array(set_sizes), np.array(maes)))
@@ -358,13 +362,13 @@ def full_kernel_ridge(folder, result_file, set_sizes , sigmas = [], lambdas = []
 '''						'''
 '''						'''
 '''-------------------------------------------'''
-def save_all_Results(results_list, filename = final_file):
+def save_all_Results(results_list, filename):
     f = open(filename, 'wb')
     pickle.dump(results_list, f)
     f.close()
-    return(print('results were saved'))
+    return(print('results were saved to ', filename))
     
-def get_all_Results(filename = final_file):
+def get_all_Results(filename):
     '''
     Variables
     ---------
@@ -385,7 +389,7 @@ def get_all_Results(filename = final_file):
     
     return(results_list[0])
 
-def save_single_Result(result, filename = final_file):
+def save_single_Result(result, filename):
     results_list = get_all_Results(filename)
     results_list.append(result)
     save_all_Results(results_list, filename)
