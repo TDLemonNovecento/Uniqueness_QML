@@ -22,12 +22,15 @@ def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis,\
         title = "Nonzero Eigenvalues of Derivatives of CM",\
         savetofile = "perc_nonzeroEV_CM_test",\
         oneplot = True,\
-        representations = 1,\
+        representations = [0,1],\
         xaxis_title = 'Norm of Coulomb Matrix',\
         yaxis_title= 'Fraction of Nonzero Eigenvalues'):
     '''
-
-
+    norm_xaxis: list of xaxis data
+    percentages_yaxis: list of yaxis data/label lists
+    
+    representations: list of representations that were used
+    
     '''
     
     #general figure settings
@@ -46,10 +49,14 @@ def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis,\
  
     #add all plots
     if oneplot:
-        for y in percentages_yaxis:
-            ax.scatter(norm_xaxis, y[0], label = y[1])
+        print("percentages yaxis label:", percentages_yaxis[0][1])
+        for y in range(len(percentages_yaxis)):
+            print("len xaxis:", len(norm_xaxis[y]))
+            yax = percentages_yaxis[y]
+            print("len yaxis:", len(yax), len(yax[0]))
+            ax.scatter(norm_xaxis[y], yax[0], label = yax[1])
     else:
-        repros  = ["CM", "EVCM"]
+        repros  = ["CM", "EVCM", "BOB", "OM", "EVOM"]
         for i in range(representations):
             name = repros[i]
             y = percentages_yaxis #for simplicity
@@ -84,8 +91,8 @@ def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis,\
         handles, labels = ax.get_legend_handles_labels()
         ax.legend(handles, labels, bbox_to_anchor = (1,1), loc = "upper left", title = 'Derivatives')
     
-        plt.xlabel('Norm of Coulomb Matrix')
-        plt.ylabel('Fraction of Nonzero Eigenvalues')
+        plt.xlabel(xaxis_title)
+        plt.ylabel(yaxis_title)
         fig.subplots_adjust(top=0.92, bottom = 0.1, left = 0.12, right = 0.97)
 
         # shift subplots down and to the left to give title and legend space:
@@ -101,6 +108,57 @@ def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis,\
     
 
     return(print("plots have been saved to %s" % name))
+
+def plot_zeroEV(norm_xaxis, percentages_yaxis,\
+        title = "Nonzero Eigenvalues of Derivatives of CM",\
+        savetofile = "perc_nonzeroEV_CM_test",\
+        representations = [0,1],\
+        xaxis_title = 'Norm of Coulomb Matrix',\
+        yaxis_title= 'Fraction of Nonzero Eigenvalues'):
+    '''
+    norm_xaxis: list of xaxis data
+    percentages_yaxis: list of yaxis data/label lists
+
+    representations: list of representations that were used
+
+    '''
+
+    #general figure settings
+    fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize=(12,8))
+
+    fig.tight_layout()
+
+    #add all plots
+    print("percentages yaxis label:", percentages_yaxis[0][1])
+    for y in range(len(percentages_yaxis)):
+        print("len xaxis:", len(norm_xaxis[y]))
+        yax = percentages_yaxis[y]
+        print("len yaxis:", len(yax), len(yax[0]))
+        ax.scatter(norm_xaxis[y], yax[0], label = yax[1])
+
+
+    #title, axis and legend
+    st = fig.suptitle(title)
+
+    handles, labels = ax.get_legend_handles_labels()
+    ax.legend(handles, labels, bbox_to_anchor = (1,1), loc = "upper left", title = 'Derivatives')
+
+    plt.xlabel(xaxis_title)
+    plt.ylabel(yaxis_title)
+    fig.subplots_adjust(top=0.92, bottom = 0.1, left = 0.12, right = 0.97)
+
+    N = np.arange(1,23)
+
+    relevant_dim = 3*N - 6
+    ax.plot(N, relevant_dim, label = "internal degrees of freedom")
+
+    #save and display plot
+    name = savetofile
+    plt.savefig(name, transparent = True, bbox_inches = 'tight')
+
+
+    return(print("plot has been saved to %s" % name))
+
 
 def pandaseries_dR(eigenvalues, dimZ):
     label_dR = [['dx%i' %(i+1) , 'dy%i' %(i+1) , 'dz%i' %(i+1)]  for i in range(dimZ)]
@@ -282,7 +340,15 @@ def merge_plot_with_svg(figname, imagepath):
     fig.save("fig_final.svg")
 
 
-def prepresults(results, rep = "CM"):
+def prepresults(results, rep = "CM", dwhich = [0, 1, 2, 3, 4], repno = 0, norm = "norm", yval = "perc"):
+    '''
+    dwhich: 0 = dZ, 1 = dR, 2 = dZdZ, 3 = dRdR, 4 = dRdZ
+    repno: 0 = CM, 1 = EVCM, 2 = BOB, 3 = OM, 4 = EVOM
+    norm: string, "norm" is norm of CM matrix, "nuc" is number of nuclear charges
+    yval: string, "perc" calculates percentages, "abs" gives back absolute
+    '''
+    
+
     dZ_percentages = []
     dR_percentages = []
     dZdZ_percentages = []
@@ -292,17 +358,35 @@ def prepresults(results, rep = "CM"):
     norms = []
 
     for i in range(len(results)):
-        print("this result:", results[i])
+        #print("this result:", results[i])
+        
+        if norm == "nuc":
+            norms.append(len(results[i].Z))
+        else: #norm = "norm" or something else that is not valid/not yet defined
+            norms.append(results[i].norm)
 
-        norms.append(results[i].norm)
+        #results_perc = results[i].calculate_smallerthan(repro = repno)
+        
+        #if results[i].dZ_perc > 1:
+        #    print(results[i].filename, "dZ percentage is bigger than 1")
+        
+        if yval == "abs":
+            
+            dim = results[i].calculate_dim(repno)
+            #print("repno", repno, "dimension:", dim)
+            dZ_percentages.append(results[i].dZ_perc*dim)
+            dR_percentages.append(results[i].dR_perc*dim)
+            dZdZ_percentages.append(results[i].dZdZ_perc*dim)
+            dRdR_percentages.append(results[i].dRdR_perc*dim)
+            dZdR_percentages.append(results[i].dZdR_perc*dim)
 
-        #results_perc = results[i].calculate_smallerthan()
 
-        dZ_percentages.append(results[i].dZ_perc)
-        dR_percentages.append(results[i].dR_perc)
-        dZdZ_percentages.append(results[i].dZdZ_perc)
-        dRdR_percentages.append(results[i].dRdR_perc)
-        dZdR_percentages.append(results[i].dZdR_perc)
+        elif yval == "perc":
+            dZ_percentages.append(results[i].dZ_perc)
+            dR_percentages.append(results[i].dR_perc)
+            dZdZ_percentages.append(results[i].dZdZ_perc)
+            dRdR_percentages.append(results[i].dRdR_perc)
+            dZdR_percentages.append(results[i].dZdR_perc)
 
     ylist_toplot = [[np.asarray(dZ_percentages), rep + " dZ"],\
             [np.asarray(dR_percentages), rep + " dR"],\
@@ -310,6 +394,10 @@ def prepresults(results, rep = "CM"):
             [np.asarray(dZdR_percentages), rep + " dZdR"],\
             [np.asarray(dZdZ_percentages), rep + " dZdZ"]]
 
-    
+    #print("len ylist before crop:", len(ylist_toplot))
+    ylist_toplot = [ylist_toplot[d] for d in dwhich]
+    #print(len(ylist_toplot))
+
+    #print(ylist_toplot[0][1]) 
     
     return(np.asarray(norms), ylist_toplot, results)

@@ -2,7 +2,7 @@
 '''
 from jax.config import config
 config.update("jax_enable_x64", True) #increase precision from float32 to float64
-
+import jax_representation as jrep
 import numpy as np
 import pickle
 import copy
@@ -143,14 +143,27 @@ class derivative_results():
         self.dim = M.shape[0]
         self.norm = jnp.linalg.norm(M, ord = 'nuc')
 
-    def calculate_percentage(self):
-        dim = len(self.Z)
+    def calculate_percentage(self, repro):
+        '''
+        Calculates fraction of nonzero values compared to full dim of fingerprint
+        repro: int, defines which representation was used:
+                0 = CM, 1 = EVCM, 2 = BoB, 3 = OM, 4  = EVOM
+        '''
+        
+        N = len(self.Z)
+        OM_dim = jrep.OM_dimension(self.Z)
+        BoB_dim = jrep.BoB_dimension(self.Z)
+        dimension = [N*N, N, BoB_dim, OM_dim*OM_dim, OM_dim]
+
+        dim = dimension[repro]
+
+
         try:
-            self.dZ_perc = jnp.count_nonzero(jnp.asarray(self.dZ_ev))/(dim**2) #is 2*dim Z the max number of EV?
-            self.dR_perc = jnp.count_nonzero(jnp.asarray(self.dR_ev))/(3*dim**2)
-            self.dZdZ_perc = jnp.count_nonzero(jnp.asarray(self.dZdZ_ev))/(dim**3)
-            self.dRdR_perc = jnp.count_nonzero(jnp.asarray(self.dRdR_ev))/(9*dim**3)
-            self.dZdR_perc = jnp.count_nonzero(jnp.asarray(self.dZdR_ev))/(3*dim**3)
+            self.dZ_perc = np.count_nonzero(np.asarray(self.dZ_ev))/(dim*N) #is 2*dim Z the max number of EV?
+            self.dR_perc = np.count_nonzero(np.asarray(self.dR_ev))/(dim*3*N)
+            self.dZdZ_perc = np.count_nonzero(np.asarray(self.dZdZ_ev))/(dim*N*N)
+            self.dRdR_perc = np.count_nonzero(np.asarray(self.dRdR_ev))/(9*dim*N*N)
+            self.dZdR_perc = np.count_nonzero(np.asarray(self.dZdR_ev))/(3*dim*N*N)
 
         except ValueError:
             print("an error occured while calculating percentage")
@@ -158,6 +171,22 @@ class derivative_results():
         fractions = [self.dZ_perc, self.dR_perc, self.dZdZ_perc, self.dRdR_perc, self.dZdR_perc]
 
         return(fractions)
+
+    def calculate_dim(self, repro):
+        '''
+        repro: int, defines which representation was used:
+                0 = CM, 1 = EVCM, 2 = BoB, 3 = OM, 4  = EVOM
+        '''
+        N = len(self.Z)
+        OM_dim = jrep.OM_dimension(self.Z)
+        BoB_dim = jrep.BoB_dimension(self.Z)
+        dimension = [N*N, N, BoB_dim, OM_dim*OM_dim, OM_dim]
+
+        return(dimension[repro])
+
+
+        
+
     
     def transfer_to_numpy(self, listofself):
         for i in listofself:
@@ -166,9 +195,21 @@ class derivative_results():
         return(listofself)
 
 
-    def calculate_smallerthan(self, lower_bound = 0.00000001):
-        dim = len(self.Z)
-        self.representation_form = dim
+    def calculate_smallerthan(self, repro = 0, lower_bound = 0.00000001):
+        '''
+        Calculates fraction of nonzero values compared to full dim of fingerprint
+        repro: int, defines which representation was used:
+                0 = CM, 1 = EVCM, 2 = BoB, 3 = OM, 4  = EVOM
+        '''
+        
+        N = len(self.Z)
+        OM_dim = jrep.OM_dimension(self.Z)
+        BoB_dim = jrep.BoB_dimension(self.Z)
+        dimension = [N*N, N, BoB_dim, OM_dim*OM_dim, OM_dim]
+        
+        dim = N
+
+        self.representation_form = dimension[repro]
         
         while True: #this is a fix for damaged results files
             try:
@@ -192,8 +233,8 @@ class derivative_results():
 
                 continue
 
-        print("self.representation_form", self.representation_form, "dim:", dim)
-        print("size:", self.dZdZ_bigger.size, "dimension foreseen:", self.representation_form*dim**2)
+        #print("self.representation_form", self.representation_form, "dim:", dim)
+        #print("size:", self.dZdZ_bigger.size, "dimension foreseen:", self.representation_form*dim**2)
 
 
         self.dZ_perc = (len(self.dZ_bigger))/(self.representation_form*dim) #is 2*dim Z the max number of EV?
@@ -205,7 +246,7 @@ class derivative_results():
         fractions = [self.dZ_perc, self.dR_perc, self.dZdZ_perc, self.dRdR_perc, self.dZdR_perc]
         numbers = [self.dZ_bigger, self.dR_bigger, self.dZdZ_bigger, self.dRdR_bigger, self.dZdR_bigger]
 
-
+        
         return(fractions, numbers)
 
             
@@ -360,6 +401,7 @@ def store_compounds(compound_list, destination_file):
     '''stores componds to destination_file'''
     with open(destination_file, 'wb') as f:
         pickle.dump(compound_list, f)
+    return(print("compounds have been stored to ", destination_file))
 
 
 def read_compounds(source_file):

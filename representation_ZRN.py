@@ -12,7 +12,7 @@ Variables:
 import jax_representation as jrep
 import qml
 
-dim = 3
+dim = 23 
 
 print("Your representation from representation_ZRN.py was started with dim = ", dim)
 print("Please notice that not all, but some of the representations require")
@@ -41,7 +41,7 @@ def Coulomb_Matrix(Z, R, N = 0):
     will be mapped onto different representations)
     '''
     #return(qml.representations.generate_coulomb_matrix(Z, R, size = dim, sorting = 'row-norm'))
-    return(jrep.CM_full_unsorted_matrix(Z,R,N, size = dim))
+    return(jrep.CM_full_unsorted_matrix(Z,R,N))
 
 def Eigenvalue_Coulomb_Matrix(Z, R, N = 0):
     '''requires: : preordering of Z and R according to CM_full_sorted(Z, R, N)[1]
@@ -72,6 +72,7 @@ def Bag_of_Bonds(Z, R, N = 0):
     qml gnerate_bob function requires superfluous variable 'atomtypes'
     as third argument
     '''
-    return(qml.representations.generate_bob(Z, R, 'N'))
+    return(qml.representations.generate_bob(Z, R, 'N', asize = {'C':7, 'H': 16, 'N':6, 'O': 4, 'F': 4}))
+
 
     
