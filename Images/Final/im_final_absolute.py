@@ -58,7 +58,8 @@ for i in representations:
         #get xdata and ydata with labels (ydatalist[i][1] stores labels)
         xdata, ydata, newresults = prepresults(results, rep = repro,\
                 dwhich = which_d, repno = i,\
-                norm = xnorm, yval = yvalues)
+                norm = xnorm, yval = yvalues,\
+                with_whichd = False)
         
         xdatalist.append(xdata)
         ydatalist.extend(ydata)
@@ -72,10 +73,11 @@ for i in representations:
         fullxdata = []
         ydatalabel = ""
 
-        for k in [100, 200, 300, 400, 500, 600, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900,\
+        for k in range(0, 4000, 100):
+            '''[100, 200, 300, 400, 500, 600, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900,\
                 2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3100, 3200, 3300, 3400, 3500, 3600,\
                 3700, 3800, 3900]:
-            
+            '''
             if k < 3900:
                 numbers = "%i-%i" % (k, k+100)
             else:
@@ -89,7 +91,8 @@ for i in representations:
 
             xdata, ydata, newresults = prepresults(results, rep = repro,\
                     dwhich = which_d, repno = i,\
-                    norm = xnorm, yval = yvalues)
+                    norm = xnorm, yval = yvalues,\
+                    with_whichd = False)
             
             #datprep.store_compounds(newresults, partialfilename)
 
@@ -119,4 +122,6 @@ if xnorm == "nuc":
 else: #xnorm = "norm" or something else that is not yet defined
     xtitle = "Norm of Coulomb Matrix"
 
-pltder.plot_zeroEV(xdatalist, ydatalist, savetofile = "dZ_Absolute_Values")
+plottitle = "Nonzero Values of " + dname + " Derivative"
+
+pltder.plot_zeroEV(xdatalist, ydatalist, title = plottitle, savetofile = dname +"_Absolute_Values")

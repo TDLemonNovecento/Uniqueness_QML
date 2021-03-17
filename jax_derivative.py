@@ -22,9 +22,9 @@ config.update("jax_enable_x64", True) #increase precision from float32 to float6
 
 def sort_derivative(representation, Z, R, N = 0, grad = 1, dx = "Z", ddx = "R", M = None, order = None):
     '''Easy function to handle no, one dimensional or two dimensional derivatives with grad. Issue right now: no additional arguments can be passed to function, it therefore falls back to default for any further arguments beside Z, R and N.
-    Parameters
+    Parameters, OM and OM_EV need to be treated with numerical method
     ----------
-    fun : callable function depending on (Z, R, N, ...) args
+    representation : 'CM', 'CM_unsrt', 'CM_EV', 'CM_EV_unsrt', 'OM', 'OM_EV'
     Z : 1 x n dimensional array
         contains nuclear charges
     R : 3 x n dimensional array

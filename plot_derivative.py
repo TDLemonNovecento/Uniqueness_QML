@@ -110,11 +110,11 @@ def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis,\
     return(print("plots have been saved to %s" % name))
 
 def plot_zeroEV(norm_xaxis, percentages_yaxis,\
-        title = "Nonzero Eigenvalues of Derivatives of CM",\
-        savetofile = "perc_nonzeroEV_CM_test",\
+        title = "Nonzero Values of Derivative",\
+        savetofile = "Abs_nonzeroEV_CM_test",\
         representations = [0,1],\
-        xaxis_title = 'Norm of Coulomb Matrix',\
-        yaxis_title= 'Fraction of Nonzero Eigenvalues'):
+        xaxis_title = 'Number of Atoms in Molecule',\
+        yaxis_title= 'Number of Nonzero Values'):
     '''
     norm_xaxis: list of xaxis data
     percentages_yaxis: list of yaxis data/label lists
@@ -127,6 +127,13 @@ def plot_zeroEV(norm_xaxis, percentages_yaxis,\
     fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize=(12,8))
 
     fig.tight_layout()
+
+    #add reference line of degrees of freedom
+    N = np.arange(1,23)
+
+    relevant_dim = 3*N - 6
+    ax.plot(N, relevant_dim, label = "internal degrees of freedom")
+
 
     #add all plots
     print("percentages yaxis label:", percentages_yaxis[0][1])
@@ -147,17 +154,91 @@ def plot_zeroEV(norm_xaxis, percentages_yaxis,\
     plt.ylabel(yaxis_title)
     fig.subplots_adjust(top=0.92, bottom = 0.1, left = 0.12, right = 0.97)
 
-    N = np.arange(1,23)
-
-    relevant_dim = 3*N - 6
-    ax.plot(N, relevant_dim, label = "internal degrees of freedom")
-
     #save and display plot
     name = savetofile
     plt.savefig(name, transparent = True, bbox_inches = 'tight')
 
 
     return(print("plot has been saved to %s" % name))
+
+
+def plot_ethyne(index, valuelist, title = "Ethyne in EVCM Representation",\
+        savetofile = "Trial_Ethyne.png",\
+        xaxis_title = "Conformation", yaxis_title = "Values",\
+        lineplots = []):
+    '''plots analysis from ethyne runs
+    Variables
+    ---------
+    index: array,
+            some number by which molecular structures are sorted
+    valuelist: list of datapairs [values, label] with values being
+            an array and labels a string
+    title : title of plot
+    lineplots: same format as valuelist, but plotted as line
+    
+    '''
+    #general figure settings
+    fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize=(12,8))
+
+    fig.tight_layout()
+
+    #lines that are all zero are not plotted but displayed seperately
+    zero_valued_plots = []
+
+    #add all plots
+    for y in range(len(valuelist)):
+         
+        yax = valuelist[y]
+        
+        nonz = np.count_nonzero(yax[0])
+        #print("number of nonzero values in ", yax[1], ":", nonz)
+        
+        if nonz > 0:
+            ax.plot(index, yax[0], 'o', label = yax[1])
+        else:
+            zero_valued_plots.append(yax[1])
+    
+    for l in range(len(lineplots)):
+        vals = lineplots[l]
+
+        ax.plot(index, vals[0], marker = '--', label = vals[1])
+
+    #add text with zero valued ylists:
+    zerotext = "Zero valued:\n"
+    for t in zero_valued_plots:
+        zerotext += " "+ t + ","
+    
+    #remove last ","
+    zerotext = zerotext[:-1]
+
+
+    plt.text(0, -1.3, zerotext, fontsize=20)
+    
+    #title, axis and legend
+    st = fig.suptitle(title)
+    
+    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+    handles, labels = ax.get_legend_handles_labels()
+    ax.legend(handles, labels, bbox_to_anchor = (1,1), loc = "upper left", title = 'Derivatives')
+
+
+    #add line
+    for l in range(len(lineplots)):
+        vals = lineplots[l]
+
+        ax.plot(vals[0], label = vals[1])
+
+
+
+    plt.xlabel(xaxis_title)
+    plt.ylabel(yaxis_title)
+    fig.subplots_adjust(top=0.92, bottom = 0.1, left = 0.12, right = 0.97)
+
+    #save and display plot
+    plt.savefig(savetofile, transparent = True, bbox_inches = 'tight')
+
+
+    return(print("plot has been saved to %s" % savetofile))
 
 
 def pandaseries_dR(eigenvalues, dimZ):
@@ -340,12 +421,16 @@ def merge_plot_with_svg(figname, imagepath):
     fig.save("fig_final.svg")
 
 
-def prepresults(results, rep = "CM", dwhich = [0, 1, 2, 3, 4], repno = 0, norm = "norm", yval = "perc"):
+def prepresults(results, rep = "CM",\
+        dwhich = [0, 1, 2, 3, 4], repno = 0,\
+        norm = "norm", yval = "perc",\
+        with_whichd = True):
     '''
     dwhich: 0 = dZ, 1 = dR, 2 = dZdZ, 3 = dRdR, 4 = dRdZ
     repno: 0 = CM, 1 = EVCM, 2 = BOB, 3 = OM, 4 = EVOM
     norm: string, "norm" is norm of CM matrix, "nuc" is number of nuclear charges
     yval: string, "perc" calculates percentages, "abs" gives back absolute
+    with_whichd : boolean, if True, include dZ, dR ect. in label
     '''
     
 
@@ -387,12 +472,20 @@ def prepresults(results, rep = "CM", dwhich = [0, 1, 2, 3, 4], repno = 0, norm =
             dZdZ_percentages.append(results[i].dZdZ_perc)
             dRdR_percentages.append(results[i].dRdR_perc)
             dZdR_percentages.append(results[i].dZdR_perc)
-
-    ylist_toplot = [[np.asarray(dZ_percentages), rep + " dZ"],\
+    
+    if with_whichd:
+        ylist_toplot = [[np.asarray(dZ_percentages), rep + " dZ"],\
             [np.asarray(dR_percentages), rep + " dR"],\
             [np.asarray(dRdR_percentages), rep + " dRdR"],\
             [np.asarray(dZdR_percentages), rep + " dZdR"],\
             [np.asarray(dZdZ_percentages), rep + " dZdZ"]]
+    else:
+        ylist_toplot = [[np.asarray(dZ_percentages), rep],\
+            [np.asarray(dR_percentages), rep ],\
+            [np.asarray(dRdR_percentages), rep ],\
+            [np.asarray(dZdR_percentages), rep ],\
+            [np.asarray(dZdZ_percentages), rep ]]
+
 
     #print("len ylist before crop:", len(ylist_toplot))
     ylist_toplot = [ylist_toplot[d] for d in dwhich]

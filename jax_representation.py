@@ -14,7 +14,7 @@ import jax_math as jmath
 
 
 
-def CM_full_unsorted_matrix(Z, R, N, size = 3):
+def CM_full_unsorted_matrix(Z, R, N, size = 23):
     ''' Calculates unsorted coulomb matrix
     Parameters
     ----------
@@ -28,7 +28,7 @@ def CM_full_unsorted_matrix(Z, R, N, size = 3):
     D : 2D array (matrix)
     Full Coulomb Matrix, dim(Z)xdim(Z)
     '''
-    nick_version = True
+    nick_version = False
     
     n = Z.shape[0]
     D = jnp.zeros((size, size))
@@ -124,7 +124,7 @@ def CM_ev(Z, R, N=0, maxsize = 23, unsorted = False):
 
     return(ev, order)
 
-def CM_ev_unsrt(Z, R, N=0):
+def CM_ev_unsrt(Z, R, N=0, size = 23):
     '''
     Parameters
     ----------
@@ -144,10 +144,9 @@ def CM_ev_unsrt(Z, R, N=0):
         contains Eigenvectors of matrix (n dim.)
         If i out of bounds, return none and print error)
     '''
-    dim = Z.shape[0]
     
-    M = CM_full_unsorted_matrix(Z,R,N)
-    order = jnp.asarray(range(dim))
+    M = CM_full_unsorted_matrix(Z,R,N, size = size)
+    
     ev, vectors = jnp.linalg.eigh(M)
 
     return(ev)

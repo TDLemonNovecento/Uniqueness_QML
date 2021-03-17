@@ -7,7 +7,7 @@ import pandas as pd
 
 #path to xyz files
 database_opt = "/home/linux-miriam/Databases/Ethyne_invariant/Optimized/"
-ethin_image = "./ethin.svg"
+ethin_image = "/home/linux-miriam/Databases/Ethyne_invariant/ehtyne.png"
 database_raw = "/home/linux-miriam/Databases/Ethyne_invariant/Raw"
 #the ethin files are sorted by index. the numbering shows how big angle theta is:
 '''we start with a straight molecule stretching out on the x axis:
@@ -32,6 +32,8 @@ listof_series_dR = []
 listof_pandaseries = []
 
 database = database_opt
+
+
 
 for xyzfile in os.listdir(database):
     if xyzfile.endswith(".xyz"):

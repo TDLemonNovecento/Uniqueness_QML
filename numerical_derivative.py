@@ -81,7 +81,7 @@ def num_der1(representation, ZRN, d1, h = 0.1, dimension = dim):
     difference : central difference derivative
     '''
     
-    print("checkpoint 3: numerical differentiation 1st grade started, numerical_differentiation line 84")
+    #print("checkpoint 3: numerical differentiation 1st grade started, numerical_differentiation line 84")
     #change variable by which to derive (d1) slightly by h
     #print("ZRN: ", ZRN)
 
@@ -93,7 +93,7 @@ def num_der1(representation, ZRN, d1, h = 0.1, dimension = dim):
     repro_plus = representation(plus_ZRN[0], plus_ZRN[1], plus_ZRN[2])
     repro_minus = representation(minus_ZRN[0], minus_ZRN[1], minus_ZRN[2])
     toc = time.perf_counter()
-    print(f"2Repros in {toc - tic:0.4f} seconds")
+    #print(f"2Repros in {toc - tic:0.4f} seconds")
 
     #print(repro_plus)
     #print("repro minus: \n", repro_minus)
