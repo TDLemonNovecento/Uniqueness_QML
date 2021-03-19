@@ -162,10 +162,12 @@ def plot_zeroEV(norm_xaxis, percentages_yaxis,\
     return(print("plot has been saved to %s" % name))
 
 
+
 def plot_ethyne(index, valuelist, title = "Ethyne in EVCM Representation",\
         savetofile = "Trial_Ethyne.png",\
         xaxis_title = "Conformation", yaxis_title = "Values",\
         lineplots = []):
+    
     '''plots analysis from ethyne runs
     Variables
     ---------
@@ -178,30 +180,51 @@ def plot_ethyne(index, valuelist, title = "Ethyne in EVCM Representation",\
     
     '''
     #general figure settings
-    fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize=(12,8))
+    fig = plt.figure( figsize=(12,8))
 
     fig.tight_layout()
+    
+    ax = fig.add_subplot(1,1,1)
+    
+    #format ticks
+    major_ticks = [0, 5, 10, 15, 20]
+
+    ax.set_xticks(major_ticks)
+    ax.set(xlim=(-1, 20.5)) #, ylim = (-1.5, 0.3)) for dZ
 
     #lines that are all zero are not plotted but displayed seperately
     zero_valued_plots = []
 
     #add all plots
+    color_count = 0
     for y in range(len(valuelist)):
          
         yax = valuelist[y]
-        
+       
+        if len(yax) > 2:
+            cor = yax[2]
+        else:
+            try:
+                cor = plt.rcParams['axes.prop_cycle'].by_key()['color'][color_count]
+                #print("cor:", cor)
+                color_count += 1
+            except IndexError:
+                cor = plt.rcParams['axes.prop_cycle'].by_key()['color'][0]
+                color_count = 1
+
+
         nonz = np.count_nonzero(yax[0])
         #print("number of nonzero values in ", yax[1], ":", nonz)
         
         if nonz > 0:
-            ax.plot(index, yax[0], 'o', label = yax[1])
+            plt.plot(index, yax[0], 'o', c = cor, label = yax[1])
         else:
             zero_valued_plots.append(yax[1])
     
     for l in range(len(lineplots)):
         vals = lineplots[l]
 
-        ax.plot(index, vals[0], marker = '--', label = vals[1])
+        plt.plot(index, vals[0], label = vals[1])
 
     #add text with zero valued ylists:
     zerotext = "Zero valued:\n"
@@ -211,28 +234,19 @@ def plot_ethyne(index, valuelist, title = "Ethyne in EVCM Representation",\
     #remove last ","
     zerotext = zerotext[:-1]
 
-
-    plt.text(0, -1.3, zerotext, fontsize=20)
+    plt.text(0, -2.5, zerotext, fontsize = 18)
+    #plt.text(0, -1.4, zerotext, fontsize=18) #for dZ
     
     #title, axis and legend
-    st = fig.suptitle(title)
+    st = plt.suptitle(title)
     
-    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-    handles, labels = ax.get_legend_handles_labels()
-    ax.legend(handles, labels, bbox_to_anchor = (1,1), loc = "upper left", title = 'Derivatives')
-
-
-    #add line
-    for l in range(len(lineplots)):
-        vals = lineplots[l]
-
-        ax.plot(vals[0], label = vals[1])
-
+    #plt.axis.set_major_locator(MaxNLocator(integer=True))
+    #handles, labels = plt.get_legend_handles_labels()
+    plt.legend( bbox_to_anchor = (1,1), loc = "upper left", title = 'Derivatives', prop={'size':15})
 
 
     plt.xlabel(xaxis_title)
     plt.ylabel(yaxis_title)
-    fig.subplots_adjust(top=0.92, bottom = 0.1, left = 0.12, right = 0.97)
 
     #save and display plot
     plt.savefig(savetofile, transparent = True, bbox_inches = 'tight')
