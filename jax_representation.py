@@ -14,7 +14,7 @@ import jax_math as jmath
 
 
 
-def CM_full_unsorted_matrix(Z, R, N, size = 23):
+def CM_full_unsorted_matrix(Z, R, N=0, size = 23):
     ''' Calculates unsorted coulomb matrix
     Parameters
     ----------

@@ -311,8 +311,8 @@ def read_xyz_energies(folder, get_energy = True):
                     R.append(jnp.asarray([float(atominfo[1]), float(atominfo[2]), float(atominfo[3])]))
 
             #transform to np arrays for further use
-            Z = jnp.asarray([jbas.atomic_signs[atom] for atom in atoms])
-            R = jnp.asarray(R)
+            Z = np.asarray([float(jbas.atomic_signs[atom]) for atom in atoms])
+            R = np.asarray(R)
             
             #create list of compound information and represented information
             c = compound(xyzfile, Z, R, N)

@@ -24,13 +24,14 @@ def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis,\
         oneplot = True,\
         representations = [0,1],\
         xaxis_title = 'Norm of Coulomb Matrix',\
-        yaxis_title= 'Fraction of Nonzero Eigenvalues'):
+        yaxis_title= 'Fraction of Nonzero Eigenvalues',\
+        BOB = False):
     '''
     norm_xaxis: list of xaxis data
     percentages_yaxis: list of yaxis data/label lists
     
     representations: list of representations that were used
-    
+    BOB : boolean, changes formatting for 2 compounds
     '''
     
     #general figure settings
@@ -57,7 +58,7 @@ def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis,\
             ax.scatter(norm_xaxis[y], yax[0], label = yax[1])
     else:
         repros  = ["CM", "EVCM", "BOB", "OM", "EVOM"]
-        for i in range(representations):
+        for i in representations:
             name = repros[i]
             y = percentages_yaxis #for simplicity
             ax_d1.scatter(norm_xaxis, y[i*5+0][0], label = name)
@@ -71,6 +72,25 @@ def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis,\
             ax_dd3.scatter(norm_xaxis, y[i*5+4][0])
             ax_dd3.title.set_text("dZdZ")#y[i*5+4][1])
         
+        #format ticks for BOB
+        if BOB:
+            major_ticks = [1,2]
+
+            ax_d1.set_xticks(major_ticks)
+            ax_d1.set(xlim=(0.8, 2.2), ylim = (0, 1))
+
+            ax_d2.set_xticks(major_ticks)
+            ax_d2.set(xlim=(0.8, 2.2), ylim = (0, 1))
+
+            ax_dd1.set_xticks(major_ticks)
+            ax_dd1.set(xlim=(0.8, 2.2), ylim = (0, 1))
+
+            ax_dd2.set_xticks(major_ticks)
+            ax_dd2.set(xlim=(0.8, 2.2), ylim = (0, 1))
+
+            ax_dd3.set_xticks(major_ticks)
+            ax_dd3.set(xlim=(0.8, 2.2), ylim = (0, 1))
+
         #turn off ticks and so on for outer subfigure
         ax.xaxis.set_ticks([])
         ax.yaxis.set_ticks([])
@@ -99,7 +119,7 @@ def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis,\
         #hspace, wspace increases space between subplots
     else:
         fig.subplots_adjust(top=0.87, left = 0.10, right = 0.97,  wspace = 0.2, hspace = 0.5) #right = 0.82
-        ax_d1.legend(loc = "upper left")#, title = "Representation") 
+        ax_d1.legend(loc = "center")#, title = "Representation") 
         #alternative : bbox_to_anchor = (0., 1.02, 1., 0.102)
     
     #save and display plot
@@ -440,11 +460,26 @@ def prepresults(results, rep = "CM",\
         norm = "norm", yval = "perc",\
         with_whichd = True):
     '''
+    Reshapes results and evaluates for plotting
+
+    Variables
+    ---------
+
+    results : list, contains database_preparation.results instances
+    rep: string, "CM", "EVCM", "BOB", "OM" or "EVOM"
     dwhich: 0 = dZ, 1 = dR, 2 = dZdZ, 3 = dRdR, 4 = dRdZ
     repno: 0 = CM, 1 = EVCM, 2 = BOB, 3 = OM, 4 = EVOM
     norm: string, "norm" is norm of CM matrix, "nuc" is number of nuclear charges
     yval: string, "perc" calculates percentages, "abs" gives back absolute
     with_whichd : boolean, if True, include dZ, dR ect. in label
+    
+    Returns
+    -------
+    xlist : list of xdata arrays
+    ylist_toplot : list of [ydata, label] lists
+                    ydata is a np array, label a string
+    results : list, contains database_preparation.results instances
+                with calculated percentages or absolute values
     '''
     
 
@@ -464,7 +499,7 @@ def prepresults(results, rep = "CM",\
         else: #norm = "norm" or something else that is not valid/not yet defined
             norms.append(results[i].norm)
 
-        #results_perc = results[i].calculate_smallerthan(repro = repno)
+        results_perc = results[i].calculate_smallerthan(repro = repno)
         
         #if results[i].dZ_perc > 1:
         #    print(results[i].filename, "dZ percentage is bigger than 1")

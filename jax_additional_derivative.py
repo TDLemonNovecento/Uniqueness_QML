@@ -29,14 +29,15 @@ def presort(Z_orig, R_orig, order):
     Z = np.asarray(Z, dtype = np.float64)
     return(Z, R)
 
-def calculate_num_der(repro, compoundlist, matrix = False, do_dZ = False, do_dR = True):
+def calculate_num_der(repro, compoundlist, matrix = False, do_dZ = True, do_dR = True):
     '''calculates eigenvalues of derived matrices from compounds
     only functions as translator between the compound object, the derivative_result object
     and the sorted_derivative function.
 
     Arguments:
     ----------
-    repro: representation, such as 'CM' for coulomb matrix ect, as is used in sorted_derivative function
+    repro: callable representation function that takes Z, R as first two args
+            all functions in "representations_ZRN.py" work
     compoundlist: list of database_preparation.compound objects
     matrix: If repro returns matrix like shape, unravel
     do_dZ : boolean,
@@ -85,16 +86,21 @@ def calculate_num_der(repro, compoundlist, matrix = False, do_dZ = False, do_dR 
         print("checkpoint2: now starting numerical differentiation, jax_additional line 82")
         for i in range(dim):
             if do_dZ:
-                dZ[i] = numder.derivative(repro, [Z, R, N], order = 1, d1 = [0, i])
-                print("subcheck2: dZ derivative calculated")
+                try:
+                    dZ[i] = numder.derivative(repro, [Z, R, N], order = 1, d1 = [0, i])
+                    print("subcheck2: dZ derivative calculated")
+                except TypeError:
+                    print("this representation cannot be derived by dZ")
             for j in range(3):
                 if do_dR:
                     dR[i][j] = numder.derivative(repro, [Z, R, N], order = 1, d1 = [1, i, j])
 
                 for k in range(dim):
                     if do_dZ:
-                        dZdR[i][k][j] = numder.derivative(repro, [Z, R, N], order = 2, d1 = [0, i], d2 = [1, k, j])
-                    
+                        try:
+                            dZdR[i][k][j] = numder.derivative(repro, [Z, R, N], order = 2, d1 = [0, i], d2 = [1, k, j])
+                        except TypeError:
+                            print("this representation cannot be derived by dZdR")
                     if do_dR:
                         for l in range(3):
                             dRdR[i][j][k][l] = numder.derivative(repro, [Z, R, N], order = 2, d1 = [1, i, j], d2 = [1, k,l])
