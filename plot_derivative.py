@@ -499,7 +499,7 @@ def prepresults(results, rep = "CM",\
         else: #norm = "norm" or something else that is not valid/not yet defined
             norms.append(results[i].norm)
 
-        results_perc = results[i].calculate_smallerthan(repro = repno)
+        #results_perc = results[i].calculate_smallerthan(repro = repno)
         
         #if results[i].dZ_perc > 1:
         #    print(results[i].filename, "dZ percentage is bigger than 1")

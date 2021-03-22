@@ -249,7 +249,7 @@ def CM_eigenvectors_EVsorted(Z, R, N= 0, cutoff = 10):
 
 
 def OM_full_unsorted_matrix(Z, R, N= 0):
-    print("started fast OM calculation")
+    #print("started fast OM calculation")
     '''
     The overlap matrix is constructed as described in the
     'student-friendly guide to molecular integrals' by Murphy et al, 2018
@@ -313,7 +313,7 @@ def OM_full_unsorted_matrix(Z, R, N= 0):
 
     tend = tic()
 
-    print("total time:", tend - tstart)
+    #print("total time:", tend - tstart)
 
     return(S)
 

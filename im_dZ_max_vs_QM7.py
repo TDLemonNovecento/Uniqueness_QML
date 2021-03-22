@@ -10,10 +10,15 @@ was computed using wolframalpha.com
 '''
 
 dim = np.arange(1,24)
-zeros_in_der = np.asarray([0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196, 225, 256, 289, 324, 361, 400, 441, 484])
 zeros_in_evofder = np.asarray([0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21])
-
 size_of_matrix = dim**2
+
+zeros_in_der = 2/dim - 1/(dim**2)
+CM_diag = dim*(dim + 1)/2
+CM_triag = dim*(dim-1)/2
+
+
+
 
 fraction_of_nonzero_direct = np.ones(dim.size)-(zeros_in_der / size_of_matrix)
 fraction_of_nonzero_EV = np.ones(dim.size)-(zeros_in_evofder / dim)
@@ -35,7 +40,7 @@ norms = []
 for i in range(len(results_CM)):
     norms.append(results_CM[i].Z.size)
 
-    results_perc_CM = results_CM[i].calculate_smallerthan()
+    all_fractions = results_CM[i].calculate_smallerthan(0)
     dZ_frac_CM.append(results_CM[i].dZ_perc)
 
 
@@ -58,7 +63,6 @@ ax.scatter(np.asarray(norms), np.asarray(dZ_frac_CM), label = "Analytical Deriva
 #add line plot of maximum possible values
 ax.plot(dim, fraction_of_nonzero_EV, label = "Maximum Fraction of Nonzero Eigenvalues of dZ Matrix")
 ax.plot(dim, fraction_of_nonzero_direct, label = "Maximum Fraction of Nonzero dZ Matrix fields")
-
 
 plt.xlabel("Number of Atoms in Molecule")
 plt.ylabel("Fraction of Nonzero Derivatives") 

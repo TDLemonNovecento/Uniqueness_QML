@@ -235,8 +235,6 @@ class derivative_results():
 
         #print("self.representation_form", self.representation_form, "dim:", dim)
         #print("size:", self.dZdZ_bigger.size, "dimension foreseen:", self.representation_form*dim**2)
-
-
         self.dZ_perc = (len(self.dZ_bigger))/(self.representation_form*dim) #is 2*dim Z the max number of EV?
         self.dR_perc = (len(self.dR_bigger))/(3*dim*self.representation_form)
         self.dZdZ_perc = (len(self.dZdZ_bigger))/(self.representation_form*dim**2)
