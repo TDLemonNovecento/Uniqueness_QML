@@ -1,5 +1,6 @@
 '''
 all representations that work well with the numerical_derivative file
+Afterwards: Methods that work well with Kernel
 !!! SORTED REPRESENTATIONS DON'T WORK WITH MY NUMERICAL METHODS!!!
 the sorting needs to be done before taking a derivative
 
@@ -8,13 +9,11 @@ Variables:
     R: np.array of nuclear positions in cartesian coordinates [x,y,z]
     N: total number of electrons in system, irrelevant for most representations
 '''
-
+import numpy as np
 import jax_representation as jrep
 import qml
 
-dim = 23 
 
-print("Your representation from representation_ZRN.py was started with dim = ", dim)
 print("Please notice that not all, but some of the representations require")
 print("their dimensionality to be changed according to the molecule as otherwise no proper")
 print("numeric derivative can be taken. This variable can be changed inside the")
@@ -67,12 +66,57 @@ def SLATM(Z, R, N = 0):
     return(qml.representations.generate_slatm(R, Z, mbtypes))
 ''' 
 
+#BOB can be used for both, derivatives and ML
 def Bag_of_Bonds(Z, R, N = 0):
     '''
     qml gnerate_bob function requires superfluous variable 'atomtypes'
     as third argument
     '''
     return(qml.representations.generate_bob(Z, R, 'N', asize = {'C':7, 'H': 16, 'N':6, 'O': 4, 'F': 4}))
+
+
+'''All methods that work well with Kernels (hashed) below:
+-----------------------------------------------------------
+'''
+
+
+def Coulomb_Matrix_h(Z, R, N = 0, size = 23):
+    '''
+    returns hashed CM to size
+    '''
+    return(jrep.CM_full_sorted(Z,R,N, size = size)[0])
+
+
+def Eigenvalue_Coulomb_Matrix_h(Z, R, N = 0, size = 23):
+    '''requires: : preordering of Z and R according to CM_full_sorted(Z, R, N)[1]
+    (otherwise two identical molecules with atoms 1 and 2 switched in the Z and R array
+    will be mapped onto different representations)
+    '''
+    return(np.asarray(jrep.CM_ev(Z, R, N, maxsize = size)[0]))
+
+
+def Overlap_Matrix_h(Z, R, N = 0, size = 51):
+    '''
+    Returns OM hashed to size
+    '''
+    return(jrep.OM_full_sorted(Z, R, N, size)[0])
+
+def Eigenvalue_Overlap_Matrix_h(Z, R, N=0, size = 51):
+    '''
+    returns hashed EVOM representation with hash = size
+    '''
+    return(jrep.OM_ev(Z, R, N, size)[0])
+
+
+
+
+
+
+
+
+
+
+
 
 
     

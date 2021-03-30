@@ -112,7 +112,7 @@ class derivative_results():
                     dZdZ_ev.append(eigenvals)
         
         else:
-            print("dZdR size:", len(dZdR), len(dZdR[0]), len(dZdR[0][0]))
+            #print("dZdR size:", len(dZdR), len(dZdR[0]), len(dZdR[0][0]))
             for i in range(dim):
                 dZ_ev.append(dZ[i])
                 for x in range(3):
@@ -138,11 +138,6 @@ class derivative_results():
         self.dZdR_ev = np.asarray(self.dZdR_ev)
 
     
-    def add_Z_norm(self, Z, M):
-        self.Z = Z
-        self.dim = M.shape[0]
-        self.norm = jnp.linalg.norm(M, ord = 'nuc')
-
     def calculate_percentage(self, repro):
         '''
         Calculates fraction of nonzero values compared to full dim of fingerprint

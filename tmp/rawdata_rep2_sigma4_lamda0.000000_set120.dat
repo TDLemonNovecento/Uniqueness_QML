@@ -1,0 +1,13 @@
+no_training:9	no_test:1file identifier	 training data
+1	-360.499843
+2	-324.551643
+0	-351.615495
+5	-351.628383
+4	-270.439280
+9	-344.468531
+7	-309.722879
+6	-345.687671
+8	-272.545439
+
+file identifier 	 test data 	 predicted
+3	-346.838279	-0.000000
