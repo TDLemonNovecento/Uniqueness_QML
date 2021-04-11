@@ -131,7 +131,8 @@ if do_plot_derivatives:
     print(yvals)
 
     pltder.plot_percentage_zeroEV([1,2], yvals, title = "4 C Atoms",\
-            savetofile = "BOB_unrecognized.png", oneplot = False,\
+            savetofile = "./Images/Final/BOB_conformations.png", oneplot = False,\
             representations = [0,1,2,3,4],\
             xaxis_title = "Compound",\
+            Include_Title = False,\
             BOB = True)

@@ -19,20 +19,21 @@ final_file_list = ['CM_QM7', \
         'EVOM_QM7']
 
 repnames = ["CM","EVCM", "BOB", "OM", "EVOM"]
+max_no = 3993 #150
 
-#for i in range(2):
-#    results = kproc.kernel_learning(datapath, final_file_list[i], representation_no = i, maxnumber = 10)
+for i in [0, 1, 2]:
+    results = kproc.kernel_learning(datapath, final_file_list[i], representation_no = i, maxnumber = max_no, repno = repno)
 
 curve_list = []
-for i in range(2):
+for i in [0, 1, 2]:
     final_file = final_file_list[i]
-    curves = kplot.cleanup_results(final_file, multiple_runs = True, rep_no = repno)
+    curves = kplot.cleanup_results(final_file, rep_no = repno)
     for curve in curves:
         curve.name = repnames[i] + curve.name
         curve_list.append(curve)
 
-        print("curve", curve)
-    kplot.plot_curves(curves, file_title = final_file[11:], plottitle = final_file + "Learning on 200 QM7 datapoints")
+        #print("curve", curve)
+    #kplot.plot_curves(curves, file_title = final_file[11:], plottitle = final_file + "Learning on 200 QM7 datapoints")
 
 
-kplot.plot_curves(curve_list, file_title = "ML_QM7", plottitle = "Learning of Molecular Energies on QM7 Dataset")
+kplot.plot_curves(curve_list, file_title = "ML_trial", plottitle = "Learning of Molecular Energies on QM7 Dataset")

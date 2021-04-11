@@ -29,21 +29,24 @@ def cleanup_results(result_file, multiple_runs = False, Choose_Folder = False, r
     '''
     
     if not Choose_Folder:
-        print("your results were stored to ./Pickled/Kernel_Results/")
+        #print("your results were stored to ./Pickled/Kernel_Results/")
         result_file = "./Pickled/Kernel_Results/" + result_file + "_" + str(rep_no)+ "reps"
 
 
     plottable_curves = []
-    
+    if rep_no > 1:
+        multiple_runs = True
+
+
     if multiple_runs:
         lamdas = []
         sigmas = []
 
     results_list = datprep.read_compounds(result_file)
-    print("len results_list:", len(results_list)) 
+    #print("len results_list:", len(results_list)) 
     
     for result in results_list:
-        print("type result:", type(result))
+        #print("type result:", type(result))
         lamda = result.lamda
         sigma = result.sigma
         xlist = result.set_sizes
@@ -72,7 +75,7 @@ def cleanup_results(result_file, multiple_runs = False, Choose_Folder = False, r
                     if result.lamda == l and result.sigma == s:
                         same_x.append(result.set_sizes)
                         same_y.append(result.maes)
-                print("all arrays of same y:\n", same_y)        
+                #print("all arrays of same y:\n", same_y)        
                 #calculate average now
                 av_ylist, yerror = jmath.calculate_mean(same_y)
                 print("the calculated mean and it's error are:\n mean:", av_ylist, "\n error:", yerror)
@@ -147,14 +150,22 @@ def plot_curves(curve_list, file_title = "TrialLearning",\
     #all the plotting has to be done below
     for c in range(len(curve_list)):
         curve = curve_list[c]
-        print('a curve with the following x and y arrays was plotted')
-        print('x:' ,curve.xnparray,'\ny:', curve.ynparray)
-        ax.plot(curve.xnparray, curve.ynparray,  label = curve.name)
         
-        if multiple_runs:
-            #ax.plot(curve.xnparray, curve.ynparray, 'o')
-            ax.errorbar(curve.xnparray, curve.ynparray, yerr = curve.yerror, fmt = '-o')
+        ax.plot(curve.xnparray, curve.ynparray, linewidth = 2, label = curve.name)
+        print('x:' ,curve.xnparray,'\ny:', curve.ynparray)
 
+        '''
+        #check whether learning worked
+        if curve.ynparray[8] > curve.ynparray[0]:
+            #print('a curve with the following x and y arrays was plotted')
+            #print('x:' ,curve.xnparray,'\ny:', curve.ynparray)
+            ax.plot(curve.xnparray, curve.ynparray,  label = curve.name)
+        else:
+            print("this curve was excluded:", curve.name)
+        #if multiple_runs:
+        #    #ax.plot(curve.xnparray, curve.ynparray, 'o')
+        #    ax.errorbar(curve.xnparray, curve.ynparray, yerr = curve.yerror, fmt = '-o')
+        '''
     #all the plotting has to be done above
     
     #f.legend = ax.legend(loc = 'center right')

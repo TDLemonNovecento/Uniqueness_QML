@@ -1,0 +1,941 @@
+WARNING:absl:No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
+Please notice that not all, but some of the representations require
+their dimensionality to be changed according to the molecule as otherwise no proper
+numeric derivative can be taken. This variable can be changed inside the
+representation_ZRN.py file
+len of compoundlist: 3993
+len of compoundlist used for this run: 3993
+time start to compounds:  3615.1727209091187
+your results are stored to ./Pickled/Kernel_Results/
+trainin/test split: 0.0016825199127197266
+kernel matrix: 0.0633401870727539
+alphas calculation: 0.0003116130828857422
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma60_lamda0.000000_set5.dat
+trainin/test split: 0.0016753673553466797
+kernel matrix: 0.03461575508117676
+alphas calculation: 0.00014400482177734375
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma60_lamda0.000000_set10.dat
+trainin/test split: 0.0017423629760742188
+kernel matrix: 0.25026631355285645
+alphas calculation: 0.00021314620971679688
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma60_lamda0.000000_set25.dat
+trainin/test split: 0.0016322135925292969
+kernel matrix: 1.8793387413024902
+alphas calculation: 0.009611129760742188
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma60_lamda0.000000_set70.dat
+trainin/test split: 0.001764535903930664
+kernel matrix: 5.333301305770874
+alphas calculation: 0.03960371017456055
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma60_lamda0.000000_set120.dat
+trainin/test split: 0.0017914772033691406
+kernel matrix: 35.79516887664795
+alphas calculation: 0.6480083465576172
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma60_lamda0.000000_set300.dat
+trainin/test split: 0.0018820762634277344
+kernel matrix: 137.01554656028748
+alphas calculation: 0.2907440662384033
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma60_lamda0.000000_set600.dat
+trainin/test split: 0.0017104148864746094
+kernel matrix: 860.5184373855591
+alphas calculation: 1.8547940254211426
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma60_lamda0.000000_set1500.dat
+trainin/test split: 0.0017032623291015625
+kernel matrix: 3418.994589805603
+alphas calculation: 2.755387306213379
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma60_lamda0.000000_set3000.dat
+trainin/test split: 0.001726388931274414
+kernel matrix: 0.010199308395385742
+alphas calculation: 0.00022530555725097656
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma80_lamda0.000000_set5.dat
+trainin/test split: 0.0017352104187011719
+kernel matrix: 0.03637385368347168
+alphas calculation: 0.000102996826171875
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma80_lamda0.000000_set10.dat
+trainin/test split: 0.0017490386962890625
+kernel matrix: 0.22670865058898926
+alphas calculation: 0.00819087028503418
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma80_lamda0.000000_set25.dat
+trainin/test split: 0.0016956329345703125
+kernel matrix: 1.906543254852295
+alphas calculation: 0.053853511810302734
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma80_lamda0.000000_set70.dat
+trainin/test split: 0.001744985580444336
+kernel matrix: 5.169726610183716
+alphas calculation: 0.08585691452026367
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma80_lamda0.000000_set120.dat
+trainin/test split: 0.001813650131225586
+kernel matrix: 35.06478524208069
+alphas calculation: 0.028690099716186523
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma80_lamda0.000000_set300.dat
+trainin/test split: 0.001758575439453125
+kernel matrix: 137.22542262077332
+alphas calculation: 0.041518449783325195
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma80_lamda0.000000_set600.dat
+trainin/test split: 0.0018367767333984375
+kernel matrix: 851.0718307495117
+alphas calculation: 1.939361333847046
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma80_lamda0.000000_set1500.dat
+trainin/test split: 0.0018055438995361328
+kernel matrix: 3386.7857913970947
+alphas calculation: 2.718236207962036
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma80_lamda0.000000_set3000.dat
+trainin/test split: 0.0016374588012695312
+kernel matrix: 0.009712696075439453
+alphas calculation: 0.00030612945556640625
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma100_lamda0.000000_set5.dat
+trainin/test split: 0.0018570423126220703
+kernel matrix: 0.041022539138793945
+alphas calculation: 9.942054748535156e-05
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma100_lamda0.000000_set10.dat
+trainin/test split: 0.001825571060180664
+kernel matrix: 0.2630579471588135
+alphas calculation: 0.00016236305236816406
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma100_lamda0.000000_set25.dat
+trainin/test split: 0.0017547607421875
+kernel matrix: 1.7828145027160645
+alphas calculation: 0.06025242805480957
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma100_lamda0.000000_set70.dat
+trainin/test split: 0.001764059066772461
+kernel matrix: 5.468724250793457
+alphas calculation: 0.17653274536132812
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma100_lamda0.000000_set120.dat
+trainin/test split: 0.0017180442810058594
+kernel matrix: 34.09172701835632
+alphas calculation: 0.35247015953063965
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma100_lamda0.000000_set300.dat
+trainin/test split: 0.0018706321716308594
+kernel matrix: 135.81851768493652
+alphas calculation: 1.2024304866790771
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma100_lamda0.000000_set600.dat
+trainin/test split: 0.001771688461303711
+kernel matrix: 849.9791028499603
+alphas calculation: 2.095048427581787
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma100_lamda0.000000_set1500.dat
+trainin/test split: 0.0017924308776855469
+kernel matrix: 3384.814386844635
+alphas calculation: 2.733884572982788
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma100_lamda0.000000_set3000.dat
+trainin/test split: 0.0015642642974853516
+kernel matrix: 0.009971380233764648
+alphas calculation: 0.0002887248992919922
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma120_lamda0.000000_set5.dat
+trainin/test split: 0.001779317855834961
+kernel matrix: 0.03895139694213867
+alphas calculation: 0.00011181831359863281
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma120_lamda0.000000_set10.dat
+trainin/test split: 0.0017635822296142578
+kernel matrix: 0.2520742416381836
+alphas calculation: 0.009308099746704102
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma120_lamda0.000000_set25.dat
+trainin/test split: 0.0017628669738769531
+kernel matrix: 1.9492180347442627
+alphas calculation: 0.0025267601013183594
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma120_lamda0.000000_set70.dat
+trainin/test split: 0.0018341541290283203
+kernel matrix: 5.62114691734314
+alphas calculation: 0.045053958892822266
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma120_lamda0.000000_set120.dat
+trainin/test split: 0.001893758773803711
+kernel matrix: 34.3494918346405
+alphas calculation: 0.53265380859375
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma120_lamda0.000000_set300.dat
+trainin/test split: 0.0018444061279296875
+kernel matrix: 138.4096851348877
+alphas calculation: 0.4304375648498535
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma120_lamda0.000000_set600.dat
+trainin/test split: 0.0018091201782226562
+kernel matrix: 856.3698637485504
+alphas calculation: 0.3135080337524414
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma120_lamda0.000000_set1500.dat
+trainin/test split: 0.0018389225006103516
+kernel matrix: 3417.2407989501953
+alphas calculation: 2.891453981399536
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma120_lamda0.000000_set3000.dat
+round 1 successfully finished
+trainin/test split: 0.0016438961029052734
+kernel matrix: 0.009320735931396484
+alphas calculation: 0.00027561187744140625
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma60_lamda0.000000_set5.dat
+trainin/test split: 0.0018298625946044922
+kernel matrix: 0.03996610641479492
+alphas calculation: 0.00011277198791503906
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma60_lamda0.000000_set10.dat
+trainin/test split: 0.0017478466033935547
+kernel matrix: 0.22615623474121094
+alphas calculation: 0.00016427040100097656
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma60_lamda0.000000_set25.dat
+trainin/test split: 0.0017595291137695312
+kernel matrix: 1.927680253982544
+alphas calculation: 0.04658794403076172
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma60_lamda0.000000_set70.dat
+trainin/test split: 0.001870870590209961
+kernel matrix: 5.555936098098755
+alphas calculation: 0.1386868953704834
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma60_lamda0.000000_set120.dat
+trainin/test split: 0.0017845630645751953
+kernel matrix: 35.04591464996338
+alphas calculation: 0.009865522384643555
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma60_lamda0.000000_set300.dat
+trainin/test split: 0.0018723011016845703
+kernel matrix: 134.73663020133972
+alphas calculation: 0.33820176124572754
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma60_lamda0.000000_set600.dat
+trainin/test split: 0.001756906509399414
+kernel matrix: 861.1185274124146
+alphas calculation: 1.7353861331939697
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma60_lamda0.000000_set1500.dat
+trainin/test split: 0.0017511844635009766
+kernel matrix: 3410.6753718852997
+alphas calculation: 2.0225348472595215
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma60_lamda0.000000_set3000.dat
+trainin/test split: 0.0017409324645996094
+kernel matrix: 0.009996414184570312
+alphas calculation: 0.0003159046173095703
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma80_lamda0.000000_set5.dat
+trainin/test split: 0.0018465518951416016
+kernel matrix: 0.03979682922363281
+alphas calculation: 0.00010347366333007812
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma80_lamda0.000000_set10.dat
+trainin/test split: 0.001871347427368164
+kernel matrix: 0.22415924072265625
+alphas calculation: 0.00015974044799804688
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma80_lamda0.000000_set25.dat
+trainin/test split: 0.0017924308776855469
+kernel matrix: 1.844756841659546
+alphas calculation: 0.040320634841918945
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma80_lamda0.000000_set70.dat
+trainin/test split: 0.0017349720001220703
+kernel matrix: 5.700955629348755
+alphas calculation: 0.16044974327087402
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma80_lamda0.000000_set120.dat
+trainin/test split: 0.0017566680908203125
+kernel matrix: 35.90509819984436
+alphas calculation: 0.5244343280792236
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma80_lamda0.000000_set300.dat
+trainin/test split: 0.0017919540405273438
+kernel matrix: 134.50570154190063
+alphas calculation: 0.06243491172790527
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma80_lamda0.000000_set600.dat
+trainin/test split: 0.0017867088317871094
+kernel matrix: 852.0350494384766
+alphas calculation: 0.11640810966491699
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma80_lamda0.000000_set1500.dat
+trainin/test split: 0.0017385482788085938
+kernel matrix: 3387.903728723526
+alphas calculation: 2.0774171352386475
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma80_lamda0.000000_set3000.dat
+trainin/test split: 0.0016689300537109375
+kernel matrix: 0.009313106536865234
+alphas calculation: 0.00025916099548339844
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma100_lamda0.000000_set5.dat
+trainin/test split: 0.0018658638000488281
+kernel matrix: 0.040479421615600586
+alphas calculation: 0.0001087188720703125
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma100_lamda0.000000_set10.dat
+trainin/test split: 0.001781463623046875
+kernel matrix: 0.23755431175231934
+alphas calculation: 0.00016355514526367188
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma100_lamda0.000000_set25.dat
+trainin/test split: 0.0018582344055175781
+kernel matrix: 1.9060368537902832
+alphas calculation: 0.008656978607177734
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma100_lamda0.000000_set70.dat
+trainin/test split: 0.0017948150634765625
+kernel matrix: 5.6144022941589355
+alphas calculation: 0.1748054027557373
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma100_lamda0.000000_set120.dat
+trainin/test split: 0.0018041133880615234
+kernel matrix: 34.57732629776001
+alphas calculation: 0.4462904930114746
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma100_lamda0.000000_set300.dat
+trainin/test split: 0.0018968582153320312
+kernel matrix: 138.33543610572815
+alphas calculation: 1.3956298828125
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma100_lamda0.000000_set600.dat
+trainin/test split: 0.0017414093017578125
+kernel matrix: 854.9568395614624
+alphas calculation: 1.8846180438995361
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma100_lamda0.000000_set1500.dat
+trainin/test split: 0.0017180442810058594
+kernel matrix: 3393.7724318504333
+alphas calculation: 2.9807896614074707
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma100_lamda0.000000_set3000.dat
+trainin/test split: 0.0016176700592041016
+kernel matrix: 0.009263038635253906
+alphas calculation: 0.00026917457580566406
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma120_lamda0.000000_set5.dat
+trainin/test split: 0.001760721206665039
+kernel matrix: 0.04083871841430664
+alphas calculation: 0.00010466575622558594
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma120_lamda0.000000_set10.dat
+trainin/test split: 0.001771688461303711
+kernel matrix: 0.2266552448272705
+alphas calculation: 0.008171319961547852
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma120_lamda0.000000_set25.dat
+trainin/test split: 0.001744985580444336
+kernel matrix: 1.882690668106079
+alphas calculation: 0.045417070388793945
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma120_lamda0.000000_set70.dat
+trainin/test split: 0.0030715465545654297
+kernel matrix: 5.600558519363403
+alphas calculation: 0.06522512435913086
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma120_lamda0.000000_set120.dat
+trainin/test split: 0.001745462417602539
+kernel matrix: 34.864362955093384
+alphas calculation: 0.46305274963378906
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma120_lamda0.000000_set300.dat
+trainin/test split: 0.0018105506896972656
+kernel matrix: 138.93786430358887
+alphas calculation: 0.015347003936767578
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma120_lamda0.000000_set600.dat
+trainin/test split: 0.0018622875213623047
+kernel matrix: 861.1067559719086
+alphas calculation: 1.236921787261963
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma120_lamda0.000000_set1500.dat
+trainin/test split: 0.0018033981323242188
+kernel matrix: 3398.585892677307
+alphas calculation: 0.5851953029632568
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma120_lamda0.000000_set3000.dat
+round 2 successfully finished
+trainin/test split: 0.001657247543334961
+kernel matrix: 0.010076522827148438
+alphas calculation: 0.00026917457580566406
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma60_lamda0.000000_set5.dat
+trainin/test split: 0.0017538070678710938
+kernel matrix: 0.04043865203857422
+alphas calculation: 0.00010609626770019531
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma60_lamda0.000000_set10.dat
+trainin/test split: 0.001735687255859375
+kernel matrix: 0.23420977592468262
+alphas calculation: 0.0001633167266845703
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma60_lamda0.000000_set25.dat
+trainin/test split: 0.001714468002319336
+kernel matrix: 1.8980238437652588
+alphas calculation: 0.04712176322937012
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma60_lamda0.000000_set70.dat
+trainin/test split: 0.0017795562744140625
+kernel matrix: 5.770113945007324
+alphas calculation: 0.17317414283752441
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma60_lamda0.000000_set120.dat
+trainin/test split: 0.0017592906951904297
+kernel matrix: 35.1257107257843
+alphas calculation: 0.281604528427124
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma60_lamda0.000000_set300.dat
+trainin/test split: 0.0018839836120605469
+kernel matrix: 141.82571125030518
+alphas calculation: 1.1328582763671875
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma60_lamda0.000000_set600.dat
+trainin/test split: 0.0017342567443847656
+kernel matrix: 867.3596999645233
+alphas calculation: 1.393239974975586
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma60_lamda0.000000_set1500.dat
+trainin/test split: 0.009516239166259766
+kernel matrix: 4205.0778901577
+alphas calculation: 2.8579723834991455
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma60_lamda0.000000_set3000.dat
+trainin/test split: 0.009378910064697266
+kernel matrix: 0.021345138549804688
+alphas calculation: 0.0041217803955078125
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma80_lamda0.000000_set5.dat
+trainin/test split: 0.0017626285552978516
+kernel matrix: 0.03701663017272949
+alphas calculation: 0.0006616115570068359
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma80_lamda0.000000_set10.dat
+trainin/test split: 0.0018870830535888672
+kernel matrix: 0.2525441646575928
+alphas calculation: 0.0014424324035644531
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma80_lamda0.000000_set25.dat
+trainin/test split: 0.0018987655639648438
+kernel matrix: 1.9237391948699951
+alphas calculation: 0.06621360778808594
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma80_lamda0.000000_set70.dat
+trainin/test split: 0.024657249450683594
+kernel matrix: 6.023658275604248
+alphas calculation: 0.5789415836334229
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma80_lamda0.000000_set120.dat
+trainin/test split: 0.004812479019165039
+kernel matrix: 35.18378806114197
+alphas calculation: 1.285883903503418
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma80_lamda0.000000_set300.dat
+trainin/test split: 0.00500035285949707
+kernel matrix: 139.92458152770996
+alphas calculation: 1.272251844406128
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma80_lamda0.000000_set600.dat
+trainin/test split: 0.0041506290435791016
+kernel matrix: 857.7958111763
+alphas calculation: 1.9085168838500977
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma80_lamda0.000000_set1500.dat
+trainin/test split: 0.0020847320556640625
+kernel matrix: 3450.6350507736206
+alphas calculation: 2.517887592315674
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma80_lamda0.000000_set3000.dat
+trainin/test split: 0.0016667842864990234
+kernel matrix: 0.009389400482177734
+alphas calculation: 0.00028896331787109375
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma100_lamda0.000000_set5.dat
+trainin/test split: 0.0017948150634765625
+kernel matrix: 0.041100502014160156
+alphas calculation: 0.00011110305786132812
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma100_lamda0.000000_set10.dat
+trainin/test split: 0.001863241195678711
+kernel matrix: 0.24910616874694824
+alphas calculation: 0.0001773834228515625
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma100_lamda0.000000_set25.dat
+trainin/test split: 0.0017921924591064453
+kernel matrix: 1.7190093994140625
+alphas calculation: 0.07469606399536133
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma100_lamda0.000000_set70.dat
+trainin/test split: 0.001940011978149414
+kernel matrix: 5.4874608516693115
+alphas calculation: 0.20757031440734863
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma100_lamda0.000000_set120.dat
+trainin/test split: 0.0017960071563720703
+kernel matrix: 35.39930820465088
+alphas calculation: 0.3275623321533203
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma100_lamda0.000000_set300.dat
+trainin/test split: 0.001798868179321289
+kernel matrix: 139.0525312423706
+alphas calculation: 1.467627763748169
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma100_lamda0.000000_set600.dat
+trainin/test split: 0.0018038749694824219
+kernel matrix: 871.2287421226501
+alphas calculation: 1.9606332778930664
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma100_lamda0.000000_set1500.dat
+trainin/test split: 0.0018742084503173828
+kernel matrix: 3432.4990587234497
+alphas calculation: 2.160693407058716
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma100_lamda0.000000_set3000.dat
+trainin/test split: 0.0017006397247314453
+kernel matrix: 0.009604215621948242
+alphas calculation: 0.0002715587615966797
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma120_lamda0.000000_set5.dat
+trainin/test split: 0.0017559528350830078
+kernel matrix: 0.035581350326538086
+alphas calculation: 0.00010848045349121094
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma120_lamda0.000000_set10.dat
+trainin/test split: 0.001800537109375
+kernel matrix: 0.22549867630004883
+alphas calculation: 0.01220703125
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma120_lamda0.000000_set25.dat
+trainin/test split: 0.0018124580383300781
+kernel matrix: 1.9208834171295166
+alphas calculation: 0.012934207916259766
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma120_lamda0.000000_set70.dat
+trainin/test split: 0.0018155574798583984
+kernel matrix: 5.559863328933716
+alphas calculation: 0.10789155960083008
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma120_lamda0.000000_set120.dat
+trainin/test split: 0.0018379688262939453
+kernel matrix: 33.828550577163696
+alphas calculation: 0.01963973045349121
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma120_lamda0.000000_set300.dat
+trainin/test split: 0.0018374919891357422
+kernel matrix: 137.4532766342163
+alphas calculation: 1.0041625499725342
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma120_lamda0.000000_set600.dat
+trainin/test split: 0.0017490386962890625
+kernel matrix: 860.1182315349579
+alphas calculation: 1.885312557220459
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma120_lamda0.000000_set1500.dat
+trainin/test split: 0.0017900466918945312
+kernel matrix: 3445.607579231262
+alphas calculation: 3.182258129119873
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma120_lamda0.000000_set3000.dat
+round 3 successfully finished
+compounds have been stored to  ./Pickled/Kernel_Results/CM_QM7_3reps
+len of compoundlist: 3993
+len of compoundlist used for this run: 3993
+time start to compounds:  2213.2605319023132
+your results are stored to ./Pickled/Kernel_Results/
+trainin/test split: 0.0019927024841308594
+kernel matrix: 0.019702434539794922
+alphas calculation: 9.059906005859375e-05
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma60_lamda0.000000_set5.dat
+trainin/test split: 0.0018825531005859375
+kernel matrix: 0.040535926818847656
+alphas calculation: 0.0001068115234375
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma60_lamda0.000000_set10.dat
+trainin/test split: 0.001798391342163086
+kernel matrix: 0.24806547164916992
+alphas calculation: 0.01219487190246582
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma60_lamda0.000000_set25.dat
+trainin/test split: 0.0019114017486572266
+kernel matrix: 2.0908408164978027
+alphas calculation: 0.01563405990600586
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma60_lamda0.000000_set70.dat
+trainin/test split: 0.0019176006317138672
+kernel matrix: 5.812580823898315
+alphas calculation: 0.0943448543548584
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma60_lamda0.000000_set120.dat
+trainin/test split: 0.0018298625946044922
+kernel matrix: 35.12945318222046
+alphas calculation: 0.7966620922088623
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma60_lamda0.000000_set300.dat
+trainin/test split: 0.0019402503967285156
+kernel matrix: 140.47090435028076
+alphas calculation: 0.0176694393157959
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma60_lamda0.000000_set600.dat
+trainin/test split: 0.0019202232360839844
+kernel matrix: 862.4642226696014
+alphas calculation: 0.1062459945678711
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma60_lamda0.000000_set1500.dat
+trainin/test split: 0.0018978118896484375
+kernel matrix: 3463.401082754135
+alphas calculation: 0.6152539253234863
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma60_lamda0.000000_set3000.dat
+trainin/test split: 0.0015802383422851562
+kernel matrix: 0.009819746017456055
+alphas calculation: 0.00027108192443847656
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma80_lamda0.000000_set5.dat
+trainin/test split: 0.001714944839477539
+kernel matrix: 0.04014730453491211
+alphas calculation: 0.00010275840759277344
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma80_lamda0.000000_set10.dat
+trainin/test split: 0.0017533302307128906
+kernel matrix: 0.2646670341491699
+alphas calculation: 0.0001678466796875
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma80_lamda0.000000_set25.dat
+trainin/test split: 0.001817941665649414
+kernel matrix: 1.8736817836761475
+alphas calculation: 0.0037157535552978516
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma80_lamda0.000000_set70.dat
+trainin/test split: 0.0017516613006591797
+kernel matrix: 5.572434186935425
+alphas calculation: 0.005365610122680664
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma80_lamda0.000000_set120.dat
+trainin/test split: 0.0018126964569091797
+kernel matrix: 35.22801232337952
+alphas calculation: 0.006279706954956055
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma80_lamda0.000000_set300.dat
+trainin/test split: 0.0017533302307128906
+kernel matrix: 139.81875371932983
+alphas calculation: 0.0219419002532959
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma80_lamda0.000000_set600.dat
+trainin/test split: 0.0017428398132324219
+kernel matrix: 863.6447925567627
+alphas calculation: 0.08792638778686523
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma80_lamda0.000000_set1500.dat
+trainin/test split: 0.0017151832580566406
+kernel matrix: 3445.998104572296
+alphas calculation: 0.4511539936065674
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma80_lamda0.000000_set3000.dat
+trainin/test split: 0.0016417503356933594
+kernel matrix: 0.009704828262329102
+alphas calculation: 0.00030994415283203125
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma100_lamda0.000000_set5.dat
+trainin/test split: 0.0018067359924316406
+kernel matrix: 0.03785848617553711
+alphas calculation: 9.846687316894531e-05
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma100_lamda0.000000_set10.dat
+trainin/test split: 0.001707315444946289
+kernel matrix: 0.23366308212280273
+alphas calculation: 0.00016641616821289062
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma100_lamda0.000000_set25.dat
+trainin/test split: 0.0018258094787597656
+kernel matrix: 1.9449880123138428
+alphas calculation: 0.0668485164642334
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma100_lamda0.000000_set70.dat
+trainin/test split: 0.0017576217651367188
+kernel matrix: 5.680915594100952
+alphas calculation: 0.07684206962585449
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma100_lamda0.000000_set120.dat
+trainin/test split: 0.0017709732055664062
+kernel matrix: 34.873680114746094
+alphas calculation: 0.5012965202331543
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma100_lamda0.000000_set300.dat
+trainin/test split: 0.001688241958618164
+kernel matrix: 136.06640076637268
+alphas calculation: 1.092353105545044
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma100_lamda0.000000_set600.dat
+trainin/test split: 0.0017027854919433594
+kernel matrix: 861.632387638092
+alphas calculation: 0.09614038467407227
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma100_lamda0.000000_set1500.dat
+trainin/test split: 0.0017075538635253906
+kernel matrix: 3450.7884845733643
+alphas calculation: 1.7731471061706543
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma100_lamda0.000000_set3000.dat
+trainin/test split: 0.0016477108001708984
+kernel matrix: 0.009610652923583984
+alphas calculation: 0.00029468536376953125
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma120_lamda0.000000_set5.dat
+trainin/test split: 0.0018150806427001953
+kernel matrix: 0.04261493682861328
+alphas calculation: 0.00010371208190917969
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma120_lamda0.000000_set10.dat
+trainin/test split: 0.0017461776733398438
+kernel matrix: 0.24055695533752441
+alphas calculation: 0.0001537799835205078
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma120_lamda0.000000_set25.dat
+trainin/test split: 0.0018031597137451172
+kernel matrix: 1.9320933818817139
+alphas calculation: 0.00026535987854003906
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma120_lamda0.000000_set70.dat
+trainin/test split: 0.0018489360809326172
+kernel matrix: 5.539134979248047
+alphas calculation: 0.05275225639343262
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma120_lamda0.000000_set120.dat
+trainin/test split: 0.0017254352569580078
+kernel matrix: 34.6363000869751
+alphas calculation: 0.007270097732543945
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma120_lamda0.000000_set300.dat
+trainin/test split: 0.0018432140350341797
+kernel matrix: 137.7119562625885
+alphas calculation: 0.014347314834594727
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma120_lamda0.000000_set600.dat
+trainin/test split: 0.001745462417602539
+kernel matrix: 873.7181701660156
+alphas calculation: 1.420639991760254
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma120_lamda0.000000_set1500.dat
+trainin/test split: 0.0016529560089111328
+kernel matrix: 3448.9081411361694
+alphas calculation: 0.7754185199737549
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep0_sigma120_lamda0.000000_set3000.dat
+round 1 successfully finished
+trainin/test split: 0.0016474723815917969
+kernel matrix: 0.009848833084106445
+alphas calculation: 0.00030541419982910156
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma60_lamda0.000000_set5.dat
+trainin/test split: 0.0017237663269042969
+kernel matrix: 0.04114699363708496
+alphas calculation: 0.00010347366333007812
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma60_lamda0.000000_set10.dat
+trainin/test split: 0.0018258094787597656
+kernel matrix: 0.26739072799682617
+alphas calculation: 0.000171661376953125
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma60_lamda0.000000_set25.dat
+trainin/test split: 0.0018420219421386719
+kernel matrix: 1.9877514839172363
+alphas calculation: 0.007517337799072266
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma60_lamda0.000000_set70.dat
+trainin/test split: 0.0018074512481689453
+kernel matrix: 5.210028171539307
+alphas calculation: 0.004360675811767578
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma60_lamda0.000000_set120.dat
+trainin/test split: 0.0018434524536132812
+kernel matrix: 34.41055369377136
+alphas calculation: 0.007326841354370117
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma60_lamda0.000000_set300.dat
+trainin/test split: 0.0018157958984375
+kernel matrix: 139.72540402412415
+alphas calculation: 0.012907743453979492
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma60_lamda0.000000_set600.dat
+trainin/test split: 0.0017054080963134766
+kernel matrix: 861.5487401485443
+alphas calculation: 0.09409976005554199
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma60_lamda0.000000_set1500.dat
+trainin/test split: 0.0016744136810302734
+kernel matrix: 3446.3815937042236
+alphas calculation: 2.4240429401397705
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma60_lamda0.000000_set3000.dat
+trainin/test split: 0.0016303062438964844
+kernel matrix: 0.009210348129272461
+alphas calculation: 0.0002815723419189453
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma80_lamda0.000000_set5.dat
+trainin/test split: 0.0017228126525878906
+kernel matrix: 0.036365509033203125
+alphas calculation: 0.00010275840759277344
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma80_lamda0.000000_set10.dat
+trainin/test split: 0.001806497573852539
+kernel matrix: 0.23410773277282715
+alphas calculation: 0.008176803588867188
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma80_lamda0.000000_set25.dat
+trainin/test split: 0.0017981529235839844
+kernel matrix: 1.8925249576568604
+alphas calculation: 0.000286102294921875
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma80_lamda0.000000_set70.dat
+trainin/test split: 0.0018122196197509766
+kernel matrix: 5.634902000427246
+alphas calculation: 0.021129131317138672
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma80_lamda0.000000_set120.dat
+trainin/test split: 0.0017242431640625
+kernel matrix: 33.925230979919434
+alphas calculation: 0.01750802993774414
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma80_lamda0.000000_set300.dat
+trainin/test split: 0.0017211437225341797
+kernel matrix: 135.91652369499207
+alphas calculation: 0.8554356098175049
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma80_lamda0.000000_set600.dat
+trainin/test split: 0.0019199848175048828
+kernel matrix: 866.8402009010315
+alphas calculation: 0.621410608291626
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma80_lamda0.000000_set1500.dat
+trainin/test split: 0.007324934005737305
+kernel matrix: 3457.2965178489685
+alphas calculation: 2.2274322509765625
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma80_lamda0.000000_set3000.dat
+trainin/test split: 0.008800029754638672
+kernel matrix: 0.013729095458984375
+alphas calculation: 0.0007185935974121094
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma100_lamda0.000000_set5.dat
+trainin/test split: 0.0017096996307373047
+kernel matrix: 0.03692364692687988
+alphas calculation: 0.0005404949188232422
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma100_lamda0.000000_set10.dat
+trainin/test split: 0.0017962455749511719
+kernel matrix: 0.2342205047607422
+alphas calculation: 0.00016045570373535156
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma100_lamda0.000000_set25.dat
+trainin/test split: 0.001813650131225586
+kernel matrix: 1.8341898918151855
+alphas calculation: 0.054541587829589844
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma100_lamda0.000000_set70.dat
+trainin/test split: 0.0017952919006347656
+kernel matrix: 5.691535949707031
+alphas calculation: 0.1381220817565918
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma100_lamda0.000000_set120.dat
+trainin/test split: 0.0018117427825927734
+kernel matrix: 35.04107856750488
+alphas calculation: 0.5759849548339844
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma100_lamda0.000000_set300.dat
+trainin/test split: 0.0022211074829101562
+kernel matrix: 142.08895468711853
+alphas calculation: 0.8090572357177734
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma100_lamda0.000000_set600.dat
+trainin/test split: 0.005112648010253906
+kernel matrix: 875.6170575618744
+alphas calculation: 2.0765817165374756
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma100_lamda0.000000_set1500.dat
+trainin/test split: 0.0026276111602783203
+kernel matrix: 3419.4337906837463
+alphas calculation: 0.5040879249572754
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma100_lamda0.000000_set3000.dat
+trainin/test split: 0.003804922103881836
+kernel matrix: 0.011843681335449219
+alphas calculation: 0.0007412433624267578
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma120_lamda0.000000_set5.dat
+trainin/test split: 0.0016925334930419922
+kernel matrix: 0.04669833183288574
+alphas calculation: 0.0006048679351806641
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma120_lamda0.000000_set10.dat
+trainin/test split: 0.0017771720886230469
+kernel matrix: 0.23562335968017578
+alphas calculation: 0.00016617774963378906
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma120_lamda0.000000_set25.dat
+trainin/test split: 0.0018086433410644531
+kernel matrix: 1.893996238708496
+alphas calculation: 0.0026733875274658203
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma120_lamda0.000000_set70.dat
+trainin/test split: 0.001744985580444336
+kernel matrix: 5.390631914138794
+alphas calculation: 0.011306047439575195
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma120_lamda0.000000_set120.dat
+trainin/test split: 0.0018227100372314453
+kernel matrix: 34.54536414146423
+alphas calculation: 0.004729032516479492
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma120_lamda0.000000_set300.dat
+trainin/test split: 0.0017316341400146484
+kernel matrix: 136.1774833202362
+alphas calculation: 0.012277603149414062
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma120_lamda0.000000_set600.dat
+trainin/test split: 0.0017843246459960938
+kernel matrix: 847.1253311634064
+alphas calculation: 0.06983780860900879
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma120_lamda0.000000_set1500.dat
+trainin/test split: 0.0017080307006835938
+kernel matrix: 3387.43758225441
+alphas calculation: 0.383373498916626
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep1_sigma120_lamda0.000000_set3000.dat
+round 2 successfully finished
+trainin/test split: 0.0016455650329589844
+kernel matrix: 0.010387659072875977
+alphas calculation: 0.0003039836883544922
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma60_lamda0.000000_set5.dat
+trainin/test split: 0.0018219947814941406
+kernel matrix: 0.03771805763244629
+alphas calculation: 9.799003601074219e-05
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma60_lamda0.000000_set10.dat
+trainin/test split: 0.0017931461334228516
+kernel matrix: 0.23998212814331055
+alphas calculation: 0.00016927719116210938
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma60_lamda0.000000_set25.dat
+trainin/test split: 0.0017805099487304688
+kernel matrix: 1.9408411979675293
+alphas calculation: 0.00038313865661621094
+calculating new properties
+raw data was saved to  ./tmp/rawdata_rep2_sigma60_lamda0.000000_set70.dat
+trainin/test split: 0.0017724037170410156
+kernel matrix: 5.658016681671143

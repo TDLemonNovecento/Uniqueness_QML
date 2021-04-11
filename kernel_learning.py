@@ -205,7 +205,7 @@ def make_training_test(dim, training_size, upperlim = 1000):
 -	Kernel ridge regression function		-
 -							-
 ----------------------------------------------------'''
-def full_kernel_ridge(fingerprint_list, property_list, result_file, set_sizes , sigmas = [], lambdas = [], rep_no = 1, upperlimit = 12, Choose_Folder = False):
+def full_kernel_ridge(fingerprint_list, property_list, result_file, set_sizes , sigmas = [], lambdas = [], rep_no = 1, upperlimit = 12, Choose_Folder = False, representation = "CM"):
     #print("result_file:", result_file) 
     ''' Kernel ridge regression model
     y(X') = sum_i alpha_i K(X', X_i)
@@ -221,7 +221,9 @@ def full_kernel_ridge(fingerprint_list, property_list, result_file, set_sizes , 
     upperlimit : int, total of training + test set. Can be used if more data is available than is being used or to bootstrap
     Choose_Folder: boolean, if True, file is directly stored to result_file.
                     if not, result file is stored in ./Pickled/Kernel_Results folder
-    
+    representation: str, abbreviation for fingerprint used
+
+
     Return
     ------
     learning_list : list of LearningResults Objects
@@ -278,9 +280,9 @@ def full_kernel_ridge(fingerprint_list, property_list, result_file, set_sizes , 
 
                     #print("\n \n \n alphas:\n ", alphas)
 
-                    print("trainin/test split:", t2 - t1)
-                    print("kernel matrix:", t3-t2)
-                    print("alphas calculation:", t4 - t3)
+                    #print("trainin/test split:", t2 - t1)
+                    #print("kernel matrix:", t3-t2)
+                    #print("alphas calculation:", t4 - t3)
 
                     #predict properties of test set
                     results, errors = predict_new(s, alphas, tr_fingerprints, tst_fingerprints, tst_properties)
@@ -288,7 +290,7 @@ def full_kernel_ridge(fingerprint_list, property_list, result_file, set_sizes , 
                     maes.append(mae)
 
                     #save raw data
-                    filename = './tmp/rawdata_rep%i_sigma%s_lamda%f_set%i.dat' %(i, str(s), l, sets)
+                    filename = './tmp/%srawdata_rep%i_sigma%s_lamda%f_set%i.dat' %(representation, i, str(s), l, sets)
                     raw_data_files.append(filename)
                     save_raw_data(filename, tr_properties, training_indices, tst_properties, results, test_indices)
                     

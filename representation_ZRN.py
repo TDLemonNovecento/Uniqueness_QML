@@ -66,8 +66,16 @@ def SLATM(Z, R, N = 0):
     return(qml.representations.generate_slatm(R, Z, mbtypes))
 ''' 
 
-#BOB can be used for both, derivatives and ML
-def Bag_of_Bonds(Z, R, N = 0):
+def Bag_of_Bonds(Z, R, N=0):
+    '''unsorted BOB representation for numerical derivatives
+    '''
+    return(jrep.BoB_unsorted(Z, R))
+
+
+
+
+
+def Bag_of_Bonds_h(Z, R, N = 0):
     '''
     qml gnerate_bob function requires superfluous variable 'atomtypes'
     as third argument

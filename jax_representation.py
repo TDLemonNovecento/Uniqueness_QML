@@ -10,7 +10,7 @@ import jax_basis as basis
 from jax_basis import empty_BoB_dictionary, BoB_emptyZ
 from scipy import misc, special, linalg
 import jax_math as jmath
-
+import collections
 
 
 
@@ -262,6 +262,7 @@ def OM_full_unsorted_matrix(Z, R, N= 0):
         contains nuclear charges
     R : 3 x n dimensional array
         contains nuclear positions
+    size : size for hashed matrix
  
     Return
     ------
@@ -320,7 +321,7 @@ def OM_full_unsorted_matrix(Z, R, N= 0):
 
 
 
-def OM_full_sorted(Z, R, N = 0):
+def OM_full_sorted(Z, R, N = 0, size = 51):
     ''' Calculates sorted coulomb matrix
     Parameters
     ----------
@@ -328,6 +329,7 @@ def OM_full_sorted(Z, R, N = 0):
     contains nuclear charges
     R : 3 x n dimensional array
     contains nuclear positions
+    size: int, size of hashed matrix
     
     Return
     ------
@@ -336,11 +338,19 @@ def OM_full_sorted(Z, R, N = 0):
     '''
 
     M_unsorted = OM_full_unsorted_matrix(Z, R, N)
+    dim = M_unsorted.shape[0]
+
+
     val_row = np.asarray([jnp.linalg.norm(row) for row in M_unsorted])
     order = val_row.argsort()[::-1]
 
     M_sorted = jnp.asarray([[M_unsorted[i,j] for j in order] for i in order])
-    return(M_sorted, order)
+
+    #hash the matrix
+    M = np.pad(M_sorted, [(0, size-dim), (0, size-dim)], mode='constant')
+
+
+    return(M, order)
 
 
 def OM_dimension(Z):
@@ -362,7 +372,7 @@ def OM_dimension(Z):
         d += len(basis.orbital_configuration[nuc])
     return d
 
-def OM_ev(Z, R, N=0):
+def OM_ev(Z, R, N=0, maxsize = 51):
     '''
     Parameters
     ----------
@@ -373,6 +383,7 @@ def OM_ev(Z, R, N=0):
     N : float
         number of electrons in system
         here: meaningless, can remain empty
+    maxsize : int, size of hashed fingerprint
 
     Return
     ------
@@ -383,7 +394,7 @@ def OM_ev(Z, R, N=0):
         If i out of bounds, return none and print error)
     '''
 
-    M, order = OM_full_sorted(Z,R)
+    M, order = OM_full_sorted(Z,R, size = maxsize)
     ev, vectors = jnp.linalg.eigh(M)
     return(ev, order)
 
@@ -410,6 +421,53 @@ def OM_ev_unsrt(Z, R, N=0):
     M = OM_full_unsorted_matrix(Z,R)
     ev, vectors = jnp.linalg.eigh(M)
     return(ev)
+
+def BoB_unsorted(nuclear_charges, coordinates, N, asize={1:16, 6:7, 7:6, 8:4, 9:4}):
+    """ Generates a bag-of-bonds representation of the molecule. ``size=`` denotes the max number of atoms in the molecule (thus the size of the resulting square matrix.
+    ``asize=`` is the maximum number of atoms of each type (necessary to generate bags of minimal sizes), with Z:no_of_atoms.
+    The resulting matrix is the upper triangle put into the form of a 1D-vector.
+    The returned type will be a list of 1D coulomb matrices.
+    :param arg1: Input representation.
+    :type arg1: (N, 3) shape numpy array.
+    :param arg1: Nuclear charges.
+    :type arg1: list of floats
+    :return: List of 1D Coulomb matrix
+    """
+    
+    Z = nuclear_charges
+    R = coordinates
+
+    natoms = len(Z)
+
+    coulomb_matrix = CM_full_unsorted_matrix(Z, R, N=0, size = natoms)
+
+    descriptor = []
+    #atomtypes = collections.Counter(Z)
+    
+    for atom1, size1 in asize.items():
+        pos1 = np.where(Z == atom1)[0]
+        feature_vector = np.zeros(size1)
+        feature_vector[:pos1.size] = np.diag(coulomb_matrix)[pos1]
+        feature_vector.sort()
+        descriptor.append(feature_vector[:])
+        for atom2, size2 in asize.items():
+            if atom1 > atom2:
+                continue
+            if atom1 == atom2:
+                size = int(size1*(size1-1)/2)
+                feature_vector = np.zeros(size)
+                sub_matrix = coulomb_matrix[np.ix_(pos1,pos1)]
+                feature_vector[:int(pos1.size*(pos1.size-1)/2)] = sub_matrix[np.triu_indices(pos1.size, 1)]
+                feature_vector.sort()
+                descriptor.append(feature_vector[:])
+            else:
+                pos2 = np.where(Z == atom2)[0]
+                feature_vector = np.zeros(size1*size2)
+                feature_vector[:pos1.size*pos2.size] = coulomb_matrix[np.ix_(pos1,pos2)].ravel()
+                feature_vector.sort()
+                descriptor.append(feature_vector[:])
+
+    return np.concatenate(descriptor)
 
 def BoB_dimension(Z):
     ''' Calculates dimension of BoB

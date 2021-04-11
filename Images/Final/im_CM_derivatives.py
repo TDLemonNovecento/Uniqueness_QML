@@ -58,7 +58,9 @@ for i in representations:
         #get xdata and ydata with labels (ydatalist[i][1] stores labels)
         xdata, ydata, newresults = prepresults(results, rep = repro,\
                 dwhich = which_d, repno = i,\
-                norm = xnorm, yval = yvalues)
+                norm = xnorm, yval = yvalues,\
+                with_repro = False,\
+                with_whichd = True)
         
         xdatalist.append(xdata)
         ydatalist.extend(ydata)
@@ -123,10 +125,11 @@ else: #xnorm = "norm" or something else that is not yet defined
 
 pltder.plot_percentage_zeroEV(xdatalist, ydatalist,\
         title = "CM Derivatives on QM7 Dataset",\
-        savetofile = dname +"_derivatives_CM",\
+        savetofile = "./Images/Final/" + dname +"_derivatives_CM",\
         oneplot = True,\
         representations = representations,\
-        xaxis_title = xtitle)
+        xaxis_title = xtitle,\
+        Include_Title = False)
 
 
 '''

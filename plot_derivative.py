@@ -25,12 +25,15 @@ def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis,\
         representations = [0,1],\
         xaxis_title = 'Norm of Coulomb Matrix',\
         yaxis_title= 'Fraction of Nonzero Eigenvalues',\
-        BOB = False):
+        Include_Title = False,\
+        BOB = False,\
+        by_nuc = True):
     '''
     norm_xaxis: list of xaxis data
     percentages_yaxis: list of yaxis data/label lists
     
     representations: list of representations that were used
+    Include_Title : boolean, if False, no title is printed
     BOB : boolean, changes formatting for 2 compounds
     '''
     
@@ -105,12 +108,20 @@ def plot_percentage_zeroEV(norm_xaxis, percentages_yaxis,\
 
 
     #title, axis and legend
-    st = fig.suptitle(title)
+    if Include_Title:
+        st = fig.suptitle(title)
 
     if oneplot:
         handles, labels = ax.get_legend_handles_labels()
-        ax.legend(handles, labels, bbox_to_anchor = (1,1), loc = "upper left", title = 'Derivatives')
-    
+        ax.legend(handles, labels, loc = "upper left") #, bbox_to_anchor = (1,1), loc = "upper left", title = 'Derivatives')
+        #format ticks
+        if by_nuc:
+            print("sorting by nuclear charge, limited to 23 atoms")
+            major_ticks = [0, 5, 10, 15, 20]
+            
+            ax.set_xticks(major_ticks)
+            ax.set(xlim=(-1, 25)) #, ylim = (-1.5, 0.3)) for dZ
+
         plt.xlabel(xaxis_title)
         plt.ylabel(yaxis_title)
         fig.subplots_adjust(top=0.92, bottom = 0.1, left = 0.12, right = 0.97)
@@ -134,7 +145,8 @@ def plot_zeroEV(norm_xaxis, percentages_yaxis,\
         savetofile = "Abs_nonzeroEV_CM_test",\
         representations = [0,1],\
         xaxis_title = 'Number of Atoms in Molecule',\
-        yaxis_title= 'Number of Nonzero Values'):
+        yaxis_title= 'Number of Nonzero Values',\
+        plot_title = True):
     '''
     norm_xaxis: list of xaxis data
     percentages_yaxis: list of yaxis data/label lists
@@ -142,6 +154,7 @@ def plot_zeroEV(norm_xaxis, percentages_yaxis,\
     representations: list of representations that were used
 
     '''
+    print("plot_title ", str(plot_title))
 
     #general figure settings
     fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize=(12,8))
@@ -165,10 +178,11 @@ def plot_zeroEV(norm_xaxis, percentages_yaxis,\
 
 
     #title, axis and legend
-    st = fig.suptitle(title)
+    if plot_title:
+        st = fig.suptitle(title)
 
     handles, labels = ax.get_legend_handles_labels()
-    ax.legend(handles, labels, bbox_to_anchor = (1,1), loc = "upper left", title = 'Derivatives')
+    ax.legend(handles, labels, loc = "upper left")#, title = 'Derivatives')
 
     plt.xlabel(xaxis_title)
     plt.ylabel(yaxis_title)
@@ -186,7 +200,9 @@ def plot_zeroEV(norm_xaxis, percentages_yaxis,\
 def plot_ethyne(index, valuelist, title = "Ethyne in EVCM Representation",\
         savetofile = "Trial_Ethyne.png",\
         xaxis_title = "Conformation", yaxis_title = "Values",\
-        lineplots = []):
+        lineplots = [],\
+        plot_title = True,\
+        plot_dZ = True):
     
     '''plots analysis from ethyne runs
     Variables
@@ -210,7 +226,7 @@ def plot_ethyne(index, valuelist, title = "Ethyne in EVCM Representation",\
     major_ticks = [0, 5, 10, 15, 20]
 
     ax.set_xticks(major_ticks)
-    ax.set(xlim=(-1, 20.5)) #, ylim = (-1.5, 0.3)) for dZ
+    ax.set(xlim=(-1, 21.5)) #, ylim = (-1.5, 0.3)) for dZ
 
     #lines that are all zero are not plotted but displayed seperately
     zero_valued_plots = []
@@ -254,16 +270,20 @@ def plot_ethyne(index, valuelist, title = "Ethyne in EVCM Representation",\
     #remove last ","
     zerotext = zerotext[:-1]
 
-    plt.text(0, -2.5, zerotext, fontsize = 18)
-    #plt.text(0, -1.4, zerotext, fontsize=18) #for dZ
+    if plot_dZ:
+        plt.text(0, -1.3, zerotext, fontsize=18) #for dZ
+    else:
+        plt.text(0, -2.5, zerotext, fontsize = 18)
+
     
     #title, axis and legend
-    st = plt.suptitle(title)
+    if plot_title:
+        st = plt.suptitle(title)
     
     #plt.axis.set_major_locator(MaxNLocator(integer=True))
     #handles, labels = plt.get_legend_handles_labels()
-    plt.legend( bbox_to_anchor = (1,1), loc = "upper left", title = 'Derivatives', prop={'size':15})
-
+    plt.legend(loc = "center right", prop={'size':15})
+    
 
     plt.xlabel(xaxis_title)
     plt.ylabel(yaxis_title)
@@ -458,6 +478,7 @@ def merge_plot_with_svg(figname, imagepath):
 def prepresults(results, rep = "CM",\
         dwhich = [0, 1, 2, 3, 4], repno = 0,\
         norm = "norm", yval = "perc",\
+        with_repro = True,\
         with_whichd = True):
     '''
     Reshapes results and evaluates for plotting
@@ -471,6 +492,7 @@ def prepresults(results, rep = "CM",\
     repno: 0 = CM, 1 = EVCM, 2 = BOB, 3 = OM, 4 = EVOM
     norm: string, "norm" is norm of CM matrix, "nuc" is number of nuclear charges
     yval: string, "perc" calculates percentages, "abs" gives back absolute
+    with_repro: boolean, if True, include representation in label, e.g. "CM", "OM", ect.
     with_whichd : boolean, if True, include dZ, dR ect. in label
     
     Returns
@@ -505,7 +527,7 @@ def prepresults(results, rep = "CM",\
         #    print(results[i].filename, "dZ percentage is bigger than 1")
         
         if yval == "abs":
-            
+            print("ABSOLUTE YVALUES")    
             dim = results[i].calculate_dim(repno)
             #print("repno", repno, "dimension:", dim)
             dZ_percentages.append(results[i].dZ_perc*dim)
@@ -521,19 +543,24 @@ def prepresults(results, rep = "CM",\
             dZdZ_percentages.append(results[i].dZdZ_perc)
             dRdR_percentages.append(results[i].dRdR_perc)
             dZdR_percentages.append(results[i].dZdR_perc)
+
+    if with_repro:
+        label = rep + " "
+    else:
+        label = ""
     
     if with_whichd:
-        ylist_toplot = [[np.asarray(dZ_percentages), rep + " dZ"],\
-            [np.asarray(dR_percentages), rep + " dR"],\
-            [np.asarray(dRdR_percentages), rep + " dRdR"],\
-            [np.asarray(dZdR_percentages), rep + " dZdR"],\
-            [np.asarray(dZdZ_percentages), rep + " dZdZ"]]
+        ylist_toplot = [[np.asarray(dZ_percentages), label + "dZ"],\
+            [np.asarray(dR_percentages), label + "dR"],\
+            [np.asarray(dRdR_percentages), label + "dRdR"],\
+            [np.asarray(dZdR_percentages), label + "dZdR"],\
+            [np.asarray(dZdZ_percentages), label + "dZdZ"]]
     else:
-        ylist_toplot = [[np.asarray(dZ_percentages), rep],\
-            [np.asarray(dR_percentages), rep ],\
-            [np.asarray(dRdR_percentages), rep ],\
-            [np.asarray(dZdR_percentages), rep ],\
-            [np.asarray(dZdZ_percentages), rep ]]
+        ylist_toplot = [[np.asarray(dZ_percentages), label],\
+            [np.asarray(dR_percentages), label ],\
+            [np.asarray(dRdR_percentages), label ],\
+            [np.asarray(dZdR_percentages), label ],\
+            [np.asarray(dZdZ_percentages), label ]]
 
 
     #print("len ylist before crop:", len(ylist_toplot))

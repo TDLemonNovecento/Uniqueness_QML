@@ -17,6 +17,7 @@ results = datprep.read_compounds(compounds)[:10]
 #res2 = datprep.read_compounds(seveneight)
 res3 = datprep.read_compounds(firsthundred)[:10]
 
+
 dZarray = []
 for c in results:
     #if c.filename == "dsgdb9nsd_000177.xyz":

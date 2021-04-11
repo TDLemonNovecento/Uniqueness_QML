@@ -4,7 +4,7 @@ import jax_additional_derivative as jader
 import jax_representation as jrep
 import plot_derivative as pltder
 import jax.numpy as jnp
-import sys
+import sys, os
 from plot_derivative import prepresults
 
 
@@ -22,7 +22,7 @@ der = ["dZ", "dR", "dRdR", "dZdR", "dZdZ"]
 dname = der[which_d[0]]
 
 '''which representation is going to be plotted'''
-representations = [0, 1, 2] #0 = CM, 1 = EVCM, 2 = BOB, 3 = OM, 4 = EVOM
+representations =[0, 1, 2]#, 3, 4] #0 = CM, 1 = EVCM, 2 = BOB, 3 = OM, 4 = EVOM
 
 '''this list is necessary to assign the correct labels'''
 reprolist = ['CM', 'EVCM', 'BOB', 'OM', 'EVOM']
@@ -33,6 +33,7 @@ results_file =["/home/linux-miriam/Databases/Pickled/qm7_CM_results.pickle",\
         "/home/linux-miriam/Databases/Pickled/qm7_CM_EV_results.pickle",\
         "/home/linux-miriam/Databases/Pickled/BoB_numder_res",\
         "/home/linux-miriam/Databases/Pickled/OM_numder_res",\
+        "/home/linux-miriam/Databases/Pickled/EVOM_numder_res",\
         "./Pickled/fourcompounds_EV_results.pickle",\
         "./Pickled/trial_numder.pickle"]
 
@@ -84,9 +85,12 @@ for i in representations:
                 numbers = "%i-3993" %(k)
 
             partialfilename = filename + numbers
-     
-            print(partialfilename)
-            results = datprep.read_compounds(partialfilename)
+            
+            if os.path.isfile(partialfilename):
+                results = datprep.read_compounds(partialfilename)
+            else:
+                print("this file does not exist, skip: ", partialfilename)
+                continue
             j += 1
 
             xdata, ydata, newresults = prepresults(results, rep = repro,\
@@ -97,10 +101,11 @@ for i in representations:
             #datprep.store_compounds(newresults, partialfilename)
 
             fullxdata.extend(xdata) 
-            print("attention: if there are problems with the xdata list and ydatalist length when plotting\
+            '''print("attention: if there are problems with the xdata list and ydatalist length when plotting\
                     check whether different lengths of data are included\
                     for BOB; EVOM and OM the length may vary depending on the range depickted")
-            
+            '''
+
             for y in ydata:
                 fullydata.extend(y[0])
                 ydatalabel = y[1]
@@ -124,4 +129,7 @@ else: #xnorm = "norm" or something else that is not yet defined
 
 plottitle = "Nonzero Values of " + dname + " Derivative"
 
-pltder.plot_zeroEV(xdatalist, ydatalist, title = plottitle, savetofile = dname +"_Absolute_Values")
+pltder.plot_zeroEV(xdatalist, ydatalist,\
+        title = plottitle,\
+        savetofile = "./Images/Final/" + dname +"_Absolute_Values",\
+        plot_title = False)

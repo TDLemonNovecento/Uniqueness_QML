@@ -69,9 +69,9 @@ plt.yscale('log')
 
 ax.legend()
 
-plt.title("Dimensions of Representations")
+#plt.title("Dimensions of Representations")
 fig.tight_layout()
 
-plt.savefig("Representation_dimensions", transparent = True, bbox_inches = 'tight')
+plt.savefig("./Images/Final/Representation_dimensions", transparent = True, bbox_inches = 'tight')
 
 
