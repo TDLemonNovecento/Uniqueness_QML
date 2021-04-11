@@ -422,7 +422,7 @@ def OM_ev_unsrt(Z, R, N=0):
     ev, vectors = jnp.linalg.eigh(M)
     return(ev)
 
-def BoB_unsorted(nuclear_charges, coordinates, N, asize={1:16, 6:7, 7:6, 8:4, 9:4}):
+def BoB_unsorted(nuclear_charges, coordinates, N= 0, asize={1:16, 6:7, 7:6, 8:4, 9:4}):
     """ Generates a bag-of-bonds representation of the molecule. ``size=`` denotes the max number of atoms in the molecule (thus the size of the resulting square matrix.
     ``asize=`` is the maximum number of atoms of each type (necessary to generate bags of minimal sizes), with Z:no_of_atoms.
     The resulting matrix is the upper triangle put into the form of a 1D-vector.
@@ -433,7 +433,6 @@ def BoB_unsorted(nuclear_charges, coordinates, N, asize={1:16, 6:7, 7:6, 8:4, 9:
     :type arg1: list of floats
     :return: List of 1D Coulomb matrix
     """
-    
     Z = nuclear_charges
     R = coordinates
 
