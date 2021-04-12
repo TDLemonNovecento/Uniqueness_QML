@@ -95,11 +95,49 @@ def curve_name( sigma, lamda):
     name = ', sigma = %s, lambda = %s'% (str(sigma), str(lamda))
     return(name)
 
-def plot_learning(set_sizes = [10, 20, 40, 80, 160, 300], maes = [2.035934924620435, 1.8125458722942258, 1.7146791116661697, 1.6779313630086368, 1.8454600048725978, 1.8763117260488518], perc_maes = [232.7964404444149, 205.87841291639506, 190.275572697472, 162.50375206243325, 254.048604095239, 64.66622415061042], title = "sigma = 20\nlambda = 1e-3"):
+def plot_learning(set_sizes ,\
+        maes,\
+        labels = [],\
+        xtitle = 'Training Set Size',\
+        ytitle = 'MAE [kcal/mol]',\
+        title = "sigma = 20\nlambda = 1e-3",\
+        figuretitle = "QML_learning.png"):
+    
+    '''
+    plots x and y values of learning curves
+    '''
+    
+    #standard settings for plotting:
+    fontsize = 30
 
-    ax[0].loglog(set_sizes, maes, label = title, linewidth = fontsize/8)
-    ax[1].loglog(set_sizes, perc_maes, label = title, linewidth = fontsize/8)
-    return()
+    plt.rc('font',       size=fontsize) # controls default text sizes
+    plt.rc('axes',  titlesize=fontsize) # fontsize of the axes title
+    plt.rc('axes',  labelsize=fontsize) # fontsize of the x and y labels
+    plt.rc('xtick', labelsize=fontsize*0.8) # fontsize of the tick labels
+    plt.rc('ytick', labelsize=fontsize*0.8) # fontsize of the tick labels
+    plt.rc('legend', fontsize=fontsize*0.8) # legend fontsize
+    plt.rc('figure',titlesize=fontsize*1.2) # fontsize of the figure title
+    plt.rcParams['axes.titlepad'] = 20
+
+
+    f, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (12, 8))
+    
+    for m in range(len(maes)):
+        mae_list = maes[m]
+        name = labels[m]
+        ax.loglog(set_sizes, mae_list, label = name, linewidth = 2)
+
+    #set x and y axis label
+    ax.set_xlabel(xtitle)
+    ax.set_ylabel(ytitle)
+
+    #add legend
+    ax.legend()
+
+    #save figure
+    f.savefig(figuretitle, bbox_inches = 'tight')
+
+    return(print("figure was saved to", figuretitle))
 
 def plot_curves(curve_list, file_title = "TrialLearning",\
         plottitle = 'Learning Curves of CM Eigenvector Representation on QM9 Dataset\n 1000 molecules, 2 Runs Averaged',\
@@ -108,7 +146,7 @@ def plot_curves(curve_list, file_title = "TrialLearning",\
         multiple_runs = True,\
         include_title = False):
 
-    '''plots learning curves
+    '''plots learning curves from hartree to kcal/mol
     curve_list: lsit of data
     file_title: string, where to store plot to
     plottitle = title over plot
@@ -147,12 +185,16 @@ def plot_curves(curve_list, file_title = "TrialLearning",\
     ax.set_xscale('log')
     ax.set_yscale('log')
     
+
+    kcal = 627.503  #1 hartree are 627.503 kcal/mol
     #all the plotting has to be done below
     for c in range(len(curve_list)):
         curve = curve_list[c]
+
+        yarray = curve.ynparray * kcal
         
         ax.plot(curve.xnparray, curve.ynparray, linewidth = 2, label = curve.name)
-        print('x:' ,curve.xnparray,'\ny:', curve.ynparray)
+        print('x:' ,curve.xnparray,'\ny:', yarray)
 
         '''
         #check whether learning worked

@@ -54,6 +54,9 @@ def kernel_learning(datapath, final_file, representation_no = 0, maxnumber = 399
 
 
     #for compounds create list of energies and list of fingerprints in "repro" representation
+    #internal = potential energy in hartree
+    raw_energylist = []
+    #convert to atomization energy in kcal/mol
     energylist = []
     fingerprintlist = []
 
@@ -61,11 +64,13 @@ def kernel_learning(datapath, final_file, representation_no = 0, maxnumber = 399
 
         #get properties from compound class
         energy = float(c.energy)
-    
+
         Z = c.Z
         R = c.R
         N = c.N
     
+        atomization_energy = datprep.atomization_energy(potential_energy = energy, nuclear_charges = Z)
+
         #calculate fingerprint of molecule
         fingerprint = repro(Z, R, N)
          
@@ -89,3 +94,6 @@ def kernel_learning(datapath, final_file, representation_no = 0, maxnumber = 399
             representation = repro_name)
 
     return(results)
+
+
+

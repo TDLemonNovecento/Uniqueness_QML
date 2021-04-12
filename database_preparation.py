@@ -469,3 +469,25 @@ def alter_coordinates(coordinates, d, h):
 
         return([Z, R, N])
 
+
+def atomization_energy(potential_energy, nuclear_charges):
+    '''calculates atomization energy in kcal/mol based on
+    potential energy in hartree and nuclear charges,
+    Data taken from Ramakrishnan, Raghunathan; Dral, Pavlo; Dral, Pavlo O.;\\
+    Rupp, Matthias; Anatole von Lilienfeld, O. (2014):\\
+    Quantum chemistry structures and properties of 134 kilo molecules.\\
+    figshare. Collection. https://doi.org/10.6084/m9.figshare.978904
+    '''
+    #atom energy of single atoms, nuclear charge: U_0 in hartree
+    atom_energy_hartree = {1:-0.500273 , 6:-37.846772, 7:-54.583861, 8:-75.064579 , 9:-99.718730}
+    
+    total_atom_energy = 0
+
+    for Z in nuclear_charges:
+        total_atom_energy += atom_energy_hartree[Z]
+
+    atomization_energy_hartree = potential_energy - total_atom_energy
+    
+    atomization_energy_kcal = atomization_energy_hartree * 627.503
+
+    return(atomization_energy_kcal)
