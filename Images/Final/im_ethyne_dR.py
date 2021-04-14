@@ -159,6 +159,6 @@ for ylist in yvalues:
 
 pltder.plot_ethyne(indexes, finalyvalues,\
         savetofile = "./Images/Final/dR_Ethyne.png",\
-        lineplots = linevalues,\
+        #lineplots = linevalues,\
         plot_title = False,\
         plot_dZ = False)

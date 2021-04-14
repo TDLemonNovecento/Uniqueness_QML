@@ -253,7 +253,7 @@ def plot_ethyne(index, valuelist, title = "Ethyne in EVCM Representation",\
         #print("number of nonzero values in ", yax[1], ":", nonz)
         
         if nonz > 0:
-            plt.plot(index, yax[0], 'o', c = cor, label = yax[1])
+            plt.plot(index, yax[0], c = cor, label = yax[1])
         else:
             zero_valued_plots.append(yax[1])
     

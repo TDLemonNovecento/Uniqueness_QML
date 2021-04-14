@@ -53,6 +53,8 @@ dZ_slot4_list = [[],[],[],[]]
 
 EVCM_aberration = []
 
+M_list = [[],[],[],[]]
+
 for i in indexes:
     num = str(i).zfill(2)
     filename = datapath + "ethin_" + num + ".xyz"
@@ -81,10 +83,19 @@ for i in indexes:
         dZ_slot2_list[j].append(dZj[1])
         dZ_slot3_list[j].append(dZj[2])
         dZ_slot4_list[j].append(dZj[3])
+        M_list[j].append(M_EVCM[j])
             
 
 #dZ1 is dZ[0] and so forth, it contains a list of arrays in 4 dimensions
 #for every atom, extract it's data
+
+#eigenvalues per atom
+atom1 = np.array(M_list[0])
+atom2 = np.array(M_list[1])
+atom3 = np.array(M_list[2])
+atom4 = np.array(M_list[3])
+
+print("atom1 array:", atom1)
 
 
 #prepare list of lists for plotting
@@ -102,6 +113,9 @@ linevalues = [[np.asarray(EVCM_aberration), "MSE to Reference"]]
 
 pltder.plot_ethyne(indexes, yvalues, \
         savetofile = "./Images/Final/dZ_Ethyne.png",\
-        lineplots = linevalues,\
+        #lineplots = linevalues,\
         plot_title = False,\
         plot_dZ = True)
+
+pltder.plot_ethyne(indexes, [[atom1, "Eigenvalue 1"], [atom2, "Eigenvalue 2"], [atom3, "Eigenvalue 3"], [atom4, "Eigenvalue 4"]],\
+        savetofile = "trial_EVCM.png", plot_title = False)

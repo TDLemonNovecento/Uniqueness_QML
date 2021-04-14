@@ -10,6 +10,11 @@ import os
 import jax.numpy as jnp
 import jax_basis as jbas
 
+import qml
+from qml.kernels import gaussian_kernel
+from qml.math import cho_solve
+
+
 class compound():
     '''
     stores information of molecules
@@ -242,7 +247,96 @@ class derivative_results():
         
         return(fractions, numbers)
 
-            
+class Kernel_Result():
+    """ The kernel_result class stores information of kernel results
+        
+        :param exact_results, test_results: initialize
+            the "kernel_result" with exact and test results
+        :type exact_results, test_results: numpy.array
+        :param sigma, lambda: type float
+    """
+    def __init__(self):
+
+        
+        empty_array = np.asarray([], dtype = float)
+        
+        #hyperparameters>c
+        self.sigma = float("nan")
+        self.lamda = float("nan")
+        
+        #all data
+        self.x = empty_array
+        self.y = empty_array
+
+        #training and test set
+        self.x_training = empty_array
+        self.x_test = empty_array
+        
+        self.y_training = empty_array
+        self.y_test = empty_array
+        
+        #results
+        self.test_predicted_results = empty_array
+
+
+        #additional information
+        self.representation_name = None
+
+        self.test_indices = empty_array
+        self.training_indices = empty_array
+
+
+    def add_results(self,\
+            sigma,\
+            lamda,\
+            y_test = np.asarray([], dtype = float),\
+            y_predicted = np.asarray([], dtype = float),\
+            mae = float("nan")):
+
+        self.sigma = sigma
+        self.lamda = lamda
+        
+        self.y_test = y_test
+        self.test_predicted_results = y_predicted
+
+        if mae is float("nan"):
+            self.calculate_mae()
+
+    def do_qml_gaussian_kernel(self):
+        
+        #K is also a np array, create kernel matrix
+        K = gaussian_kernel(self.x_training, self.x_training, self.sigma)
+
+        #add small lambda to the diagonal of the kernel matrix
+        K[np.diag_indices_from(K)] += self.lamda
+        
+        #use the built in Cholesky-decomposition to solve
+        alpha = cho_solve(K, self.y_training)
+
+        #predict new, calculate kernel matrix between test and training
+        Ks = gaussian_kernel(self.x_test, self.x_training, self.sigma)
+
+        #make prediction
+        Y_predicted = np.dot(Ks, alpha)
+
+        # Calculate mean-absolute-error (MAE):
+        self.mae = np.mean(np.abs(Y_predicted - self.y_test)) 
+        self.test_predicted_results = Y_predicted
+    
+    def calculate_mae(self):
+        """Calculates mean average error
+        Between exact and test result
+        """
+        self.mae = np.mean(np.abs(self.y_test - self.test_predicted_results))
+
+    def result_name(self):
+        return("%s l%f s%f" %(self.representation_name, self.lamda, self.sigma))
+
+
+
+
+
+
 def read_xyz_energies(folder, get_energy = True):
     ''' Opens files in xyz folder and stores Z, R and N data + makes representation
     Variables

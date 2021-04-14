@@ -10,7 +10,7 @@ import pickle
 from time import time as tic
 import database_preparation as datprep
 
-
+#redundant, replaced by database_preparation.Kernel_Result class. Replace in respective functions
 class LearningResults:
     def __init__(self, lamda, sigma, set_sizes, maes):
         self.lamda = lamda
@@ -21,6 +21,11 @@ class LearningResults:
 
 
 def gaussian_kernel(x, y, sigma):
+    """Gaussian Function to be used in Kernel learning
+        :param x, y are two datapoints, in best scenario 1D
+        :param sigma: width of the function
+        :type sigma: float
+    """
     #print("type x:", type(x))
     distance = jnp.subtract(x,y)
     absolute = jnp.linalg.norm(distance)
@@ -77,6 +82,8 @@ def get_alphas(K, properties, dim, lamda = 1.0e-3):
     inverted = np.linalg.inv(invertable)
     alphas = np.dot(inverted, properties)
     return(alphas)
+
+
 
 
 #representation to be used: CM_eigenvectors_EVsorted(Z, R, N, cutoff = 8)
@@ -205,6 +212,8 @@ def make_training_test(dim, training_size, upperlim = 1000):
 -	Kernel ridge regression function		-
 -							-
 ----------------------------------------------------'''
+
+
 def full_kernel_ridge(fingerprint_list, property_list, result_file, set_sizes , sigmas = [], lambdas = [], rep_no = 1, upperlimit = 12, Choose_Folder = False, representation = "CM"):
     #print("result_file:", result_file) 
     ''' Kernel ridge regression model
