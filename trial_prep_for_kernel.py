@@ -8,22 +8,21 @@ import representation_ZRN as ZRN_rep
 this file creates pickled lists of Kernel_Result class objects with the represented information
 """
 
-'''
-calculated = datprep.read_compounds("./tmp/EVCM_raw_Kernel_Results")
+
+calculated = datprep.read_compounds("./tmp/BOB_raw_Kernel_Results")
 
 print("len of list: ", len(calculated))
 print("first element:", calculated[0])
 print("CM of first element:", calculated[0].representation_name)
 print(calculated[0].x[0])
-print("energy:", calculated[0].y)
-'''
+print("energy:", calculated[0].y[0])
 
 
 #define datapath to a pickled list of compound instances
 datapath = "./Pickled/qm7.pickle"
 
 #list of representations to be considered, 0 = CM, 1 = EVCM, 2 = BOB, 3 = OM, 4 = EVOM
-representation_list = [1]#3, 4]# 2]
+rep = 4
 
 rep_names = ["CM", "EVCM", "BOB", "OM", "EVOM"]
 
@@ -58,41 +57,40 @@ for c in range(total):
     
 
     # Generate and representations and append to X_list
-    for rep in representation_list:
-        if rep == 0:
-            mol.generate_coulomb_matrix()
+    if rep == 0:
+        mol.generate_coulomb_matrix()
 
-        if rep == 1:
-            M = ZRN_rep.Eigenvalue_Coulomb_Matrix_h(compound.Z, compound.R)
-            mol.representation = M.flatten()
+    if rep == 1:
+        M = ZRN_rep.Eigenvalue_Coulomb_Matrix_h(compound.Z, compound.R)
+        mol.representation = M.flatten()
 
-        if rep == 2:
-            mol.generate_bob(asize={'C':7, 'H': 16, 'N':6, 'O': 4, 'F': 4})
+    if rep == 2:
+        mol.generate_bob(asize={'C':7, 'H': 16, 'N':6, 'O': 4, 'F': 4})
 
-        if rep == 3:
-            M = ZRN_rep.Overlap_Matrix_h(compound.Z, compound.R)
-            mol.representation = M.flatten()
+    if rep == 3:
+        M = ZRN_rep.Overlap_Matrix_h(compound.Z, compound.R)
+        mol.representation = M.flatten()
 
-        if rep == 4:
-            M = ZRN_rep.Eigenvalue_Overlap_Matrix_h(compound.Z, compound.R)
-            mol.representation = M.flatten()
-
-
-        #add representation array to X_list
-        X_list[rep].append(mol.representation)
+    if rep == 4:
+        M = ZRN_rep.Eigenvalue_Overlap_Matrix_h(compound.Z, compound.R)
+        mol.representation = M.flatten()
 
 
+    #add representation array to X_list
+    X_list[rep].append(mol.representation)
 
-'''prepare training and test sets '''
 
-for rep in representation_list:
-    m = datprep.Kernel_Result()
-    m.representation_name = rep_names[rep]
-    m.x = X_list[rep]
-    m.y = Y_energy_list
+
+#prepare Kernel_Result raw instances (no training/test split, no sigma, no lamda)
+
+
+m = datprep.Kernel_Result()
+m.representation_name = rep_names[rep]
+m.x = X_list[rep]
+m.y = Y_energy_list
         
-    CM_list.append(m)
+CM_list.append(m)
 
 
-datprep.store_compounds(CM_list, "./tmp/EVCM_raw_Kernel_Results")
+datprep.store_compounds(CM_list, "./tmp/%s_raw_Kernel_Results" %rep_names[rep])
 

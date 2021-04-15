@@ -1,17 +1,10 @@
 import numpy as np
+import itertools
 import kernel_learning as kler
 import matplotlib.pyplot as plt
 import jax_math as jmath
 import database_preparation as datprep
 datapath = "/home/stuke/Databases/QM9_XYZ_below10/"
-
-class CurveObj:
-    def __init__(self, name):
-        self.xnparray = None
-        self.ynparray = None
-        self.xerror = None
-        self.yerror = None
-        self.name = name
 
 def cleanup_results(result_file, multiple_runs = False, Choose_Folder = False, rep_no = 1):
     ''' gets data from resultfile and returns plottable Curve objects
@@ -139,15 +132,56 @@ def plot_learning(set_sizes ,\
 
     return(print("figure was saved to", figuretitle))
 
+
+def plot_scatter(y_test, y_predicted, label = "OM",\
+        title = "OM Representation Gaussian Kernel",\
+        figuretitle = "Scatterplot_OM",\
+        xtitle = "Atomic Energies [kcal/mol]",\
+        ytitle = "Predicted Atomic Energies [kcal/mol]"):
+    #standard settings for plotting:
+    fontsize = 30
+
+    plt.rc('font',       size=fontsize) # controls default text sizes
+    plt.rc('axes',  titlesize=fontsize) # fontsize of the axes title
+    plt.rc('axes',  labelsize=fontsize) # fontsize of the x and y labels
+    plt.rc('xtick', labelsize=fontsize*0.8) # fontsize of the tick labels
+    plt.rc('ytick', labelsize=fontsize*0.8) # fontsize of the tick labels
+    plt.rc('legend', fontsize=fontsize*0.8) # legend fontsize
+    plt.rc('figure',titlesize=fontsize*1.2) # fontsize of the figure title
+    plt.rcParams['axes.titlepad'] = 20
+
+    #prep figure
+    f, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (12, 8))
+    
+    ax.set_xlabel(xtitle)
+    ax.set_ylabel(ytitle)
+
+    st = f.suptitle(title)
+
+    #plot results
+    ax.scatter(y_test, y_predicted, label = label)
+    
+    #make x and y ticks the same
+    multiplier = 10 ** -2
+    min_tick = int(min(y_test)*multiplier) / multiplier
+
+    plt.xticks(np.arange(min_tick, max(y_test)+100, 200))
+    plt.yticks(np.arange(min_tick, max(y_test)+100, 200))
+    #save figure
+
+    f.savefig(figuretitle, bbox_inches = 'tight')
+    return(print("figure was saved to", figuretitle))
+
+
 def plot_curves(curve_list, file_title = "TrialLearning",\
         plottitle = 'Learning Curves of CM Eigenvector Representation on QM9 Dataset\n 1000 molecules, 2 Runs Averaged',\
         xtitle = 'Training Set Size',\
-        ytitle = 'MAE [hartree]',\
-        multiple_runs = True,\
+        ytitle = 'MAE [kcal/mol]',\
+        multiple_runs = False,\
         include_title = False):
 
     '''plots learning curves from hartree to kcal/mol
-    curve_list: lsit of data
+    curve_list: list of CurveObj class objects
     file_title: string, where to store plot to
     plottitle = title over plot
     xtitle : string, title of x axis
@@ -175,9 +209,6 @@ def plot_curves(curve_list, file_title = "TrialLearning",\
     if include_title:
         st = f.suptitle(plottitle)
 
-        # shift subplots down and to the left to give title and legend space:
-        st.set_y(0.95)
-    f.subplots_adjust(top=0.8, left = 0.05, right = 0.78, wspace = 0.1)
 
     ax.set_xlabel(xtitle)
     ax.set_ylabel(ytitle)
@@ -185,35 +216,32 @@ def plot_curves(curve_list, file_title = "TrialLearning",\
     ax.set_xscale('log')
     ax.set_yscale('log')
     
+    #assign marker for better differentiation
+    marker = itertools.cycle((',', '+', '.', 'o', '*', "1", "2", "3", "4", "8", "H", "D")) 
 
-    kcal = 627.503  #1 hartree are 627.503 kcal/mol
     #all the plotting has to be done below
-    for c in range(len(curve_list)):
-        curve = curve_list[c]
-
-        yarray = curve.ynparray * kcal
+    for curve in curve_list:
+         
+        if float(curve.name[8:16]) < 1e-9 or float(curve.name[8:16]) > 1e-5:
+                continue
         
-        ax.plot(curve.xnparray, curve.ynparray, linewidth = 2, label = curve.name)
+        if float(curve.name[25:]) < 64.0 or float(curve.name[25:]) > 50000.0:
+            print("this loop was not continued: ", curve.name)
+            continue
+        print("this loop was printed:", curve.name)
+       
+        yarray = curve.ynparray
+        
+        
+        ax.plot(curve.xnparray, curve.ynparray, linewidth = 2, marker = next(marker), label = curve.name)
         print('x:' ,curve.xnparray,'\ny:', yarray)
 
-        '''
-        #check whether learning worked
-        if curve.ynparray[8] > curve.ynparray[0]:
-            #print('a curve with the following x and y arrays was plotted')
-            #print('x:' ,curve.xnparray,'\ny:', curve.ynparray)
-            ax.plot(curve.xnparray, curve.ynparray,  label = curve.name)
-        else:
-            print("this curve was excluded:", curve.name)
-        #if multiple_runs:
-        #    #ax.plot(curve.xnparray, curve.ynparray, 'o')
-        #    ax.errorbar(curve.xnparray, curve.ynparray, yerr = curve.yerror, fmt = '-o')
-        '''
     #all the plotting has to be done above
     
     #f.legend = ax.legend(loc = 'center right')
     handles, labels = ax.get_legend_handles_labels()
 
-    f.legend(handles, labels) #, bbox_to_anchor=(1,1), loc="upper left")
+    f.legend(handles, labels, bbox_to_anchor=(1,1), loc="upper left")
     
     figuretitle = "./Images/" + file_title + ".png"
 

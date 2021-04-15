@@ -278,13 +278,14 @@ class Kernel_Result():
         #results
         self.test_predicted_results = empty_array
 
+        self.mae = float("nan")
 
         #additional information
         self.representation_name = None
 
         self.test_indices = empty_array
         self.training_indices = empty_array
-
+        
 
     def add_results(self,\
             sigma,\
@@ -299,7 +300,7 @@ class Kernel_Result():
         self.y_test = y_test
         self.test_predicted_results = y_predicted
 
-        if mae is float("nan"):
+        if self.mae is float("nan"):
             self.calculate_mae()
 
     def do_qml_gaussian_kernel(self):
@@ -327,13 +328,32 @@ class Kernel_Result():
         """Calculates mean average error
         Between exact and test result
         """
-        self.mae = np.mean(np.abs(self.y_test - self.test_predicted_results))
+        if self.mae == float("nan"):
+            self.mae = np.mean(np.abs(self.y_test - self.test_predicted_results))
+        return(self.mae)
 
     def result_name(self):
-        return("%s l%f s%f" %(self.representation_name, self.lamda, self.sigma))
+        return("%s_l%f_s%f" %(self.representation_name, self.lamda, self.sigma))
+
+    def training_size(self):
+        try:
+            return(len(self.y_training))
+        except Error:
+            return(len(self.x_training))
 
 
+class CurveObj:
 
+
+    def __init__(self, name):
+
+        empty_array = np.asarray([], dtype = float)
+
+        self.xnparray = empty_array
+        self.ynparray = empty_array
+        self.xerror = None
+        self.yerror = None
+        self.name = name
 
 
 
