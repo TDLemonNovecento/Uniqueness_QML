@@ -4,10 +4,6 @@ They either print derivatives (cal_print_1stder, cal_pring_2ndder) or interact w
 database_preparation objects by adding derivative results to them (calculate_eigenvalues, 
 update_index).
 
-Then there are some shots at numerical derivatives that I didn't want to delete just yet
-(num_first_Derivative, num_second_derivative, num_second_pure_derivative). These three files work
-as shown in the trial_jax_numerical_der.py file. The new location of the functions
-has not been updated everywhere and neither been checked yet (Dez. 2020) so this may cause errors.
 '''
 import numpy as np
 from jax import ops

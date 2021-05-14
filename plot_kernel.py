@@ -94,7 +94,7 @@ def plot_learning(set_sizes ,\
         xtitle = 'Training Set Size',\
         ytitle = 'MAE [kcal/mol]',\
         title = "sigma = 20\nlambda = 1e-3",\
-        figuretitle = "QML_learning.png"):
+        filename = "QML_learning"):
     
     '''
     plots x and y values of learning curves
@@ -119,6 +119,19 @@ def plot_learning(set_sizes ,\
         mae_list = maes[m]
         name = labels[m]
         ax.loglog(set_sizes, mae_list, label = name, linewidth = 2)
+    
+    ax.spines['right'].set_color('none')
+    ax.spines['top'].set_color('none')
+    ax.spines['bottom'].set_position(('axes', -0.05))
+    ax.spines['bottom'].set_color('black')
+    ax.spines['left'].set_color('black')
+    ax.yaxis.set_ticks_position('left')
+    ax.xaxis.set_ticks_position('bottom')
+    ax.spines['left'].set_position(('axes', -0.05))
+
+    ax.xaxis.set_tick_params(width=2.5, length=20)
+    ax.yaxis.set_tick_params(width=2.5, length=20)
+
 
     #set x and y axis label
     ax.set_xlabel(xtitle)
@@ -128,9 +141,10 @@ def plot_learning(set_sizes ,\
     ax.legend()
 
     #save figure
-    f.savefig(figuretitle, bbox_inches = 'tight')
+    f.savefig(filename, bbox_inches = 'tight')
 
-    return(print("figure was saved to", figuretitle))
+    return(print("figure was saved to", filename))
+
 
 
 def plot_scatter(y_test, y_predicted, label = "OM",\
@@ -155,6 +169,19 @@ def plot_scatter(y_test, y_predicted, label = "OM",\
     
     ax.set_xlabel(xtitle)
     ax.set_ylabel(ytitle)
+    
+    ax.spines['right'].set_color('none')
+    ax.spines['top'].set_color('none')
+    ax.spines['bottom'].set_position(('axes', -0.05))
+    ax.spines['bottom'].set_color('black')
+    ax.spines['left'].set_color('black')
+    ax.yaxis.set_ticks_position('left')
+    ax.xaxis.set_ticks_position('bottom')
+    ax.spines['left'].set_position(('axes', -0.05))
+
+    ax.xaxis.set_tick_params(width=2.5, length=20)
+    ax.yaxis.set_tick_params(width=2.5, length=20)
+
 
     st = f.suptitle(title)
 
@@ -216,34 +243,38 @@ def plot_curves(curve_list, file_title = "TrialLearning",\
     ax.set_xscale('log')
     ax.set_yscale('log')
     
+
+    ax.spines['right'].set_color('none')
+    ax.spines['top'].set_color('none')
+    ax.spines['bottom'].set_position(('axes', -0.05))
+    ax.spines['bottom'].set_color('black')
+    ax.spines['left'].set_color('black')
+    ax.yaxis.set_ticks_position('left')
+    ax.xaxis.set_ticks_position('bottom')
+    ax.spines['left'].set_position(('axes', -0.05))
+
+    ax.xaxis.set_tick_params(width=2.5, length=20)
+    ax.yaxis.set_tick_params(width=2.5, length=20)
+
     #assign marker for better differentiation
     marker = itertools.cycle((',', '+', '.', 'o', '*', "1", "2", "3", "4", "8", "H", "D")) 
 
     #all the plotting has to be done below
     for curve in curve_list:
-         
-        if float(curve.name[8:16]) < 1e-9 or float(curve.name[8:16]) > 1e-5:
-                continue
-        
-        if float(curve.name[25:]) < 64.0 or float(curve.name[25:]) > 50000.0:
-            print("this loop was not continued: ", curve.name)
-            continue
-        print("this loop was printed:", curve.name)
-       
+    
         yarray = curve.ynparray
-        
         
         ax.plot(curve.xnparray, curve.ynparray, linewidth = 2, marker = next(marker), label = curve.name)
         print('x:' ,curve.xnparray,'\ny:', yarray)
 
     #all the plotting has to be done above
     
-    #f.legend = ax.legend(loc = 'center right')
-    handles, labels = ax.get_legend_handles_labels()
+    f.legend = ax.legend(loc = 'lower left')
+    
+    #handles, labels = ax.get_legend_handles_labels()
 
-    f.legend(handles, labels, bbox_to_anchor=(1,1), loc="upper left")
+    #f.legend(handles, labels, bbox_to_anchor=(1,1), loc="upper left")
     
     figuretitle = "./Images/" + file_title + ".png"
-
     f.savefig(figuretitle, bbox_inches = 'tight')
     return(print("figure was saved to", figuretitle))

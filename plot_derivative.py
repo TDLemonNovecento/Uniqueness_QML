@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import sys
 import numpy as np
-#import svgutils.transform as sg
+from brokenaxes import brokenaxes
 
 '''standard settings for matplotlib plots'''
 fontsize = 24
@@ -165,7 +165,7 @@ def plot_zeroEV(norm_xaxis, percentages_yaxis,\
     N = np.arange(1,23)
 
     relevant_dim = 3*N - 6
-    ax.plot(N, relevant_dim, label = "internal degrees of freedom")
+    ax.plot(N, relevant_dim, label = "Internal Degrees of Freedom (3n - 6)")
 
 
     #add all plots
@@ -196,13 +196,99 @@ def plot_zeroEV(norm_xaxis, percentages_yaxis,\
     return(print("plot has been saved to %s" % name))
 
 
+def plot_ethyne2(index, valuelist, valuelist2= [], title = "Ethyne in EVCM Representation",\
+        savetofile = "Trial_Ethyne.png",\
+        xaxis_title = "Conformation", yaxis_title = "Values",\
+        plot_title = True,\
+        plot_dZ = True,\
+        cutout_15_75 = False):
+
+    '''plots analysis from ethyne runs
+    Variables
+    ---------
+    index: array,
+            some number by which molecular structures are sorted
+    valuelist: list of datapairs [values, label] with values being
+            an array and labels a string
+    title : title of plot
+    lineplots: same format as valuelist, but plotted as line
+    
+    '''
+    #general figure settings
+    fig = plt.figure( figsize=(12,8))
+
+    fig.tight_layout()
+
+
+    #format ticks
+    major_ticks = [0, 5, 10, 15, 20]
+
+    if cutout_15_75:
+        baxes = brokenaxes(ylims =((-2, 10), (65,70)))
+
+
+    #add all plots
+    color_count = 0
+    for y in range(len(valuelist)):
+
+        yax = valuelist[y]
+
+        if len(yax) > 2:
+            cor = yax[2]
+        else:
+            try:
+                cor = plt.rcParams['axes.prop_cycle'].by_key()['color'][color_count]
+
+                color_count += 1
+            except IndexError:
+                cor = plt.rcParams['axes.prop_cycle'].by_key()['color'][0]
+                color_count = 1
+
+        if cutout_15_75:
+            baxes.plot(index, yax[0], c = cor, label = yax[1])
+        else:
+            plt.plot(index, yax[0], c = cor, label = yax[1])
+    
+    #plot second set of values in gray
+    for l in range(len(valuelist2)):
+        vals = valuelist2[l]
+
+        if cutout_15_75:
+            baxes.plot(index, vals[0],c = 'gray', label = vals[1])
+        else:
+            plt.plot(index, vals[0], label = vals[1])
+
+
+    #title, axis and legend
+    if plot_title:
+        st = plt.suptitle(title)
+
+    #plt.axis.set_major_locator(MaxNLocator(integer=True))
+    #handles, labels = plt.get_legend_handles_labels()
+    baxes.legend(loc = "upper left")
+
+    baxes.set_xlabel(xaxis_title, labelpad = 20)
+    baxes.set_ylabel(yaxis_title, labelpad = 20)
+    
+    #change xticks
+    #locs, labels = plt.xticks() #get current locations
+    baxes.set_xticks(major_ticks)
+
+
+    #save and display plot
+    plt.savefig(savetofile, transparent = True, bbox_inches = 'tight')
+
+
+    return(print("plot has been saved to %s" % savetofile))
 
 def plot_ethyne(index, valuelist, title = "Ethyne in EVCM Representation",\
         savetofile = "Trial_Ethyne.png",\
         xaxis_title = "Conformation", yaxis_title = "Values",\
         lineplots = [],\
         plot_title = True,\
-        plot_dZ = True):
+        plot_dZ = True,\
+        remove_zeros = True,\
+        cutout_15_75 = False):
     
     '''plots analysis from ethyne runs
     Variables
@@ -224,6 +310,9 @@ def plot_ethyne(index, valuelist, title = "Ethyne in EVCM Representation",\
     
     #format ticks
     major_ticks = [0, 5, 10, 15, 20]
+    
+    if cutout_15_75:
+        baxes = brokenaxes(ylims =((0, 15), (70,90)))
 
     ax.set_xticks(major_ticks)
     ax.set(xlim=(-1, 21.5)) #, ylim = (-1.5, 0.3)) for dZ
@@ -259,21 +348,25 @@ def plot_ethyne(index, valuelist, title = "Ethyne in EVCM Representation",\
     
     for l in range(len(lineplots)):
         vals = lineplots[l]
-
-        plt.plot(index, vals[0], label = vals[1])
+        
+        if cutout_15_75:
+            baxes.plot(index, vals[0], label = vals[1])
+        else:
+            plt.plot(index, vals[0], label = vals[1])
 
     #add text with zero valued ylists:
-    zerotext = "Zero valued:\n"
-    for t in zero_valued_plots:
-        zerotext += " "+ t + ","
+    if remove_zeros:
+        zerotext = "Zero valued:\n"
+        for t in zero_valued_plots:
+            zerotext += " "+ t + ","
     
-    #remove last ","
-    zerotext = zerotext[:-1]
+        #remove last ","
+        zerotext = zerotext[:-1]
 
-    if plot_dZ:
-        plt.text(0, -1.3, zerotext, fontsize=18) #for dZ
-    else:
-        plt.text(0, -2.5, zerotext, fontsize = 18)
+        if plot_dZ:
+            plt.text(0, -1.3, zerotext, fontsize=18) #for dZ
+        else:
+            plt.text(0, -2.5, zerotext, fontsize = 18)
 
     
     #title, axis and legend
@@ -522,12 +615,11 @@ def prepresults(results, rep = "CM",\
             norms.append(results[i].norm)
 
         #results_perc = results[i].calculate_smallerthan(repro = repno)
-        
         #if results[i].dZ_perc > 1:
         #    print(results[i].filename, "dZ percentage is bigger than 1")
         
         if yval == "abs":
-            print("ABSOLUTE YVALUES")    
+            #print("ABSOLUTE YVALUES")    
             dim = results[i].calculate_dim(repno)
             #print("repno", repno, "dimension:", dim)
             dZ_percentages.append(results[i].dZ_perc*dim)
@@ -536,14 +628,15 @@ def prepresults(results, rep = "CM",\
             dRdR_percentages.append(results[i].dRdR_perc*dim)
             dZdR_percentages.append(results[i].dZdR_perc*dim)
 
-
+        if yval == "abs":
+            continue
         elif yval == "perc":
             dZ_percentages.append(results[i].dZ_perc)
             dR_percentages.append(results[i].dR_perc)
             dZdZ_percentages.append(results[i].dZdZ_perc)
             dRdR_percentages.append(results[i].dRdR_perc)
             dZdR_percentages.append(results[i].dZdR_perc)
-
+        #    print("dZ perc:", results[i].dZ_perc)
     if with_repro:
         label = rep + " "
     else:

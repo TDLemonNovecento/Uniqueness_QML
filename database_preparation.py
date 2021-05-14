@@ -11,7 +11,7 @@ import jax.numpy as jnp
 import jax_basis as jbas
 
 import qml
-from qml.kernels import gaussian_kernel
+from qml.kernels import gaussian_kernel, laplacian_kernel
 from qml.math import cho_solve
 
 
@@ -45,7 +45,12 @@ class derivative_results():
     '''
     stores dZ, dR, ect. data
     '''
-    def __init__(self, filename, Z, M):
+    #reduce storage:
+    __slots__ = ['filename', 'Z', 'norm', 'dZ_ev', 'dR_ev', 'dZdZ_ev', 'dRdR_ev',\
+            'dZdR_ev', 'dZ_perc', 'dR_perc', 'dZdZ_perc', 'dRdR_perc',\
+            'dZdR_perc', 'representation_form']
+    
+    def __init__(self, filename, Z, M = None):
         '''
         filename: string
         Z: np array, nuclear charges
@@ -54,7 +59,8 @@ class derivative_results():
 
         self.filename = filename
         self.Z = Z
-        self.norm = jnp.linalg.norm(M, ord = 'nuc')
+        if not (M == None):
+            self.norm = jnp.linalg.norm(M, ord = 'nuc')
         
         self.dZ_ev = None
         self.dR_ev = None
@@ -213,11 +219,11 @@ class derivative_results():
         
         while True: #this is a fix for damaged results files
             try:
-                self.dZ_bigger = self.dZ_ev[(-lower_bound > self.dZ_ev) | (self.dZ_ev > lower_bound)]
-                self.dR_bigger = self.dR_ev[(-lower_bound > self.dR_ev) | (self.dR_ev > lower_bound)]
-                self.dZdZ_bigger = self.dZdZ_ev[(-lower_bound > self.dZdZ_ev) | (self.dZdZ_ev > lower_bound)]
-                self.dRdR_bigger = self.dRdR_ev[(-lower_bound > self.dRdR_ev) | (self.dRdR_ev > lower_bound)]
-                self.dZdR_bigger = self.dZdR_ev[(-lower_bound > self.dZdR_ev) | (self.dZdR_ev > lower_bound)]
+                dZ_bigger = self.dZ_ev[(-lower_bound > self.dZ_ev) | (self.dZ_ev > lower_bound)]
+                dR_bigger = self.dR_ev[(-lower_bound > self.dR_ev) | (self.dR_ev > lower_bound)]
+                dZdZ_bigger = self.dZdZ_ev[(-lower_bound > self.dZdZ_ev) | (self.dZdZ_ev > lower_bound)]
+                dRdR_bigger = self.dRdR_ev[(-lower_bound > self.dRdR_ev) | (self.dRdR_ev > lower_bound)]
+                dZdR_bigger = self.dZdR_ev[(-lower_bound > self.dZdR_ev) | (self.dZdR_ev > lower_bound)]
                 
                 break
 
@@ -235,14 +241,14 @@ class derivative_results():
 
         #print("self.representation_form", self.representation_form, "dim:", dim)
         #print("size:", self.dZdZ_bigger.size, "dimension foreseen:", self.representation_form*dim**2)
-        self.dZ_perc = (len(self.dZ_bigger))/(self.representation_form*dim) #is 2*dim Z the max number of EV?
-        self.dR_perc = (len(self.dR_bigger))/(3*dim*self.representation_form)
-        self.dZdZ_perc = (len(self.dZdZ_bigger))/(self.representation_form*dim**2)
-        self.dRdR_perc = (len(self.dRdR_bigger))/(self.representation_form*9*dim**2)
-        self.dZdR_perc = (len(self.dZdR_bigger))/(self.representation_form*3*dim**2)
+        self.dZ_perc = (len(dZ_bigger))/(self.representation_form*dim) #is 2*dim Z the max number of EV?
+        self.dR_perc = (len(dR_bigger))/(3*dim*self.representation_form)
+        self.dZdZ_perc = (len(dZdZ_bigger))/(self.representation_form*dim**2)
+        self.dRdR_perc = (len(dRdR_bigger))/(self.representation_form*9*dim**2)
+        self.dZdR_perc = (len(dZdR_bigger))/(self.representation_form*3*dim**2)
 
         fractions = [self.dZ_perc, self.dR_perc, self.dZdZ_perc, self.dRdR_perc, self.dZdR_perc]
-        numbers = [self.dZ_bigger, self.dR_bigger, self.dZdZ_bigger, self.dRdR_bigger, self.dZdR_bigger]
+        numbers = [dZ_bigger, dR_bigger, dZdZ_bigger, dRdR_bigger, dZdR_bigger]
 
         
         return(fractions, numbers)
@@ -255,6 +261,12 @@ class Kernel_Result():
         :type exact_results, test_results: numpy.array
         :param sigma, lambda: type float
     """
+
+    __slots__ = ['sigma', 'lamda', 'x', 'y',\
+            'x_training', 'x_test', 'y_training', 'y_test',\
+        'test_predicted_results', 'mae', 'representation_name',\
+        'test_indices', 'training_indices', 'full_kernel_matrix']
+
     def __init__(self):
 
         
@@ -285,7 +297,9 @@ class Kernel_Result():
 
         self.test_indices = empty_array
         self.training_indices = empty_array
-        
+
+        self.full_kernel_matrix = None
+
 
     def add_results(self,\
             sigma,\
@@ -323,13 +337,21 @@ class Kernel_Result():
         # Calculate mean-absolute-error (MAE):
         self.mae = np.mean(np.abs(Y_predicted - self.y_test)) 
         self.test_predicted_results = Y_predicted
+
+    def laplacian_kernel_matrix(self, x_training, x_test):
+
+        #create full laplacian kernel matrix
+        K = laplacian_kernel(x_test, x_training, self.sigma)
+
+        self.full_kernel_matrix = K
+
+        return(K)
     
     def calculate_mae(self):
         """Calculates mean average error
         Between exact and test result
         """
-        if self.mae == float("nan"):
-            self.mae = np.mean(np.abs(self.y_test - self.test_predicted_results))
+        self.mae = np.mean(np.abs(self.y_test - self.test_predicted_results))
         return(self.mae)
 
     def result_name(self):
@@ -344,6 +366,7 @@ class Kernel_Result():
 
 class CurveObj:
 
+    __slots__ = ['xnparray', 'ynparray', 'xerror', 'yerror', 'name']
 
     def __init__(self, name):
 

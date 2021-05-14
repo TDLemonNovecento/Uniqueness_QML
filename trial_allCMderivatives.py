@@ -6,7 +6,7 @@ import jax_basis
 from jax_math import BoB_fill
 import jax.numpy as jnp
 
-path = "/home/linux-miriam/Uniqueness_QML/TEST/H2O.xyz"
+path = "./Examples/H2O.xyz"
 compound = qml.Compound(path)
 
 
