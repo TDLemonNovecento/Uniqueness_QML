@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(0, "..")
+
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 import numpy as np
@@ -31,7 +34,7 @@ axb5= fig.add_subplot(gs[1,8:10])
 plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=3, hspace=None)
 
 
-database = "./Pickled/qm7.pickle"
+database = "../Databases/Pickled/qm7.pickle"
 
 
 compoundlist = datprep.read_compounds(database)

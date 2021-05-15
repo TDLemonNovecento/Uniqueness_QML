@@ -1,10 +1,12 @@
+import sys
+sys.path.insert(0, "..")
+
 import database_preparation as datprep
 import jax_derivative as jder
 import jax_additional_derivative as jader
 import jax_representation as jrep
 import plot_derivative as pltder
 import jax.numpy as jnp
-import sys
 from plot_derivative import prepresults
 
 '''with the following variable the derivatives to be included in the final plot are chosen'''
@@ -29,12 +31,10 @@ reprolist = ['CM', 'EVCM', 'BOB', 'OM', 'EVOM']
 
 
 '''below are lists of pickled results files or their partial paths'''
-results_file =["/home/linux-miriam/Databases/Pickled/qm7_CM_results.pickle",\
-        "/home/linux-miriam/Databases/Pickled/qm7_CM_EV_results.pickle",\
-        "/home/linux-miriam/Databases/Pickled/BoB_numder_res",\
-        "/home/linux-miriam/Databases/Pickled/OM_numder_res",\
-        "./Pickled/fourcompounds_EV_results.pickle",\
-        "./Pickled/trial_numder.pickle"]
+results_file =["../Databases/Pickled/qm7_CM_results.pickle",\
+        "../Databases/Pickled/qm7_CM_EV_results.pickle",\
+        "../Databases/Pickled/BoB_numder_res",\
+        "../Databases/Pickled/OM_numder_res"]
 
 
 

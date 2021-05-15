@@ -1,16 +1,19 @@
 '''in this program the off diagonal elements of OM and CM are calculated and plotted.
 This is done primarily for an application on diatomics to see the decrease
 for larger radii'''
+import sys
+sys.path.insert(0, "..")
+
+
 import os
 import jax_representation as jrep
 import matplotlib.pyplot as plt
 import qml
 import itertools
-#import jax_math as jmath
 import numpy as np
 
 #path to xyz files
-database = "/home/stuke/Databases/XYZ_diatom/"
+database = "../Databases/XYZ_diatom/"
 distance_vector = []
 OM_overlap_vector = []
 CM_overlap_vector = []

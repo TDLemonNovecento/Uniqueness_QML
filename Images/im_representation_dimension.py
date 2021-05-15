@@ -1,7 +1,6 @@
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-import plot_representation_dim as pltrep
 
 '''
 standard size for BoB:
@@ -72,6 +71,6 @@ ax.legend()
 #plt.title("Dimensions of Representations")
 fig.tight_layout()
 
-plt.savefig("./Images/Final/Representation_dimensions", transparent = True, bbox_inches = 'tight')
+plt.savefig("./Representation_dimensions", transparent = True, bbox_inches = 'tight')
 
 

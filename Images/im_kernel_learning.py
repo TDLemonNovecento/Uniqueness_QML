@@ -1,9 +1,12 @@
+import sys
+sys.path.insert(0, "..")
+
+
 import kernel_learning as kler
 import plot_kernel as kplot
 import database_preparation as datprep
-#import representation_ZRN as ZRN_rep
 from time import time as tic
-import kernel_process as kproc
+import kernel_easy_process as kproc
 
 
 #number of runs:

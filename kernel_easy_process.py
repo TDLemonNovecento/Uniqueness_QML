@@ -1,5 +1,4 @@
 import kernel_learning as kler
-#import kernel_plot as kplot
 import database_preparation as datprep
 import representation_ZRN as ZRN_rep
 from time import time as tic

@@ -5,7 +5,7 @@ from time import time as tic
 import statistics
 import numpy as np
 
-data_file = "./Pickled/qm7.pickle"
+data_file = "../Databases/Pickled/qm7.pickle"
 
 repros = [ZRNrep.Coulomb_Matrix, ZRNrep.Eigenvalue_Coulomb_Matrix, ZRNrep.Overlap_Matrix, \
         ZRNrep.Eigenvalue_Overlap_Matrix, ZRNrep.Bag_of_Bonds]
@@ -14,7 +14,7 @@ repronames = ["CM", "EVCM", "OM", "EVOM", "BOB"]
 ###read list of compounds from data file
 
 compounds = datprep.read_compounds(data_file)
-compounds = compounds[:1000]
+compounds = compounds[:1]
 print("number of compounds:", len(compounds))
 
 #store times for every single and total calculation

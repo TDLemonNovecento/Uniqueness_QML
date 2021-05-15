@@ -20,15 +20,11 @@ M, order  = jrep.CM_full_sorted(Z, R, N)
 
 print("row-sorting: ", order)
 
-'''using basis and S from literature'''
-#thisbasis, k = basis.build_sto3Gbasis(Z,R)
-#M = np.zeros((k,k))
-#myOM = oei.buildS(thisbasis, M)
 
 '''print results nicely'''
 jnp.set_printoptions(precision=3, suppress=True)
-#print('Representation:\n------------------')
-#print(M)
+print('Representation:\n------------------')
+print(M)
 
 jader.cal_print_1stder('CM_EV', Z, R, N)
 jader.cal_print_2ndder('CM_EV', Z, R, N)

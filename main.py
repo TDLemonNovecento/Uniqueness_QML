@@ -9,9 +9,12 @@ import jax.numpy as jnp
 import plot_derivative as pltder
 
 #define path to folder containing xyz files. All files are considered.
-database = "/home/linux-miriam/Uniqueness_QML/Pickled/qm7.pickle"
-small_data_file = "/home/linux-miriam/Uniqueness_QML/Pickled/fourcompounds.pickle"
-dat_ha_file = "/home/linux-miriam/Uniqueness_QML/Pickled/qm7.pickle"
+datapath = "../Database/QM9/"
+
+compounds = 
+
+#where do you want these compounds to be saved to?
+small_data_file = "../Database/Pickled/compounds.pickle"
 CM_ev_result_file = "/home/linux-miriam/Uniqueness_QML/Pickled/fourcompounds_res.pickle"
 
 

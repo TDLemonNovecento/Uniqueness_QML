@@ -5,7 +5,6 @@ from jax.config import config
 config.update("jax_enable_x64", True) #increase precision from float32 to float64
 from time import perf_counter as tic
 from jax import grad, ops
-#import qml
 import jax_basis as basis
 from jax_basis import empty_BoB_dictionary, BoB_emptyZ
 from scipy import misc, special, linalg

@@ -1,14 +1,16 @@
+import sys
+sys.path.insert(0, "..")
+
 import database_preparation as datprep
 import jax_derivative as jder
 import jax_additional_derivative as jader
 import jax_representation as jrep
 import plot_derivative as pltder
 import jax.numpy as jnp
-import sys, os
+import os
 from plot_derivative import prepresults
 import matplotlib.pyplot as plt
 import numpy as np
-import database_preparation2 as datprep2
 
 
 '''with the following variable the derivatives to be included in the final plot are chosen'''
@@ -31,9 +33,9 @@ representations =[1, 2] #0 = BOB broken dZ, 1 = sorted Bob, 2 = unsorted BOB
 reprolist = ['BOB broken dZ', 'sorted BOB', "unsorted BOB"]
 colorlist = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
 
-results_file = ["/home/linux-miriam/Databases/Pickled/BOB2_numder_res100-800",\
-        "/home/linux-miriam/Databases/Pickled/BOB_sorted_rep/BoB_numder_res",\
-        "/home/linux-miriam/Databases/Pickled/BOB_unsorted_rep/BOB_numder_res"]
+results_file = ["../Databases/Pickled/BOB2_numder_res100-800",\
+        "../Databases/Pickled/BOB_sorted_rep/BoB_numder_res",\
+        "../Databases/Pickled/BOB_unsorted_rep/BOB_numder_res"]
 
 
 
@@ -102,7 +104,7 @@ for i in representations:
         srt_numbers = ["%i-%i"%(j, j+100) for j in range_1000]
         print(srt_numbers)
         number_ends = [srt_numbers, unsrt_numbers]
-        print("anzahl moleküle total:", 20*len(unsrt_numbers))
+        print("number of molecules total:", 20*len(unsrt_numbers))
         for k in range(len(unsrt_numbers)):#range(0, 4000, 100):
             
                     
@@ -139,5 +141,5 @@ handles, labels = ax.get_legend_handles_labels()
 ax.legend(handles, labels, loc = "upper left")#, title = 'Derivatives')
 
 
-plt.savefig("./Images/Final/BOB_srt_vs_unsrt_%s.png" %dname, transparent = True, bbox_inches = 'tight')
-print("file has been saved to", "./Images/Final/BOB_srt_vs_unsrt_%s.png" %dname)
+plt.savefig("./BOB_srt_vs_unsrt_%s.png" %dname, transparent = True, bbox_inches = 'tight')
+print("file has been saved to", "./BOB_srt_vs_unsrt_%s.png" %dname)

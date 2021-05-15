@@ -1,8 +1,12 @@
+import sys
+sys.path.insert(0, "..")
+
+
 import kernel_learning as kler
 import plot_kernel as kplot
 import database_preparation as datprep
 from time import time as tic
-import kernel_process as kproc
+import kernel_easy_process as kproc
 '''plots kernel results from kernel_results files'''
 
 

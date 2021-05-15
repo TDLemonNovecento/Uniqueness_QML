@@ -10,15 +10,6 @@ import pickle
 from time import time as tic
 import database_preparation as datprep
 
-#redundant, replaced by database_preparation.Kernel_Result class. Replace in respective functions
-class LearningResults:
-    def __init__(self, lamda, sigma, set_sizes, maes):
-        self.lamda = lamda
-        self.sigma = sigma
-        self.set_sizes = set_sizes
-        self.maes = maes
-
-
 
 def gaussian_kernel(x, y, sigma):
     """Gaussian Function to be used in Kernel learning

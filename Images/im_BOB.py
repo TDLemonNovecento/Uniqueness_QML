@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(0, "..") # python scripts upstream are included
+
 import jax_derivative as jder
 import qml
 import numpy as np

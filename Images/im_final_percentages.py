@@ -1,3 +1,7 @@
+import sys
+sys.path.insert(0, "..")
+
+
 import database_preparation as datprep
 import database_preparation2 as datprep2
 import jax_derivative as jder
@@ -5,7 +9,7 @@ import jax_additional_derivative as jader
 import jax_representation as jrep
 import plot_derivative as pltder
 import jax.numpy as jnp
-import sys, os
+import os
 from plot_derivative import prepresults
 
 '''with the following variable the derivatives to be included in the final plot are chosen'''
@@ -32,14 +36,12 @@ reprolist = ['CM', 'EVCM', 'BOB', 'OM', 'EVOM']
 
 
 '''below are lists of pickled results files or their partial paths'''
-results_file =["/home/linux-miriam/Databases/Pickled/qm7_CM_results.pickle",\
-        "/home/linux-miriam/Databases/Pickled/qm7_CM_EV_results.pickle",\
-        "/home/linux-miriam/Databases/Pickled/BOB_unsorted_rep/BOB_numder_res",\
-        "/home/linux-miriam/Databases/Pickled/OM_numder_res",\
-        "/home/linux-miriam/Databases/Pickled/EVOM_numder_res",\
-        "/home/linux-miriam/Databases/Pickled/BOB2_numder_res100-800",\
-        "./Pickled/fourcompounds_EV_results.pickle",\
-        "./Pickled/trial_numder.pickle"]
+results_file =["../Databases/Pickled/qm7_CM_results.pickle",\
+        "../Databases/Pickled/qm7_CM_EV_results.pickle",\
+        "../Databases/Pickled/BOB_unsorted_rep/BOB_numder_res",\
+        "../Databases/Pickled/OM_numder_res",\
+        "../Databases/Pickled/EVOM_numder_res",\
+        "../Databases/Pickled/BOB2_numder_res100-800"]
 
 
 

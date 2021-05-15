@@ -10,20 +10,18 @@ import jax.numpy as jnp
 import sys
 import representation_ZRN as ZRNrep
 
-path_QM7 = "./Pickled/qm7.pickle"
-path_CM_results = "/home/linux-miriam/Databases/Pickled/qm7_CM_results.pickle"
-four_compounds = "./Pickled/fourcompounds.pickle"
-water = "./TEST/H2O.xyz"
-results_file = "./Pickled/BOB_numder_res"
-BOB_file = "/home/linux-miriam/Databases/BOB/compounds.pickle"
+path_QM7 = "../Databases/Pickled/qm7.pickle"
 
 data_file = path_QM7
+results_file = "./tmp/res_trial"
 
 #for numerical calculations:
-numerical_representations = [ZRNrep.Coulomb_Matrix, ZRNrep.Eigenvalue_Coulomb_Matrix, ZRNrep.Overlap_Matrix, \
-        ZRNrep.Eigenvalue_Overlap_Matrix, ZRNrep.Bag_of_Bonds]
+numerical_representations = [ZRNrep.Coulomb_Matrix, ZRNrep.Eigenvalue_Coulomb_Matrix,\
+         ZRNrep.Bag_of_Bonds, ZRNrep.Overlap_Matrix, \
+        ZRNrep.Eigenvalue_Overlap_Matrix]
 
-
+#which representation should be computed? 0 = CM, 1 = EVCM, 2 = BOB, 3 = OM, 4 = EVOM
+which_rep = 0
 
 try:
         init, end = int(sys.argv[1]), int(sys.argv[2])
@@ -50,7 +48,7 @@ except IndexError:
 #print(len(compound_ls))
 
 t1 = tic()
-results, resultaddition = jader.calculate_num_der(numerical_representations[2], compound_ls)
+results, resultaddition = jader.calculate_num_der(numerical_representations[which_rep], compound_ls)
 t2 = tic()
 
 print("time for calculating results:", t2 - t1)

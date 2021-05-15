@@ -1,3 +1,7 @@
+import sys
+sys.path.insert(0, "..")
+
+
 import os, time
 import jax_derivative as jder
 import qml
@@ -7,9 +11,9 @@ import jax_representation as jrep
 import numerical_derivative as numder
 
 #path to xyz files
-database_opt = "/home/linux-miriam/Databases/Ethyne_invariant/Optimized/"
-ethin_image = "/home/linux-miriam/Databases/Ethyne_invariant/ehtyne.png"
-database_raw = "/home/linux-miriam/Databases/Ethyne_invariant/Raw"
+database_opt = "../Databases/Ethyne_invariant/Optimized/"
+ethin_image = "../Databases/Ethyne_invariant/ehtyne.png"
+database_raw = "../Databases/Ethyne_invariant/Raw"
 
 '''define folder of .xyz files'''
 datapath = database_opt

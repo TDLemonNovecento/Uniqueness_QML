@@ -110,7 +110,7 @@ if calculate_kernel:
 
     # Get raw Kernel_Results class list with represented compounds
     for rep in representation_list:
-        kernel_class_path = "./Pickled/Represented_Compounds_Kernel/%s_raw_Kernel_Results" % rep_names[rep]
+        kernel_class_path = "./temp/%s_raw_Kernel_Results" % rep_names[rep]
     
         raw_representation = datprep.read_compounds(kernel_class_path)
         
